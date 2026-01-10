@@ -39,7 +39,7 @@ filtering, pagination, and category management.
 ---
 
 ## 📁 Project Structure
-``
+```
 component-tracker/
 ├── index.js # Main application entry point
 ├── package.json
@@ -58,7 +58,7 @@ component-tracker/
 ├── inventory.db # SQLite database (ignored by git)
 ├── version_info_mock.json
 └── .gitignore
-
+```
 ---
 
 ## ⚠️ **Note:**  
