@@ -1,10 +1,10 @@
 # Component Tracker
 
-![Node.js](https://img.shields.io/badge/Node.js-18+-green)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org/en)
 ![Platform](https://img.shields.io/badge/platform-local--first-blue)
-![Database](https://img.shields.io/badge/database-SQLite-lightgrey)
+[![Database](https://img.shields.io/badge/database-SQLite-lightgrey)](https://sqlite.org/)
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
-![License](https://img.shields.io/badge/license-Private-red)
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](LICENSE)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue)](https://paypal.me/yumera)
 
 ---
@@ -312,9 +312,14 @@ Authentication is not enforced by default.
 
 ### Backup Database
 ![Details](screenshots/backup.png)
-## License
 
 ---
 
-Private project.  
-All rights reserved.
+## License
+
+This project is licensed under the Creative Commons
+Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0).
+
+Commercial use is NOT permitted.
+
+See the LICENSE file for full details.
