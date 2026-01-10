@@ -146,7 +146,7 @@ Dependencies are installed using npm.
 ---
 
 ## Project Structure
-
+```
 component-tracker/
 ├── index.js                 Main application entry point
 ├── package.json
@@ -166,7 +166,7 @@ component-tracker/
 ├── screenshots/             Application screenshots
 ├── version_info_mock.json
 └── .gitignore
-
+```
 ---
 
 ## Running the Application
@@ -261,6 +261,9 @@ Authentication is not enforced by default.
 
 ### LowStock Component
 ![Details](screenshots/lowstock.png)
+
+### Api Services
+![Details](screenshots/api.png)
 
 ### Settings
 ![Details](screenshots/settings.png)
