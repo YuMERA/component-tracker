@@ -147,25 +147,64 @@ Dependencies are installed using npm.
 
 ## Project Structure
 ```
+## Project Structure
+
 component-tracker/
-├── index.js                 Main application entry point
+├── index.js                     Main application entry point
 ├── package.json
-├── package-lock.json
-├── apiServices/             External API integrations
-├── views/
-│   ├── layout.ejs           Global layout
-│   ├── components/          Component views (list, details, edit)
-│   ├── categories.ejs
-│   ├── add-new.ejs
-│   └── details.ejs
+├── README.md
+├── .gitignore
+├── inventory.db                 SQLite database (local, ignored by git)
+├── version_info_mock.json
+├── structure.txt                Project structure reference
+│
+├── apiServices/
+│   ├── serviceResolver.js       API service dispatcher
+│   └── vendors/
+│       ├── element14.js         Element14 (Farnell) API integration
+│       └── mouser.js            Mouser API integration
+│
+├── backups/                     Database backup storage
+│
 ├── public/
 │   ├── css/
-│   ├── js/
-│   └── i18n/                Translation files (EN / SR)
-├── inventory.db             SQLite database (ignored by git)
-├── screenshots/             Application screenshots
-├── version_info_mock.json
-└── .gitignore
+│   │   └── custom-styles.css
+│   ├── i18n/
+│   │   ├── en/                  English translations
+│   │   └── sr/                  Serbian translations
+│   ├── images/
+│   │   └── favicon.ico
+│   └── js/
+│       ├── confirm-modal.js
+│       ├── i18n.js
+│       └── table-sort.js
+│
+├── screenshots/                 Application screenshots
+│   ├── dashboard.png
+│   ├── components.png
+│   ├── categories.png
+│   ├── details.png
+│   ├── addnew.png
+│   ├── lowstock.png
+│   ├── api.png
+│   ├── backup.png
+│   ├── settings.png
+│   └── update.png
+│
+└── views/
+    ├── layout.ejs               Global layout
+    ├── dashboard.ejs
+    ├── all-components.ejs
+    ├── details.ejs
+    ├── add-new.ejs
+    ├── categories.ejs
+    ├── categories-admin.ejs
+    ├── low-stock.ejs
+    ├── backup.ejs
+    ├── settings.ejs
+    ├── tools-api.ejs
+    └── update-check.ejs
+
 ```
 ---
 
