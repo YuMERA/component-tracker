@@ -1,119 +1,168 @@
 # Component Tracker
 
-Component Tracker is a local-first web application for managing electronic components inventory.
-It is designed for personal workshops and small labs where simplicity, speed, and reliability
-are more important than cloud complexity.
+Component Tracker is a local-first web application designed for managing
+electronic components inventory in personal workshops and small labs.
 
-The application runs locally, uses SQLite for storage, and provides a clean UI with advanced
-filtering, pagination, and category management.
+The application focuses on simplicity, reliability, and full control over data.
+All data is stored locally using SQLite, with no external cloud dependencies.
+
+A simple file-based backup strategy can be applied by copying the database file,
+making the system easy to maintain and restore without special tools.
 
 ---
 
-## ✨ Features
+## Features
 
-- Full CRUD for components (Add / Edit / View / Delete)
-- Component categories with live management
+- Full CRUD operations for components (Add / Edit / View / Delete)
+- Category management with live updates
 - Pagination with configurable limits
-- Search and filters
+- Search and filtering
 - Low-stock monitoring
-- API-assisted component lookup (Element14 / Mouser)
-- Image preview for components
+- API-assisted component lookup (Element14, Mouser)
+- Image preview support
 - Datasheet links
 - Internationalization (EN / SR) with live language switching
 - Light / Dark theme toggle
-- SQLite database (local, file-based)
-- No external cloud dependencies
+- SQLite local database (file-based)
+- No cloud services, no external database server
 
 ---
 
-## 🧰 Tech Stack
+## Tech Stack
 
-- **Node.js**
-- **Express.js**
-- **EJS** (server-side rendering)
-- **SQLite** (local database)
-- **Bootstrap 5**
-- **Vanilla JavaScript**
-- **Custom i18n system**
+- Node.js
+- Express.js
+- EJS (server-side rendering)
+- SQLite
+- Bootstrap 5
+- Vanilla JavaScript
+- Custom i18n system
 
 ---
 
-## 📁 Project Structure
-```
+## Prerequisites
+
+Before running this application, the following software must be installed
+and properly configured on the system.
+
+1. Node.js (v18 or newer)
+   npm is included with Node.js.
+
+   Download from:
+   https://nodejs.org/
+
+   Verify installation:
+
+   node -v
+   npm -v
+
+   Both commands must return a version number.
+
+2. A modern web browser
+   (Chrome, Firefox, Edge, etc.)
+
+No additional services or servers are required.
+
+---
+
+## Application Dependencies
+
+All application dependencies are defined in the `package.json` file.
+
+There are no setup or installation scripts.
+Dependencies are installed using npm.
+
+---
+
+## Project Structure
+
 component-tracker/
-├── index.js # Main application entry point
+├── index.js                 Main application entry point
 ├── package.json
 ├── package-lock.json
-├── apiServices/ # External API integrations (Element14, Mouser, etc.)
+├── apiServices/             External API integrations
 ├── views/
-│ ├── layout.ejs # Global layout
-│ ├── components/ # Components views (list, details, edit)
-│ ├── categories.ejs
-│ ├── add-new.ejs
-│ └── details.ejs
+│   ├── layout.ejs           Global layout
+│   ├── components/          Component views (list, details, edit)
+│   ├── categories.ejs
+│   ├── add-new.ejs
+│   └── details.ejs
 ├── public/
-│ ├── css/
-│ ├── js/
-│ └── i18n/ # Translation files (EN / SR)
-├── inventory.db # SQLite database (ignored by git)
+│   ├── css/
+│   ├── js/
+│   └── i18n/                Translation files (EN / SR)
+├── inventory.db             SQLite database (ignored by git)
 ├── version_info_mock.json
 └── .gitignore
-```
-> ⚠️ **Note:**  
->`inventory.db` is intentionally excluded from the repository.
->Each installation creates and maintains its own local database.
 
 ---
 
-## ⚙️ Requirements
-- **Node.js** (v18 or newer recommended)
-- **npm**
-- Windows, Linux, or macOS
+## Running the Application
+
+After all prerequisites are installed:
+
+1. Install dependencies:
+
+   npm install
+
+2. Start the application:
+
+   node index.js
+
+3. Open your browser and navigate to:
+
+   http://localhost:3000
+
+The SQLite database file (inventory.db) will be created automatically
+on first run if it does not already exist.
 
 ---
 
-## 🚀 Installation
-- Clone the repository:
-- git clone https://github.com/YuMERA/component-tracker.git
-- cd component-tracker
-- Install dependencies:
-- npm install
+## Database Notes
+
+- SQLite is used as a local, file-based database.
+- No database server installation is required.
+- The database file is intentionally excluded from version control.
+- Backups can be created by copying the database file.
 
 ---
 
-## ▶️ Running the Application
-- Start the server: node index.js
-- Then open your browser at: http://localhost:3000
-- The SQLite database file will be created automatically if it does not exist.
+## Internationalization (i18n)
 
----
-
-## 🗄 Database Notes
-- SQLite is used for simplicity and portability
-- Database file is local (inventory.db)
-- Not tracked by Git
-- Backup strategy can be implemented via file copy
-
----
-
-## 🌍 Internationalization (i18n)
 - Custom-built i18n system
-- Language files located in: public/i18n/
+- Translation files located in public/i18n/
 - Live language switching without page reload
-- Easily extendable with new languages
+- Easily extendable with additional languages
 
 ---
 
-## 🔐 Security & Deployment Notes
-- This application is intended for local use.
-- If remote access is required, it is recommended to:
-- Use a VPN (e.g. WireGuard)
-- Avoid exposing the application directly to the public internet
-- Authentication is intentionally not enforced by default.
+## Windows Convenience
+
+On Windows systems, a start.bat file may be provided as a convenience.
+
+It:
+- starts the Node.js server
+- opens the default browser at http://localhost:3000
+
+Usage is optional.
+The application can always be started manually using node index.js.
 
 ---
 
-## 📌 Project Status
+## Security and Deployment Notes
+
+This application is intended for local use.
+
+For remote access, it is recommended to:
+- use a VPN (for example WireGuard)
+- avoid exposing the application directly to the public internet
+
+Authentication is not enforced by default.
+
+---
+
+## Project Status
+
 - Stable
 - Actively used
 - Designed for local environments
@@ -121,6 +170,7 @@ component-tracker/
 
 ---
 
-## 📝 License
-- Private project.
-- All rights reserved.
+## License
+
+Private project.
+All rights reserved.
