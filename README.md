@@ -61,9 +61,9 @@ component-tracker/
 ``
 ---
 
-> ⚠️ **Note:**  
-> `inventory.db` is intentionally excluded from the repository.
-> Each installation creates and maintains its own local database.
+## ⚠️ **Note:**  
+`inventory.db` is intentionally excluded from the repository.
+Each installation creates and maintains its own local database.
 ---
 
 ## ⚙️ Requirements
