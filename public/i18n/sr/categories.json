@@ -1,0 +1,42 @@
+{
+    "categories.title": "Kategorije komponenti",
+    "categories.help_title": "O kategorijama",
+    "categories.subtitle": "Upravljanje i organizacija komponenti po kategorijama.",
+  
+    "categories.new_placeholder": "Naziv nove kategorije",
+    "categories.add_btn": "Dodaj",
+  
+    "categories.help_header": "O kategorijama",
+    "categories.help_p1": "Kategorije se koriste za grupisanje komponenti prema tipu ili nameni.",
+    "categories.help_p2": "Omogućavaju brže filtriranje i pronalaženje, ali ne utiču na količine ili zalihe.",
+  
+    "categories.search_placeholder": "Pretraga po nazivu kategorije...",
+    "categories.search_btn": "Pretraga",
+    "categories.clear_search": "Očisti pretragu",
+  
+    "categories.col_name": "Naziv kategorije",
+    "categories.col_total": "Ukupno stavki",
+    "categories.col_actions": "Navigacija i akcije",
+  
+    "categories.empty": "Još uvek nema definisanih kategorija.",
+  
+    "categories.view_components": "Prikaži komponente",
+    "categories.edit": "Izmeni kategoriju",
+    "categories.delete": "Obriši kategoriju",
+    "categories.confirm_delete": "Da li ste sigurni da želite da obrišete kategoriju {name}?",
+    "categories.confirm_title": "Brisanje kategorije",
+
+    "categories.show": "Prikaži:",
+    "categories.items": "od",
+  
+    "categories.enter_name": "Unesite naziv kategorije",
+    "categories.error_add": "Greška pri dodavanju kategorije",
+    "categories.add_success": "Kategorija \"{name}\" je uspešno dodata",
+    "categories.network_error": "Greška u mreži",
+
+    "delete_not_found": "Kategorija ne postoji.",
+    "delete_forbidden": "Kategoriju „Uncategorized“ nije dozvoljeno obrisati.",
+    "delete_success": "Kategorija \"{name}\" je uspešno obrisana. Povezane komponente su sada neklasifikovane.",
+    "delete_error": "Došlo je do greške prilikom brisanja kategorije."
+  }
+  

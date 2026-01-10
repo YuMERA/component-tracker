@@ -1,0 +1,31 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+
+# Database
+*.sqlite
+*.sqlite3
+db/*.sqlite
+db/*.sqlite3
+
+# Backups
+backup/
+backups/
+
+# Uploads / generated files
+uploads/
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log

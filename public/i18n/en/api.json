@@ -1,0 +1,52 @@
+{
+    "api.title": "API Services",
+    "api.description": "Manage external API providers used for component data lookup.",
+  
+    "api.configured_services": "Configured Services",
+    "api.add_service": "Add Service",
+  
+    "api.table.name": "Name",
+    "api.table.endpoint": "Base URL",
+    "api.table.active": "Active",
+    "api.table.actions": "Actions",
+  
+    "api.active": "Active",
+    "api.inactive": "Inactive",
+  
+    "api.use": "Use",
+    "api.deactivate": "Deactivate",
+    "api.deactivate_title": "Deactivate this API service",
+    "api.edit": "Edit service",
+    "api.delete": "Delete service",
+  
+    "api.current_service": "Currently used service",
+    "api.selected_service": "Currently selected API provider",
+  
+    "api.confirm_delete": "Are you sure you want to delete API service {name}?",
+    "api.confirm_title": "Delete API Service",
+  
+    "api.about.title": "About API Services",
+    "api.about.text1": "API services are used to automatically fetch component data such as name, description, datasheet, and image when adding new components.",
+    "api.about.text2": "To use this feature, you need to:",
+    "api.about.step1": "Create an account on the supplier’s website",
+    "api.about.step2": "Generate an API key",
+    "api.about.step3": "Add the service and API key here",
+    "api.about.supported": "Currently supported services:",
+    "api.about.supported_list": "Mouser and Element14 (Farnell)",
+    "api.about.note": "This feature is optional and intended to speed up initial component entry, especially when adding many items.",
+  
+    "api.modal.add_title": "Add API Service",
+    "api.modal.edit_title": "Edit API Service",
+    "api.modal.add_btn": "Add Service",
+    "api.modal.save_btn": "Save Changes",
+    "api.form.cancel": "Cancel",
+  
+    "api.form.service_name": "Service Name",
+    "api.form.endpoint": "Endpoint URL",
+    "api.form.api_key": "API Key",
+    "api.form.additional_params": "Additional Params",
+    "api.form.active": "Active",
+  
+    "api.empty": "No API services configured."
+  }
+  

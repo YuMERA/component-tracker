@@ -1,0 +1,31 @@
+{
+    "settings.title": "Settings",
+    "settings.description": "Manage your inventory preferences and application settings.",
+    "settings.description1": "Manage your inventory preferences.",
+  
+    "settings.appearance": "Appearance",
+    "settings.appearance_desc": "Customize how the application looks",
+  
+    "settings.language": "Language",
+    "settings.language_desc": "Select application language",
+  
+    "settings.about": "About",
+    "settings.about_desc": "Application information and version details",
+    "settings.about_desc1": "A comprehensive inventory management solution for electronics workshops. Track components, datasheets, and stock levels with ease.",
+
+    "settings.theme.light": "Light",
+    "settings.theme.dark": "Dark",
+    "settings.theme.system": "System",
+    
+    "settings.theme_light": "Bright and clear interface",
+    "settings.theme_dark": "Easy on the eyes in low light",
+    "settings.theme_system": "Follow your device settings",
+
+    "settings.title_about": "About Settings",
+
+    "settings.help_title": "About Settings",
+    "settings.help_line_1": "Settings control general application behavior and preferences.",
+    "settings.help_line_2": "Changes made here affect how the inventory is displayed and managed.",
+    "settings.help_line_3": "Only adjust these options if you understand their effect on your workflow."
+}
+  

@@ -1,0 +1,217 @@
+<header class="d-flex justify-content-between align-items-center mb-0">
+    <div class="d-flex">    
+        <h1 class="h3 text-body mb-0" data-i18n="update.title">
+            Application Update Center
+        </h1>
+        <i class="bi bi-info-circle ms-2 text-muted"
+           role="button"
+           data-i18n="update.help_title"
+           data-i18n-attr="title"
+           onclick="togglePageHelp()"></i>
+    </div>
+</header>
+
+<p class="card-text text-muted small mb-3" data-i18n="update.subtitle">
+    Check the status of the installed version and available system updates.
+</p>
+
+<!-- HELP -->
+<div id="pageHelp" class="card border-0 bg-body-tertiary my-2 d-none">
+    <div class="card-body small text-body-secondary">
+        <div class="d-flex align-items-start">
+            <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+            <div>
+                <strong class="text-body" data-i18n="update.help.header">
+                    About Application Update Center
+                </strong><br>
+                <span data-i18n="update.help.text1"></span><br>
+                <span data-i18n="update.help.text2"></span><br>
+                <span data-i18n="update.help.text3"></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+<% if (error) { %>
+    <div class="col-12 mb-4">
+        <div class="alert alert-danger">
+            <h6 class="alert-heading" data-i18n="update.error.title">Error</h6>
+            <p class="mb-0">
+                <span data-i18n="update.error.text"></span>
+                <%= error %>
+            </p>
+        </div>
+    </div>
+<% } else { %>
+
+    <!-- CURRENT VERSION -->
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-body-tertiary fw-bold" data-i18n="update.current.title">
+                Current Installed Version
+            </div>
+            <div class="card-body pt-2 pb-2">
+                <p class="card-text text-muted small"
+                data-i18n="update.current.subtitle">
+                </p>
+
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-info-circle me-2 h5 p-2 text-primary"></i>
+                        <div>
+                            <div class="fw-bold">
+                                <span data-i18n="update.current.version"></span>
+                                V<%= currentVersion %>
+                            </div>
+                            <small class="text-muted">
+                                <% if (currentVersionInfo?.features?.length) { %>
+                                    <span data-i18n="update.current.feature"></span>
+                                    <%= currentVersionInfo.features[0] %>
+                                <% } else { %>
+                                    <span data-i18n="update.current.no_description"></span>
+                                <% } %>
+                            </small>
+                        </div>
+                        <span class="badge bg-info text-dark ms-auto"
+                            data-i18n="update.current.installed">
+                            Installed
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPDATE STATUS -->
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-body-tertiary fw-bold"
+                data-i18n="update.status.title">
+                Update Status
+            </div>
+            <div class="card-body pt-2 pb-2">
+                <p class="card-text text-muted small"
+                data-i18n="update.status.subtitle"></p>
+
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item d-flex align-items-center
+                        <%= updateAvailable ? 'border-start border-danger border-4' : 'border-start border-success border-4' %>">
+
+                        <i class="bi bi-cloud-download me-2 h5 p-2
+                            <%= updateAvailable ? 'text-danger' : 'text-success' %>"></i>
+
+                        <div>
+                            <div class="fw-bold">
+                                <span data-i18n="update.status.latest"></span>
+                                V<%= latestVersion %>
+                            </div>
+                            <small class="text-muted">
+                                <% if (latestVersionInfo?.features?.length) { %>
+                                    <span data-i18n="update.status.new"></span>
+                                    <%= latestVersionInfo.features[0] %>
+                                <% } else { %>
+                                    <span data-i18n="update.status.no_details"></span>
+                                <% } %>
+                            </small>
+                        </div>
+
+                        <span class="badge ms-auto p-2 rounded-pill
+                            <%= updateAvailable ? 'bg-danger' : 'bg-success' %>"
+                            data-i18n="<%= updateAvailable ? 'update.status.available' : 'update.status.uptodate' %>">
+                        </span>
+                    </div>
+
+                    <div class="list-group-item pt-3 pb-3">
+                        <% if (updateAvailable && downloadLink) { %>
+                            <a href="<%= downloadLink %>" target="_blank"
+                            class="btn btn-primary w-100 fw-bold">
+                                <i class="bi bi-download"></i>
+                                <span data-i18n="update.status.download"></span>
+                                V<%= latestVersion %>
+                            </a>
+                        <% } else { %>
+                            <button class="btn btn-secondary w-100" disabled>
+                                <i class="bi bi-shield-check"></i>
+                                <span data-i18n="update.status.none"></span>
+                            </button>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-body-tertiary fw-bold"
+                data-i18n="update.history.title">
+                All Version History
+            </div>
+            <div class="card-body pt-2 pb-2">
+                <p class="card-text text-muted small mb-3"
+                data-i18n="update.history.subtitle"></p>
+
+                <div style="max-height:350px;overflow-y:auto" class="border rounded">
+                    <div class="accordion accordion-flush" id="versionAccordion">
+                        <% versions.reverse().forEach((version, index) => { %>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button py-2 ps-3 <%= version.version === latestVersion ? '' : 'collapsed' %>"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#collapse<%= index %>">
+                                    <strong class="me-2">V<%= version.version %></strong>
+                                    <span class="text-muted"><%= version.title %></span>
+                                </button>
+                            </h2>
+                            <div id="collapse<%= index %>" 
+                                class="accordion-collapse collapse <%= version.version === latestVersion ? 'show' : '' %>"
+                                data-bs-parent="#versionAccordion">
+                                <div class="accordion-body">
+                                    <ul class="list-unstyled small mb-0">
+                                        <% version.features.forEach(f => { %>
+                                            <li><i class="bi bi-dot"></i> <%= f %></li>
+                                        <% }) %>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<% } %>
+</div>
+
+<!-- OBAVEZNO: Dodaj Bootstrap JavaScript, npr. za Accordion komponente. Ovo je neophodno za funkcionalnost akordeona. -->
+
+<script>
+
+    //**********************************************************************************
+    //** Akcija na promenu jezika za svaku stranu isto
+        /*  layout se prevede pri load-u
+            layout se prevede i kad klikneš SR / EN
+            nema bljeska
+            nema potrebe da stranice brinu o layoutu
+        */
+    //***********************************************************************************
+    function applyUpdateI18n() {
+        I18N.apply(['layout','update']);
+    }
+
+    document.addEventListener('DOMContentLoaded', applyUpdateI18n);
+    // layout mora da reaguje i na live promenu jezika
+    window.addEventListener('languageChanged', applyUpdateI18n);
+    //************************************************************************************
+
+
+    function togglePageHelp() {
+        document
+            .getElementById('pageHelp')
+            .classList.toggle('d-none');
+        }
+</script>

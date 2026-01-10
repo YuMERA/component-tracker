@@ -1,0 +1,33 @@
+{
+    "update.title": "Application Update Center",
+    "update.subtitle": "Check the status of the installed version and available system updates.",
+    "update.help_title": "About Application Update",
+    "update.help.header": "About Application Update Center",
+    "update.help.text1": "The Update Center manages application updates and version changes.",
+    "update.help.text2": "It ensures the system stays up to date while preserving data and configuration.",
+    "update.help.text3": "Updates are optional and should be applied when it fits your workflow.",
+  
+    "update.error.title": "Error",
+    "update.error.text": "An error occurred while processing version data:",
+  
+    "update.current.title": "Current Installed Version",
+    "update.current.subtitle": "Details about the version currently in use.",
+    "update.current.version": "Version:",
+    "update.current.feature": "Main feature:",
+    "update.current.no_description": "No description available for the installed version.",
+    "update.current.installed": "Installed",
+  
+    "update.status.title": "Update Status",
+    "update.status.subtitle": "Compare with the latest version available on the server.",
+    "update.status.latest": "Latest Version:",
+    "update.status.new": "New:",
+    "update.status.no_details": "No details about new features.",
+    "update.status.available": "AVAILABLE",
+    "update.status.uptodate": "UP TO DATE",
+    "update.status.download": "Download Version",
+    "update.status.none": "No Update Required",
+  
+    "update.history.title": "All Version History",
+    "update.history.subtitle": "Overview of all releases and changes in the application."
+  }
+  

@@ -1,0 +1,143 @@
+/* public/css/custom.css */
+
+/* Dodatne korekcije za sidebar */
+.min-vh-100 {
+    min-height: 100vh;
+}
+
+/* Stil za hover menija */
+.nav-link:hover {
+    background-color: var(--bs-light) !important;
+}
+
+/* Aktivna klasa za sidebar (Bootstrap primarna boja) */
+.bg-primary.text-white {
+    background-color: var(--bs-primary) !important;
+    color: white !important;
+}
+
+.card-form-bg {
+    background-color: #eeeff2 !important;
+}
+
+/* Osnovne boje za tamni mod kada Bootstrapova tamna tema nije dovoljna */
+/* Globalna pozadina tela i kontejnera */
+[data-bs-theme="dark"] body {
+    background-color: #121212 !important; 
+    color: #f0f0f0; 
+}
+
+/* ----------------------------------------------- */
+/* NOVI SELEKTOR ZA SIDEBAR: aside.flex-shrink-0  */
+/* ----------------------------------------------- */
+
+[data-bs-theme="dark"] aside.flex-shrink-0 { 
+    /* Overridujemo bg-white i postavljamo tamnu boju */
+    background-color: #212529 !important; /* Tamna pozadina za navigaciju */
+    border-right-color: #333 !important; /* Tamnija granica */
+}
+
+/* Boja teksta u tamnom modu u Sidebaru */
+/* Ciljamo h5 i p tagove unutar headera Sidebara */
+[data-bs-theme="dark"] aside.flex-shrink-0 .text-dark,
+[data-bs-theme="dark"] aside.flex-shrink-0 .text-muted {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Boja linkova i naslova sekcija */
+[data-bs-theme="dark"] aside.flex-shrink-0 .nav-link,
+[data-bs-theme="dark"] aside.flex-shrink-0 .text-secondary {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Aktivni link (treba mu jača boja) */
+[data-bs-theme="dark"] aside.flex-shrink-0 .nav-link.bg-primary {
+    /* Za aktivni link koristimo originalnu primarnu boju */
+    background-color: var(--bs-primary) !important; 
+    color: #fff !important;
+}
+
+/* Postarajte se da nav-link bude svetao na hover/fokusu */
+[data-bs-theme="dark"] aside.flex-shrink-0 .nav-link:not(.bg-primary):hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff !important;
+}
+
+/* Sredite gornji deo Sidebara (header) */
+[data-bs-theme="dark"] aside.flex-shrink-0 .border-bottom {
+    border-bottom-color: #333 !important;
+}
+
+/* Osiguravamo da se boja pozadine menja i da je dovoljno vidljiva */
+[data-bs-theme="dark"] aside.flex-shrink-0 .nav-link:not(.bg-primary):hover {
+    /* Povećavamo transparentnost pozadine (0.15) za bolju vidljivost hovera */
+    background-color: rgba(255, 255, 255, 0.15) !important; 
+    /* Osiguravamo da tekst bude čist beli na hoveru */
+    color: #fff !important; 
+}
+
+/* Osiguravamo da dugme Settings na dnu sidebara ima dobar hover efekat */
+[data-bs-theme="dark"] aside.flex-shrink-0 .btn-outline-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.15) !important; 
+    color: #fff !important;
+    border-color: #555 !important;
+}
+
+/* Opciono: Osigurajte da sve kartice i dalje izgledaju dobro */
+[data-bs-theme="dark"] .card {
+    background-color: #1e1e1e;
+    border-color: #333;
+}
+
+[data-bs-theme="dark"] .card-header {
+    background-color: #2c2c2c !important;
+    color: #e0e0e0;
+}
+
+/* Uklanjanje plave boje oko slike kad je tema Dark, ako je link fokusiran */
+[data-bs-theme="dark"] .component-thumbnail:focus {
+    box-shadow: none;
+}
+
+/* Tamna pozadina za Add/Edit formu (.card-form-bg) */
+[data-bs-theme="dark"] .card-form-bg {
+    background-color: #1e1e1e !important; /* Tamno siva pozadina za formu */
+    border-color: #333 !important; /* Tamnija ivica */
+}
+
+/* * Klasa za forsiranje tamnog teksta na svetlim pozadinama
+ * (npr. table-warning redovi u Dark Modu)
+ *
+ * Ažurirano: Cilja se specifično žuti red (table-warning) u Dark modu
+ * kako bi se nadjačalo automatsko posvetljavanje text-muted klasom,
+ * čineći Part No. i Min. Stock vidljivijim.
+ */
+ 
+ [data-bs-theme="dark"] .table-warning .text-muted{
+     /* Koristi tamno sivu nijansu koja je vidljivija na žutoj pozadini */
+     color: var(--bs-gray) !important; 
+ }
+
+ /* Targetira Part Number u Crvenom (Danger) redu u Dark Mode-u */
+[data-bs-theme="dark"] .table-danger .text-muted {
+    color: var(--bs-gray) !important;  /* Osigurava da je svetla boja na crvenoj pozadini */
+}
+
+th[data-sort] {
+    user-select: none;
+}
+
+.sort-indicator {
+    margin-left: 6px;
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
+.sort-asc .sort-indicator::before {
+    content: "▲";
+}
+
+.sort-desc .sort-indicator::before {
+    content: "▼";
+}
+

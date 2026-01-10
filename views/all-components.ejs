@@ -1,0 +1,399 @@
+
+
+<header class="d-flex justify-content-between align-items-center mb-0">
+
+    <div class="d-flex">    
+        <h1 class="h3 text-body mb-0" data-i18n="components.title">
+            All Components
+        </h1>
+        <i class="bi bi-info-circle ms-2 text-muted"
+           role="button"
+           title="About categories"
+           data-i18n-attr="title"
+           data-i18n="components.help_title"
+           onclick="togglePageHelp()"></i>
+    </div>
+
+    <a href="/components/new" class="btn btn-primary shadow-sm">
+        <i class="bi bi-plus-circle me-2"></i>
+        <span data-i18n="components.add_new">Add New</span>
+    </a>
+</header>
+
+<p class="card-text text-muted small mb-3"
+   data-i18n="components.subtitle">
+    A complete list of all items in the inventory.
+</p>
+
+<div id="pageHelp"
+     class="card border-0 bg-body-tertiary my-2 d-none">
+    <div class="card-body small text-body-secondary">
+        <div class="d-flex align-items-start">
+            <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+            <div>
+                <strong class="text-body" data-i18n="components.help_header">
+                    About All Components
+                </strong><br>
+                <span data-i18n="components.help_p1">
+                    This view shows all components currently stored in the workshop inventory.
+                </span><br>
+                <span data-i18n="components.help_p2">
+                    Each component represents a physical part you have available, along with its category, location, and quantity.
+                </span><br>
+                <span data-i18n="components.help_p3">
+                    Stock levels shown here reflect current availability, while alerts and restocking suggestions are handled separately.
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<% if (locals.message) { %>
+    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span data-i18n="<%= locals.message %>"><%= locals.message %></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<% } %>
+
+<% if (locals.error) { %>
+    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span data-i18n="<%= locals.error %>"><%= locals.error %></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<% } %>
+
+<form action="/components" method="GET" class="mb-4">
+    <div class="input-group shadow-sm">
+
+        <% if (locals.currentCategory || locals.currentStatus) { %>
+            <span class="input-group-text bg-body-tertiary text-primary fw-bold small">
+                <% if (locals.currentCategory) { %>
+                    <span data-i18n="components.filter_category">Category:</span>
+                    <%= currentCategory %>
+                <% } %>
+                <% if (locals.currentStatus) { %>
+                    <span data-i18n="components.filter_status">Status:</span>
+                    <%= currentStatus.replace('-', ' ') %>
+                <% } %>
+            </span>
+        <% } %>
+
+        <input
+            type="text"
+            class="form-control"
+            placeholder="Search by Name, Part Number, or Location..."
+            data-i18n-attr="placeholder"
+            data-i18n="components.search_placeholder"
+            name="search"
+            value="<%= locals.searchQuery || '' %>"
+        >
+
+        <% if (locals.currentStatus) { %>
+            <input type="hidden" name="status" value="<%= currentStatus %>">
+        <% } %>
+
+        <% if (locals.currentCategory) { %>
+            <input type="hidden" name="category" value="<%= currentCategory %>">
+        <% } %>
+
+        <% if (locals.limit) { %>
+            <input type="hidden" name="limit" value="<%= limit %>">
+        <% } %>
+
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-search"></i>
+            <span data-i18n="components.search">Search</span>
+        </button>
+
+        <% if (locals.searchQuery) { %>
+            <a href="/components?<%= clearSearchQueryString %>"
+               class="btn btn-outline-danger"
+               title="Clear Search"
+               data-i18n-attr="title"
+               data-i18n="components.clear_search">
+                <i class="bi bi-x-lg"></i>
+            </a>
+        <% } %>
+    </div>
+</form>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0" id="componentsTable">
+                <thead class="table-secondary">
+                    <tr>
+                        <th style="width: 50px;"></th> 
+                        <th data-sort="text" class="text small text-uppercase">
+                            <span data-i18n="components.col_name">Name</span>
+                            <span class="sort-indicator"></span>
+                        </th>
+                        <th data-sort="text" class="small text-uppercase">
+                            <span data-i18n="components.col_part">Part No.</span>
+                            <span class="sort-indicator"></span>
+                        </th>
+                        <th data-sort="text" class="small text-uppercase">
+                            <span data-i18n="components.col_category">Category</span>
+                            <span class="sort-indicator"></span>
+                        </th>
+                        <th data-sort="text" class="small text-uppercase d-none d-sm-table-cell">
+                            <span data-i18n="components.col_location">Location</span>
+                            <span class="sort-indicator"></span>
+                        </th>
+                        <th data-sort="number" class="small text-uppercase text-center">
+                            <span data-i18n="components.col_stock">Stock</span>
+                            <span class="sort-indicator"></span>
+                        </th>
+                        <th data-sort="number" class="small text-uppercase text-center d-none d-sm-table-cell">
+                            <span data-i18n="components.col_min">Min. Stock</span>
+                            <span class="sort-indicator"></span>
+                        </th>
+                        <th class="data-sort small text-uppercase text-center d-none d-sm-table-cell">
+                            <span data-i18n="components.col_status">Status</span>
+                        </th>
+                        <th class="small text-uppercase text-end">
+                            <span data-i18n="components.col_actions">Actions</span>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <% if (components.length === 0) { %>
+                        <tr>
+                            <td colspan="9" class="text-center p-4 text-muted">
+                                <span data-i18n="components.empty">No components found.</span>
+                            </td>
+                        </tr>
+                    <% } else { %>
+                        <% components.forEach(component => { %>
+                            <% 
+                                let statusClass = 'bg-success';
+                                let statusText = 'OK';
+                                let rowClass = ''; 
+                                let nameColorClass = 'text-body';
+
+                                if (component.quantity <= 0) {
+                                    statusClass = 'bg-danger';
+                                    statusText = 'OUT';
+                                    rowClass = 'table-danger';
+                                    nameColorClass = 'text-primary';
+                                } else if (component.quantity <= component.min_stock) {
+                                    statusClass = 'bg-warning';
+                                    statusText = 'LOW';
+                                    rowClass = 'table-warning';
+                                    nameColorClass = 'text-primary';
+                                }
+                            %>
+
+                            <tr class="<%= rowClass %>">
+                                <td class="text-center p-2 align-middle">
+                                    <% if (component.image_url && component.image_url.trim() !== '') { %>
+                                        <a href="<%= component.image_url %>" target="_blank" title="Show big picture">
+                                            <img src="<%= component.image_url %>"
+                                                 style="width: 40px; height: 40px; object-fit: contain; border-radius: 4px; background-color: white; border: 1px solid #b8b8b8;">
+                                        </a>
+                                    <% } %>
+                                </td>
+
+                                <td class="align-middle">
+                                    <a href="/components/details/<%= component.id %>" title="View Component Details"
+                                       class="fw-bold text-decoration-none <%= nameColorClass %>">
+                                        <%= component.name %>
+                                    </a>
+                                </td>
+
+                                <td class="align-middle">
+                                    <a href="/components/details/<%= component.id %>" title="View Component Details"
+                                        class="fw-normal text-decoration-none <%= nameColorClass %>">
+                                        <%= component.part_number || 'N/A' %>
+                                    </a>
+                                </td>
+
+                                <td class="align-middle">
+                                    <a href="/components?category=<%= encodeURIComponent(component.category || 'Uncategorized') %>"
+                                       title="View all items in <%= component.category %> category"
+                                       class="fst-italic text-decoration-none <%= nameColorClass %>"> 
+                                        <%= component.category || 'Uncategorized' %>
+                                    </a>
+                                </td>
+
+                                <td class="align-middle d-none d-sm-table-cell fst-italic">
+                                    <%= component.location || 'N/A' %>
+                                </td>
+
+                                <td class="text-center fw-bold align-middle">
+                                    <%= component.quantity %>
+                                </td>
+
+                                <td class="text-center text-muted align-middle d-none d-sm-table-cell">
+                                    <%= component.min_stock %>
+                                </td>
+
+                                <td class="text-center align-middle d-none d-sm-table-cell">
+                                    <span class="badge rounded-pill <%= statusClass %> text-white"
+                                          data-i18n="components.status.<%= statusText.toLowerCase() %>">
+                                        <%= statusText %>
+                                    </span>
+                                </td>
+
+                                <td class="text-end align-middle">
+                                    <div class="d-flex flex-row flex-wrap justify-content-end"> 
+                                        <% if (component.datasheet_url && component.datasheet_url.trim() !== '') { %>
+                                            <a href="<%= component.datasheet_url %>" target="_blank"
+                                                title="Datasheet"
+                                                data-i18n-attr="title"
+                                                data-i18n="components.datasheet"
+                                                class="btn btn-sm btn-outline-secondary me-1 mb-1">
+                                                <i class="bi bi-file-earmark-pdf-fill"></i>
+                                            </a>
+                                        <% } %>
+
+                                        <a href="/components/details/<%= component.id %>?<%= queryString %>"
+                                            title="Details"
+                                            data-i18n-attr="title"
+                                            data-i18n="components.view"
+                                            class="btn btn-sm btn-outline-primary me-1 mb-1">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        <a href="/components/edit/<%= component.id %>?<%= queryString %>"
+                                            title="Edit"
+                                            data-i18n-attr="title"
+                                            data-i18n="components.edit"
+                                            class="btn btn-sm btn-outline-secondary me-1 mb-1">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <a href="/components/delete/<%= component.id %>?returnQuery=<%= encodeURIComponent(queryString) %>"
+                                            class="btn btn-sm btn-outline-danger me-1 mb-1 js-confirm"
+                                            data-i18n-attr="title"
+                                            data-i18n="components.delete"
+                                            data-confirm-title="components.confirm_title"
+                                            data-confirm-message="components.confirm_delete"
+                                            data-confirm-params='{"name":"<%= component.name %>"}'>
+                                             <i class="bi bi-trash"></i>
+                                         </a>                                         
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center mt-3 mb-2">
+
+    <form id="limitForm" method="GET" class="d-flex align-items-center">
+        <% if (searchQuery) { %>
+            <input type="hidden" name="search" value="<%= searchQuery %>">
+        <% } %>
+        <% if (currentCategory) { %>
+            <input type="hidden" name="category" value="<%= currentCategory %>">
+        <% } %>
+        <% if (currentStatus) { %>
+            <input type="hidden" name="status" value="<%= currentStatus %>">
+        <% } %>
+
+        <label for="limitSelect"
+               class="me-2 mb-0 fst-italic"
+               data-i18n="components.show">
+            Show:
+        </label>
+        <select id="limitSelect"
+                name="limit"
+                class="form-select form-select-sm fw-bold"
+                style="width: auto;"
+                onchange="this.form.submit()">
+            <% [10, 20, 50, 100, 'All'].forEach(opt => { %>
+                <option value="<%= opt %>"
+                    <%= (limit === opt || (limit === null && opt === 'All')) ? 'selected' : '' %>>
+                    <%= opt %>
+                </option>
+            <% }) %>
+        </select>
+
+        <span class="ms-2 text-muted fst-italic">
+            <span data-i18n="components.items">of</span> <%= totalItems %>
+        </span>
+    </form>
+
+    <% if (totalPages > 1) { %>
+
+        <% 
+            const qs = [];
+            if (searchQuery) qs.push(`search=${encodeURIComponent(searchQuery)}`);
+            if (currentCategory) qs.push(`category=${encodeURIComponent(currentCategory)}`);
+            if (currentStatus) qs.push(`status=${encodeURIComponent(currentStatus)}`);
+            qs.push(`limit=${limit || 'All'}`);
+            const baseQuery = qs.join('&');
+        %>
+
+        <nav class="mx-auto">
+            <ul class="pagination mb-0 justify-content-center">
+
+                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>&<%= baseQuery %>">«</a>
+                </li>
+
+                <%
+                    const maxVisible = 5;
+                    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+                    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+                    if (endPage - startPage + 1 < maxVisible) {
+                        startPage = Math.max(1, endPage - maxVisible + 1);
+                    }
+                %>
+
+                <% if (startPage > 1) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1&<%= baseQuery %>">1</a>
+                    </li>
+                    <% if (startPage > 2) { %>
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    <% } %>
+                <% } %>
+
+                <% for (let p = startPage; p <= endPage; p++) { %>
+                    <li class="page-item <%= currentPage === p ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= p %>&<%= baseQuery %>"><%= p %></a>
+                    </li>
+                <% } %>
+
+                <% if (endPage < totalPages) { %>
+                    <% if (endPage < totalPages - 1) { %>
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    <% } %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= totalPages %>&<%= baseQuery %>"><%= totalPages %></a>
+                    </li>
+                <% } %>
+
+                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>&<%= baseQuery %>">»</a>
+                </li>
+
+            </ul>
+        </nav>
+    <% } %>
+</div>
+
+<script>
+
+    function applyAllComponentsI18n() {
+        I18N.apply(['layout','components']);
+    }
+
+    document.addEventListener('DOMContentLoaded', applyAllComponentsI18n);
+    window.addEventListener('languageChanged', applyAllComponentsI18n);
+
+    function togglePageHelp() {
+        document.getElementById('pageHelp').classList.toggle('d-none');
+    }
+</script>
+<script src="/js/confirm-modal.js"></script>
+<script src="/js/table-sort.js"></script>

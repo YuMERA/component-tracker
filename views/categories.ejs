@@ -1,0 +1,501 @@
+<!-- TODO: future refactor → category_id instead of name -->
+<% const qs = typeof queryString !== 'undefined' ? queryString : '' %>
+
+<header class="d-flex justify-content-between align-items-center">
+
+    <div class="d-flex">    
+        <h1 class="h3 text-body mb-0"
+            data-i18n="categories.title">
+            Component Categories
+        </h1>
+        <i class="bi bi-info-circle ms-2 text-muted"
+           role="button"
+           title="About categories"
+           data-i18n-attr="title"
+           data-i18n="categories.help_title"
+           onclick="toggleCategoryHelp()"></i>
+    </div>
+
+    <!-- INLINE ADD CATEGORY -->
+    <div class="input-group shadow-sm w-50 ">
+        <input
+            type="text"
+            id="newCategoryInput"
+            class="form-control "
+            placeholder="New category name"
+            data-i18n-attr="placeholder"
+            data-i18n="categories.new_placeholder"
+        >
+
+        <button
+            class="btn btn-primary"
+            id="addCategoryBtn"
+        >
+            <i class="bi bi-plus-lg"></i>
+            <span data-i18n="categories.add_btn">Add</span>
+        </button>
+    </div>
+
+</header>
+
+<p class="card-text text-muted small mb-3"
+   data-i18n="categories.subtitle">
+   Manage and organize items by category.
+</p>
+
+<!-- Toggle info kada se klikne na ikonu/button-->
+<div id="categoryHelp"
+    class="card border-0 bg-body-tertiary my-2 d-none">
+    <div class="card-body small text-body-secondary">
+        <div class="d-flex align-items-start">
+            <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+            <div>
+                <strong class="text-body"
+                        data-i18n="categories.help_header">
+                    About Categories
+                </strong><br>
+
+                <span data-i18n="categories.help_p1">
+                    Categories are used to organize and group components
+                    based on their type or function (e.g. Resistors, ICs, Connectors).
+                </span>
+                <br>
+                <span data-i18n="categories.help_p2">
+                    They help you quickly filter and locate components,
+                    but do not affect quantities or stock calculations.
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="alertPlaceholder"></div>
+
+<form action="/categories" method="GET" class="mb-4">
+    <div class="input-group shadow-sm">
+
+        <input type="text"
+               class="form-control"
+               placeholder="Search by Category Name..."
+               data-i18n-attr="placeholder"
+               data-i18n="categories.search_placeholder"
+               name="search"
+               value="<%= locals.searchQuery || '' %>">
+
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-search"></i>
+            <span data-i18n="categories.search_btn">Search</span>
+        </button>
+
+        <% if (locals.searchQuery) { %>
+            <a href="/categories"
+               class="btn btn-outline-danger"
+               title="Clear Search"
+               data-i18n-attr="title"
+               data-i18n="categories.clear_search">
+                <i class="bi bi-x-lg"></i>
+            </a>
+        <% } %>
+
+    </div>
+</form>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-secondary">
+                    <tr>
+                        <th scope="col" class="small text-uppercase" style="width: 50%;" data-sort="text">
+                            <span data-i18n="categories.col_name">Category Name</span>
+                            <span class="sort-indicator"></span>
+                        </th>
+                        <th scope="col" class="small text-uppercase text-center" data-sort="number">
+                            <span data-i18n="categories.col_total">Total Items</span>
+                            <span class="sort-indicator"></span>
+                        </th>
+                        <th scope="col" class="small text-uppercase text-end" style="width: 30%;"
+                            data-i18n="categories.col_actions">
+                            Navigation & Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (categories.length === 0) { %>
+                        <tr>
+                            <td colspan="3" class="text-center p-4 text-muted"
+                                data-i18n="categories.empty">
+                                No categories defined yet.
+                            </td>
+                        </tr>
+                    <% } else { %>
+                        <% categories.forEach(category => { %>
+                            <tr>
+                                <td class="align-middle fw-bold">
+
+                                    <!-- DISPLAY MODE -->
+                                    <span id="cat-text-<%= category.category %>">
+                                        <a href="/components?category=<%= encodeURIComponent(category.category) %>"
+                                           class="text-decoration-none text-body">
+                                            <i class="bi bi-folder me-2 text-primary"></i>
+                                            <%= category.category || 'Uncategorized' %>
+                                        </a>
+                                    </span>
+                                
+                                    <!-- EDIT MODE -->
+                                    <form id="cat-edit-<%= category.category %>"
+                                          class="d-none"
+                                          onsubmit="saveCategoryEdit(event, '<%= category.category %>')">
+                                
+                                        <div class="input-group input-group-sm">
+                                            <input type="text"
+                                                   class="form-control"
+                                                   name="name"
+                                                   value="<%= category.category %>"
+                                                   required>
+                                
+                                            <button class="btn btn-success" type="submit">
+                                                <i class="bi bi-check-lg"></i>
+                                            </button>
+                                
+                                            <button class="btn btn-outline-secondary"
+                                                    type="button"
+                                                    onclick="cancelCategoryEdit('<%= category.category %>')">
+                                                <i class="bi bi-x-lg"></i>
+                                            </button>
+                                        </div>
+                                    </form>
+                                
+                                </td>
+                                
+                                <td class="align-middle text-center"><%= category.count %></td>
+                                <td class="align-middle text-end">
+                                    <div class="btn-group" role="group" aria-label="Category Actions">
+                                        <a href="/components?category=<%= encodeURIComponent(category.category) %>"
+                                           class="btn btn-sm btn-outline-info"
+                                           title="View Components"
+                                           data-i18n-attr="title"
+                                           data-i18n="categories.view_components">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-secondary"
+                                                title="Edit Category"
+                                                data-i18n-attr="title"
+                                                data-i18n="categories.edit"
+                                                onclick="startCategoryEdit('<%= category.category %>', this)">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
+                                        
+                                        <button type="button"
+                                            class="btn btn-sm btn-outline-danger js-confirm"
+                                            data-i18n-attr="title"
+                                            data-i18n="categories.delete"
+                                            data-confirm-title="categories.confirm_title"
+                                            data-confirm-message="categories.confirm_delete"
+                                            data-confirm-params='{"name":"<%= category.category %>"}'
+                                            data-confirm-url="/categories/delete/<%= encodeURIComponent(category.category) %><%= qs ? '?returnQuery=' + encodeURIComponent(qs) : '' %>">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Pagination i Limit select -->
+<div class="d-flex justify-content-between align-items-center mt-3 mb-2">
+
+    <form method="GET" class="d-flex align-items-center">
+        <% if (searchQuery) { %>
+            <input type="hidden" name="search" value="<%= searchQuery %>">
+        <% } %>
+
+        <label class="me-2 mb-0 fst-italic"
+               data-i18n="categories.show">
+            Show:
+        </label>
+
+        <select name="limit"
+                class="form-select form-select-sm fw-bold"
+                style="width:auto"
+                onchange="this.form.submit()">
+            <% [10, 20, 50, 100, 'All'].forEach(opt => { %>
+                <option value="<%= opt %>"
+                    <%= (limit === opt || (!limit && opt === 'All')) ? 'selected' : '' %>>
+                    <%= opt %>
+                </option>
+            <% }) %>
+        </select>
+
+        <span class="ms-2 text-muted fst-italic">
+            <span data-i18n="categories.items">Of</span> <%= totalItems %> 
+        </span>
+    </form>
+
+    <% if (totalPages > 1) { %>
+        <nav class="mx-auto">
+            <ul class="pagination mb-0 justify-content-center">
+
+                <!-- Prev -->
+                <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                    <a class="page-link"
+                       href="?page=<%= currentPage - 1 %>&limit=<%= limit || 'All' %><%= searchQuery ? '&search=' + encodeURIComponent(searchQuery) : '' %>">
+                        «
+                    </a>
+                </li>
+
+                <%
+                    const maxVisible = 5;
+                    let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+                    let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+                    if (endPage - startPage + 1 < maxVisible) {
+                        startPage = Math.max(1, endPage - maxVisible + 1);
+                    }
+                %>
+
+                <% if (startPage > 1) { %>
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page=1&limit=<%= limit || 'All' %><%= searchQuery ? '&search=' + encodeURIComponent(searchQuery) : '' %>">1</a>
+                    </li>
+                    <% if (startPage > 2) { %>
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    <% } %>
+                <% } %>
+
+                <% for (let p = startPage; p <= endPage; p++) { %>
+                    <li class="page-item <%= currentPage === p ? 'active' : '' %>">
+                        <a class="page-link"
+                           href="?page=<%= p %>&limit=<%= limit || 'All' %><%= searchQuery ? '&search=' + encodeURIComponent(searchQuery) : '' %>">
+                            <%= p %>
+                        </a>
+                    </li>
+                <% } %>
+
+                <% if (endPage < totalPages) { %>
+                    <% if (endPage < totalPages - 1) { %>
+                        <li class="page-item disabled"><span class="page-link">…</span></li>
+                    <% } %>
+                    <li class="page-item">
+                        <a class="page-link"
+                           href="?page=<%= totalPages %>&limit=<%= limit || 'All' %><%= searchQuery ? '&search=' + encodeURIComponent(searchQuery) : '' %>">
+                            <%= totalPages %>
+                        </a>
+                    </li>
+                <% } %>
+
+                <!-- Next -->
+                <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                    <a class="page-link"
+                       href="?page=<%= currentPage + 1 %>&limit=<%= limit || 'All' %><%= searchQuery ? '&search=' + encodeURIComponent(searchQuery) : '' %>">
+                        »
+                    </a>
+                </li>
+
+            </ul>
+        </nav>
+    <% } %>
+</div>
+
+<script>
+    function showAlert(type, message) {
+        const placeholder = document.getElementById('alertPlaceholder');
+
+        const icon = type === 'success'
+            ? 'bi-check-circle-fill'
+            : 'bi-exclamation-triangle-fill';
+
+        const alertHtml = `
+            <div class="alert alert-${type} alert-dismissible fade show mb-4" role="alert">
+                <i class="bi ${icon} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        `;
+
+        placeholder.innerHTML = alertHtml;
+    }
+
+    document.getElementById('addCategoryBtn').addEventListener('click', async () => {
+    
+        const input = document.getElementById('newCategoryInput');
+        const name = input.value.trim();
+    
+        if (!name) {
+            alert(I18N.t('categories.enter_name'));
+            return;
+        }
+    
+        try {
+            const res = await fetch('/admin/categories/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name })
+            });
+    
+            const data = await res.json();
+    
+            if (!res.ok) {
+                showAlert('danger', data.error || I18N.t('categories.error_add'));
+                return;
+            }
+    
+            input.value = '';
+            const url = new URL(window.location.href);
+            url.searchParams.set('message', 'categories.add_success');
+            url.searchParams.set('name', name);
+            window.location.href = url.toString();
+
+    
+        } catch (err) {
+            console.error(err);
+            alert(I18N.t('categories.network_error'));
+        }
+    });
+
+    function startCategoryEdit(name, btn) {
+        const textEl = document.getElementById(`cat-text-${name}`);
+        const editEl = document.getElementById(`cat-edit-${name}`);
+
+        textEl.classList.add('d-none');
+        editEl.classList.remove('d-none');
+
+        btn.closest('.btn-group').classList.add('d-none');
+
+        const input = editEl.querySelector('input[name="name"]');
+        if (input) {
+            input.focus();
+            input.select();
+
+            input.addEventListener('keydown', function keyHandler(e) {
+
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    cancelCategoryEdit(name);
+                    input.removeEventListener('keydown', keyHandler);
+                    return;
+                }
+
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const form = input.closest('form');
+                    if (form) {
+                        form.dispatchEvent(new Event('submit', { cancelable: true }));
+                    }
+                    input.removeEventListener('keydown', keyHandler);
+                }
+            });
+        }
+    }
+
+    function cancelCategoryEdit(name) {
+        document.getElementById(`cat-text-${name}`).classList.remove('d-none');
+        document.getElementById(`cat-edit-${name}`).classList.add('d-none');
+
+        document.querySelectorAll('.btn-group.d-none').forEach(bg => {
+            bg.classList.remove('d-none');
+        });
+    }
+
+    async function saveCategoryEdit(e, oldName) {
+        e.preventDefault();
+
+        const form = e.target;
+        const newName = form.name.value.trim();
+
+        if (!newName || newName === oldName) {
+            cancelCategoryEdit(oldName);
+            return;
+        }
+
+        try {
+            const res = await fetch('/categories/edit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ oldName, newName })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                showAlert('danger', data.error || I18N.t('categories.edit_failed'));
+                return;
+            }
+
+            showAlert('success', I18N.t('categories.edit_success'));
+            location.reload();
+        } catch (err) {
+            console.error(err);
+            showAlert('danger', I18N.t('categories.network_error'));
+        }
+    }
+
+    function toggleCategoryHelp() {
+        document
+            .getElementById('categoryHelp')
+            .classList.toggle('d-none');
+    }
+
+    //**********************************************************************************
+    //** Akcija na promenu jezika za svaku stranu isto
+        /*  layout se prevede pri load-u
+            layout se prevede i kad klikneš SR / EN
+            nema bljeska
+            nema potrebe da stranice brinu o layoutu
+        */
+    //***********************************************************************************
+    async function applyCategoriesI18n() {
+        await I18N.apply(['layout','categories']);
+
+        const params = new URLSearchParams(window.location.search);
+        const messageKey = params.get('message');
+        const errorKey = params.get('error');
+        const name = params.get('name');
+
+        if (messageKey && I18N.translations[messageKey]) {
+            showAlert(
+                'success',
+                I18N.interpolate(
+                    I18N.translations[messageKey],
+                    name ? { name } : {}
+                )
+            );
+        }
+
+        if (errorKey && I18N.translations[errorKey]) {
+            showAlert(
+                'danger',
+                I18N.translations[errorKey]
+            );
+        }
+
+        // ✅ KLJUČNO — očisti URL posle prikaza poruke
+        if (messageKey || errorKey) {
+            const cleanUrl = new URL(window.location.href);
+            cleanUrl.searchParams.delete('message');
+            cleanUrl.searchParams.delete('error');
+            cleanUrl.searchParams.delete('name');
+            window.history.replaceState({}, '', cleanUrl.pathname + cleanUrl.search);
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', applyCategoriesI18n);
+    // layout mora da reaguje i na live promenu jezika
+    window.addEventListener('languageChanged', applyCategoriesI18n);
+    //************************************************************************************
+
+</script>
+<script src="/js/confirm-modal.js"></script>    
+<!-- LOAD SORTING JS -->
+<script src="/js/table-sort.js"></script>

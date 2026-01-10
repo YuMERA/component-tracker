@@ -1,0 +1,22 @@
+{
+    "backup.title": "Backup baze podataka",
+    "backup.subtitle": "Bezbedno čuva kopiju trenutnog stanja baze podataka.",
+  
+    "backup.db_file": "Fajl baze:",
+    "backup.size": "Veličina:",
+    "backup.destination": "Odredišni folder:",
+    "backup.last_name": "Naziv poslednjeg backup-a:",
+    "backup.time_passed": "Proteklo vreme:",
+  
+    "backup.create": "Kreiraj backup",
+  
+    "backup.about.title": "O backup-u baze podataka",
+    "backup.about.text1": "Backup baze podataka kreira sigurnu kopiju svih inventarskih podataka, uključujući komponente, kategorije i podešavanja.",
+    "backup.about.text2": "Backup je preporučljiv pre većih izmena kao što su ažuriranja, masovne izmene ili refaktorisanje, jer omogućava povratak podataka ako nešto pođe po zlu.",
+    "backup.about.text3": "Ovaj proces ne utiče na svakodnevni rad aplikacije i može se izvršiti u bilo kom trenutku.",
+
+    "backup.success.created": "Backup baze podataka je uspešno kreiran: {file}",
+    "backup.error.failed": "Kreiranje backup-a baze podataka nije uspelo. Pokušajte ponovo.",
+    "backup.not.yet": " Trenutno nema backup baze podataka"
+  }
+  

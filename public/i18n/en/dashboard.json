@@ -1,0 +1,33 @@
+{
+    "dashboard.title": "Dashboard",
+    "dashboard.subtitle": "An overview of inventory status and key metrics.",
+  
+    "dashboard.help.title": "About dashboard",
+    "dashboard.help.heading": "About Dashboard",
+    "dashboard.help.text1": "The dashboard provides a quick overview of the current state of the workshop inventory.",
+    "dashboard.help.text2": "It highlights key information such as total components, categories, and items that require attention.",
+    "dashboard.help.text3": "Detailed management and editing are available on the respective pages.",
+  
+    "dashboard.cards.unique_components": "Unique Components",
+    "dashboard.cards.total_items": "Total Items (pcs) : ",
+    "dashboard.cards.categories": "Component Categories",
+    "dashboard.cards.categories_desc": "Defined categories in the system.",
+    "dashboard.cards.low_stock": "Low Stock Alerts",
+    "dashboard.cards.low_stock_desc": "Components below the minimum.",
+    "dashboard.cards.out_of_stock": "Out of Stock",
+    "dashboard.cards.out_of_stock_desc": "Components with quantity 0.",
+  
+    "dashboard.recent.title": "Recent Components Added",
+    "dashboard.recent.subtitle": "The last five components",
+    "dashboard.recent.view_all": "View All Components",
+    "dashboard.recent.empty": "No recent additions.",
+    "dashboard.recent.added": "Added: ",
+  
+    "dashboard.lowstock.title": "Critical Low Stock Alerts",
+    "dashboard.lowstock.subtitle": "The last five components",
+    "dashboard.lowstock.view_all": "View All Alerts",
+    "dashboard.lowstock.ok": "All minimum stock levels are met.",
+    "dashboard.lowstock.needed": "Needed",
+    "dashboard.lowstock.in_stock": "in stock"
+  }
+  

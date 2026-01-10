@@ -1,0 +1,83 @@
+<header class="d-flex justify-content-between align-items-center mb-0">
+    <h1 class="h3 text-body mb-0" data-i18n="backup.title">Database Backup</h1>
+</header>
+
+<p class="card-text text-muted small mb-3" data-i18n="backup.subtitle">
+    Safely stores a copy of the current database state.
+</p>
+
+<% if (messageKey) { %>
+    <div class="alert alert-<%= msgType === 'success' ? 'success' : 'danger' %> mt-3">
+        <span
+            data-i18n="<%= messageKey %>"
+            data-i18n-params='{"file":"<%= backupFileName %>"}'>
+        </span>
+    </div>
+<% } %>
+
+<!-- Informacije o bazi -->
+<div class="alert alert-secondary mt-3" style="font-size: 0.9em;">
+    <strong data-i18n="backup.db_file">Database file:</strong>
+    <span class="fw-bolder text-primary"> inventory.db</span> <br>
+
+    <strong data-i18n="backup.size">Size:</strong> <%= dbSize %> KB <br>
+    <hr>
+    <strong data-i18n="backup.destination">Destination folder:</strong> <%= pathDB %> <br>
+
+    <% if (timePassed == null) { %>
+        <strong data-i18n="backup.last_name">Last backup name:</strong>
+        <span data-i18n="backup.not.yet"></span><br>
+    <% } else { %>
+        <strong data-i18n="backup.last_name">Last backup name:</strong> <%= lastBackup %> <br>
+    <% } %>
+    
+    <strong data-i18n="backup.time_passed">Time passed:</strong>
+    <%= timePassed ? timePassed : "—" %> <br>
+</div>
+
+<form action="/backup" method="POST" class="mt-0">
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary mt-0">
+            <i class="bi bi-save me-2"></i>
+            <span data-i18n="backup.create">Create Backup</span>
+        </button>
+    </div>
+</form>
+
+<div class="card border border-opacity-10 bg-body-tertiary mt-3">
+    <div class="card-body small text-body-secondary">
+        <div class="d-flex align-items-start">
+            <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+            <div>
+                <strong data-i18n="backup.about.title">About Database Backup</strong><br>
+
+                <span data-i18n="backup.about.text1">
+                    Database backups create a safe copy of all inventory data, including components, categories, and configuration.
+                </span><br>
+
+                <span data-i18n="backup.about.text2">
+                    Backups are useful before major changes such as updates, bulk edits, or refactoring, and allow data to be restored
+                    if something goes wrong.
+                </span><br>
+
+                <span data-i18n="backup.about.text3">
+                    This process does not affect daily usage and can be performed at any time.
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+        //***********************************************************************************
+        function applyBackupI18n() {
+            I18N.apply(['layout','backup']);
+        }
+
+        document.addEventListener('DOMContentLoaded', applyBackupI18n);
+        // layout mora da reaguje i na live promenu jezika
+        window.addEventListener('languageChanged', applyBackupI18n);
+        //************************************************************************************
+    </script>
+
+    

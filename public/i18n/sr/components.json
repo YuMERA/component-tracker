@@ -1,0 +1,52 @@
+{
+    "components.title": "Sve komponente",
+    "components.add_new": "Dodaj novo",
+    "components.subtitle": "Kompletna lista svih stavki u inventaru.",
+  
+    "components.help_title": "O svim komponentama",
+    "components.help_header": "O svim komponentama",
+    "components.help_p1": "Ovaj prikaz sadrži sve komponente u radionici.",
+    "components.help_p2": "Svaka komponenta predstavlja fizički deo.",
+    "components.help_p3": "Prikazano stanje predstavlja trenutno dostupnu količinu.",
+  
+    "components.search_placeholder": "Pretraga po nazivu, kataloškom broju ili lokaciji...",
+    "components.search": "Pretraga",
+    "components.clear_search": "Očisti pretragu",
+  
+    "components.filter_category": "Kategorija:",
+    "components.filter_status": "Status:",
+  
+    "components.col_name": "Naziv",
+    "components.col_part": "Kat. Br.",
+    "components.col_category": "Kategorija",
+    "components.col_location": "Lokacija",
+    "components.col_stock": "Stanje",
+    "components.col_min": "Min. zaliha",
+    "components.col_status": "Status",
+    "components.col_actions": "Akcije",
+  
+    "components.empty": "Nema pronađenih komponenti.",
+  
+    "components.details": "Detalji",
+  
+    "components.status.ok": "OK",
+    "components.status.low": "LOW",
+    "components.status.out": "OUT",
+
+    "components.items": "od",
+    "components.show": "Prikaži:",
+
+    "components.view": "Prikaži komponentu",
+    "components.edit": "Izmeni komponentu",
+    "components.delete": "Obriši komponentu",
+
+    "components.delete_success": "Komponenta je uspešno obrisana.",
+    "components.delete_failed": "Brisanje komponente nije uspelo.",
+
+    "components.edit_success": "Izmena je uspešno sačuvana.",
+
+    "components.modal_delete": "Obriši",
+    "components.confirm_title": "Brisanje komponente",
+    "components.confirm_delete": "Da li ste sigurni da želite da obrišete komponentu \"{name}\"?"
+  }
+  

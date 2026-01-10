@@ -1,0 +1,34 @@
+{
+    "low_stock.title": "Low Stock Alerts",
+    "low_stock.help_title": "About low stock alerts",
+    "low_stock.export_csv": "Export CSV",
+    "low_stock.subtitle": "View components that are running low on stock.",
+  
+    "low_stock.help_header": "About Low Stock Alert",
+    "low_stock.help_p1": "Low Stock Alerts highlight components whose quantity has fallen below the defined minimum stock level.",
+    "low_stock.help_p2": "This helps you notice parts that may soon run out, so you can restock them before they become unavailable during work.",
+    "low_stock.help_p3": "Alerts are informational only — they do not block usage or trigger automatic actions.",
+    "low_stock.help_p4": "Minimum stock values are defined per component and can be adjusted at any time.",
+  
+    "low_stock.warning": "These components need immediate restocking attention.",
+  
+    "low_stock.col_name": "Name",
+    "low_stock.col_part_no": "Part No.",
+    "low_stock.col_category": "Category",
+    "low_stock.col_location": "Location",
+    "low_stock.col_in_stock": "In Stock",
+    "low_stock.col_min_stock": "Min. Stock",
+    "low_stock.col_actions": "Actions",
+  
+    "low_stock.all_ok": "All components are adequately stocked!",
+  
+    "low_stock.show_image": "Show big picture",
+    "low_stock.view_details": "View component details",
+    "low_stock.view_category": "View all items in category",
+    "low_stock.restock": "Restock",
+    "low_stock.details": "Details",
+  
+    "low_stock.show": "Show:",
+    "low_stock.items": "of"
+  }
+  

@@ -1,0 +1,52 @@
+{
+    "components.title": "All Components",
+    "components.add_new": "Add New",
+    "components.subtitle": "A complete list of all items in the inventory.",
+  
+    "components.help_title": "About all components",
+    "components.help_header": "About All Components",
+    "components.help_p1": "This view shows all components currently stored in the workshop inventory.",
+    "components.help_p2": "Each component represents a physical part you have available.",
+    "components.help_p3": "Stock levels shown here reflect current availability.",
+  
+    "components.search_placeholder": "Search by Name, Part Number, or Location...",
+    "components.search": "Search",
+    "components.clear_search": "Clear search",
+  
+    "components.filter_category": "Category:",
+    "components.filter_status": "Status:",
+  
+    "components.col_name": "Name",
+    "components.col_part": "Part No.",
+    "components.col_category": "Category",
+    "components.col_location": "Location",
+    "components.col_stock": "Stock",
+    "components.col_min": "Min. Stock",
+    "components.col_status": "Status",
+    "components.col_actions": "Actions",
+  
+    "components.empty": "No components found.",
+  
+    "components.details": "Details",
+  
+    "components.status.ok": "OK",
+    "components.status.low": "LOW",
+    "components.status.out": "OUT",
+
+    "components.items": "of",
+    "components.show": "Show:",
+
+    "components.view": "View Components",
+    "components.edit": "Edit Components",
+    "components.delete": "Delete Components",
+
+    "components.delete_success": "Component successfully deleted.",
+    "components.delete_failed": "Failed to delete component.",
+
+    "components.edit_success": "The component was modified successfully.",
+
+    "components.modal_delete" : "Delete",
+    "components.confirm_title": "Delete Component",
+    "components.confirm_delete": "Are you sure you want to delete components \"{name}\"?"
+  }
+  

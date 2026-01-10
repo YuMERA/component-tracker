@@ -1,0 +1,52 @@
+{
+    "api.title": "API servisi",
+    "api.description": "Upravljanje eksternim API servisima za automatsko preuzimanje podataka o komponentama.",
+  
+    "api.configured_services": "Konfigurisani servisi",
+    "api.add_service": "Dodaj servis",
+  
+    "api.table.name": "Naziv",
+    "api.table.endpoint": "Adresa resursa",
+    "api.table.active": "Status",
+    "api.table.actions": "Akcije",
+  
+    "api.active": "Aktivan",
+    "api.inactive": "Neaktivan",
+  
+    "api.use": "Koristi",
+    "api.deactivate": "Deaktiviraj",
+    "api.deactivate_title": "Deaktiviraj ovaj API servis",
+    "api.edit": "Izmeni servis",
+    "api.delete": "Obriši servis",
+  
+    "api.current_service": "Trenutno aktivan servis",
+    "api.selected_service": "Izabrani API servis",
+  
+    "api.confirm_delete": "Da li ste sigurni da želite da obrišete ovaj API servis {name}?",
+    "api.confirm_title": "Brisanje API servisa",
+  
+    "api.about.title": "O API servisima",
+    "api.about.text1": "API servisi omogućavaju automatsko preuzimanje podataka o komponentama, kao što su naziv, opis, datasheet i slika, prilikom dodavanja novih komponenti.",
+    "api.about.text2": "Da biste koristili ovu opciju, potrebno je da:",
+    "api.about.step1": "Napravite nalog na sajtu dobavljača",
+    "api.about.step2": "Generišete API ključ",
+    "api.about.step3": "Dodate servis i API ključ ovde",
+    "api.about.supported": "Trenutno podržani servisi:",
+    "api.about.supported_list": "Mouser i Element14 (Farnell)",
+    "api.about.note": "Ova opcija je neobavezna i namenjena je ubrzanom unosu većeg broja komponenti.",
+  
+    "api.modal.add_title": "Dodavanje API servisa",
+    "api.modal.edit_title": "Izmena API servisa",
+    "api.modal.add_btn": "Dodaj servis",
+    "api.modal.save_btn": "Sačuvaj izmene",
+    "api.form.cancel": "Odustani",
+  
+    "api.form.service_name": "Naziv servisa",
+    "api.form.endpoint": "Endpoint URL",
+    "api.form.api_key": "API ključ",
+    "api.form.additional_params": "Dodatni parametri",
+    "api.form.active": "Aktivan",
+  
+    "api.empty": "Nema definisanih API servisa."
+  }
+  

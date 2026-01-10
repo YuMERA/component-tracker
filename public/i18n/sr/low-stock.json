@@ -1,0 +1,33 @@
+{
+    "low_stock.title": "Upozorenja niskog lagera",
+    "low_stock.help_title": "O upozorenjima niskog lagera",
+    "low_stock.export_csv": "Izvezi CSV",
+    "low_stock.subtitle": "Pregled komponenti kojima je zaliha pri kraju.",
+
+    "low_stock.help_header": "O upozorenju niskog lagera",
+    "low_stock.help_p1": "Upozorenja niskog lagera označavaju komponente čija je količina pala ispod definisanog minimuma.",
+    "low_stock.help_p2": "Ovo pomaže da na vreme primetite delove koji bi uskoro mogli nestati i da ih dopunite.",
+    "low_stock.help_p3": "Upozorenja su isključivo informativna — ne blokiraju upotrebu niti pokreću automatske akcije.",
+    "low_stock.help_p4": "Minimalne vrednosti lagera se definišu po komponenti i mogu se menjati u bilo kom trenutku.",
+
+    "low_stock.warning": "Ove komponente zahtevaju hitnu pažnju za dopunu lagera.",
+
+    "low_stock.col_name": "Naziv",
+    "low_stock.col_part_no": "Kat. br.",
+    "low_stock.col_category": "Kategorija",
+    "low_stock.col_location": "Lokacija",
+    "low_stock.col_in_stock": "Na stanju",
+    "low_stock.col_min_stock": "Min. zaliha",
+    "low_stock.col_actions": "Akcije",
+
+    "low_stock.all_ok": "Sve komponente imaju dovoljnu zalihu!",
+
+    "low_stock.show_image": "Prikaži veću sliku",
+    "low_stock.view_details": "Prikaži detalje komponente",
+    "low_stock.view_category": "Prikaži sve stavke u kategoriji",
+    "low_stock.restock": "Dopuni",
+    "low_stock.details": "Detalji",
+
+    "low_stock.show": "Prikaži:",
+    "low_stock.items": "od"
+}

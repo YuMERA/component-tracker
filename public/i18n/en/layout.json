@@ -1,0 +1,22 @@
+{
+    "nav.navigation": "Navigation",
+    "nav.dashboard": "Dashboard",
+    "nav.components": "Components",
+    "nav.all_components": "All Components",
+    "nav.add_new": "Add New",
+    "nav.categories": "Categories",
+    "nav.low_stock": "Low Stock",
+    "nav.tools": "Tools",
+    "nav.api_services": "API Services",
+    "nav.options": "Options",
+    "nav.settings": "Settings",
+    "nav.updates": "Check New Update",
+    "nav.backup": "Database Backup",
+
+    "layout.mobile.toggle_navigation": "Toggle navigation",
+    "layout.mobile.navigation_menu": "Navigation Menu",
+
+    "layout.toggle_theme": "Toggle theme",
+    "layout.close": "Close"
+
+  }

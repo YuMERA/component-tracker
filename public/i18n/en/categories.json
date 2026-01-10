@@ -1,0 +1,42 @@
+{
+    "categories.title": "Component Categories",
+    "categories.help_title": "About categories",
+    "categories.subtitle": "Manage and organize items by category.",
+  
+    "categories.new_placeholder": "New category name",
+    "categories.add_btn": "Add",
+  
+    "categories.help_header": "About Categories",
+    "categories.help_p1": "Categories are used to organize and group components based on their type or function.",
+    "categories.help_p2": "They help you quickly filter and locate components, but do not affect quantities or stock calculations.",
+  
+    "categories.search_placeholder": "Search by Category Name...",
+    "categories.search_btn": "Search",
+    "categories.clear_search": "Clear search",
+  
+    "categories.col_name": "Category Name",
+    "categories.col_total": "Total Items",
+    "categories.col_actions": "Navigation & Actions",
+  
+    "categories.empty": "No categories defined yet.",
+  
+    "categories.view_components": "View Components",
+    "categories.edit": "Edit Category",
+    "categories.delete": "Delete Category",
+    "categories.confirm_delete": "Are you sure you want to delete category {name}?",
+    "categories.confirm_title": "Delete Categories",
+  
+    "categories.show": "Show:",
+    "categories.items": "of",
+  
+    "categories.enter_name": "Enter category name",
+    "categories.error_add": "Error adding category",
+    "categories.add_success": "Category \"{name}\" was successfully added",
+    "categories.network_error": "Network error",
+
+    "delete_not_found": "Category does not exist.",
+    "delete_forbidden": "The \"Uncategorized\" category cannot be deleted.",
+    "delete_success": "Category \"{name}\" was successfully deleted. Related components are now uncategorized.",
+    "delete_error": "An error occurred while deleting the category."
+  }
+  

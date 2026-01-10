@@ -1,0 +1,322 @@
+<header class="d-flex justify-content-between align-items-center mb-0">
+    <h1 class="h3 text-body mb-0" data-i18n="api.title">API Services</h1>
+</header>
+
+<p class="card-text text-muted small mb-3" data-i18n="api.description">
+    Manage external API providers used for component data lookup.
+</p>
+
+<div class="card shadow-sm">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h6 class="m-0 fw-bold" data-i18n="api.configured_services">Configured Services</h6>
+        <button 
+            type="button"
+            class="btn btn-sm btn-primary"
+            onclick="openServiceModal('add')"
+        >
+            <i class="bi bi-plus-circle me-1"></i> 
+            <span data-i18n="api.add_service">Add Service</span>
+        </button>
+
+    </div>
+    
+
+    <div class="card-body p-0">
+        <% if (!services || services.length === 0) { %>
+            <div class="p-4 text-center text-muted" data-i18n="api.empty">
+                No API services configured.
+            </div>
+        <% } else { %>
+            <table class="table table-hover mb-0">
+                <thead class="table-secondary">
+                    <tr>
+                        <th data-i18n="api.table.name">Name</th>
+                        <th data-i18n="api.table.endpoint">Base URL</th>
+                        <th class="text-center" data-i18n="api.table.active">Active</th>
+                        <th class="text-end" data-i18n="api.table.actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% services.forEach(service => { %>
+                        <tr>
+                            <td class="fw-bold">
+                                <%= service.name %>
+                            
+                                <% if (service.is_active) { %>
+                                    <span class="badge bg-warning text-dark ms-2" 
+                                        title="Currently used service"
+                                        data-i18n-attr="title"
+                                        data-i18n="api.current_service">
+                                        <i class="bi bi-star-fill me-1"></i> 
+                                        Active
+                                    </span>
+                                <% } %>
+                            </td>
+                            <td class="text-muted"><%= service.endpoint %></td>
+                            <td class="text-center">
+                              <% if (service.is_active) { %>
+                                  <span 
+                                      class="badge bg-success"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-placement="top"
+                                      title="Currently selected API provider"
+                                      data-i18n-attr="title"
+                                      data-i18n="api.selected_service">
+                                      <span data-i18n="api.active">Active</span>
+                                  </span>
+                              <% } else { %>
+                                  <span class="badge bg-secondary" data-i18n="api.inactive">Inactive</span>
+                              <% } %>
+                            </td>
+                          
+                            <td class="text-end align-midle">
+                                <div class="d-flex flex-row flex-wrap justify-content-end"> 
+                                    <form action="/tools/api/toggle" method="POST" class="d-inline">
+                                        <input type="hidden" name="id" value="<%= service.id %>">
+                                    
+                                        <% if (service.is_active) { %>
+                                            <input type="hidden" name="makeActive" value="0">
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary me-1 mb-1" 
+                                                title="Deactivate this API service"
+                                                data-i18n-attr="title"
+                                                data-i18n="api.deactivate_title">
+                                                <i class="bi bi-pause-circle"></i>
+                                                <span  data-i18n="api.deactivate">Deactivate</span>
+                                            </button>
+                                        <% } else { %>
+                                            <input type="hidden" name="makeActive" value="1">
+                                            <button type="submit" class="btn btn-sm btn-outline-success me-1 mb-1">
+                                                <i class="bi bi-play-circle"></i>
+                                                <span data-i18n="api.use">Use</span>
+                                            </button>
+                                        <% } %>
+                                    </form>                           
+                            
+                                    <!-- EDIT (Modal) -->
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-secondary me-1 mb-1"
+                                        title="Edit service"
+                                        data-i18n-attr="title"
+                                        data-i18n="api.edit"
+                                        data-service='<%- JSON.stringify(service) %>'
+                                        onclick="openServiceModal('edit', this)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                
+                                    <form action="/tools/api/delete/<%= service.id %>"
+                                        method="POST"
+                                        class="d-inline">
+                                  
+                                      <button type="button"
+                                              class="btn btn-sm btn-outline-danger js-confirm"
+                                              data-confirm-title="api.confirm_title"
+                                              data-confirm-message="api.confirm_delete"
+                                              data-confirm-params='{"name":"<%= service.name %>"}'
+                                              data-i18n="api.delete"
+                                              data-i18n-attr="title"
+                                              title="Delete service">
+                                          <i class="bi bi-trash"></i>
+                                      </button>
+                                  </form>
+                                  
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+</div>
+
+<div class="card border border-opacity-10 bg-body-tertiary mt-3">
+    <div class="card-body small text-body-secondary">
+        <div class="d-flex align-items-start">
+            <i class="bi bi-info-circle-fill me-2 mt-1"></i>
+            <div>
+                <strong data-i18n="api.about.title">About API Services</strong><br>
+                <span data-i18n="api.about.text1">API services are used to automatically fetch component data
+                (such as name, description, datasheet, and image) when adding new components.</span><br><br>
+                <span data-i18n="api.about.text2">To use this feature, you need to:</span>
+                <ul class="mb-2">
+                    <li data-i18n="api.about.step1">Create an account on the supplier’s website</li>
+                    <li data-i18n="api.about.step2">Generate an API key</li>
+                    <li data-i18n="api.about.step3">Add the service and API key here</li>
+                </ul>
+                <span data-i18n="api.about.supported">Currently supported services:</span>
+                <strong>Mouser</strong> , <strong>Element14 (Farnell)</strong>.
+                <br><br>
+                <span data-i18n="api.about.note">This feature is optional and intended to speed up
+                initial component entry, especially when adding many items.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- MODAL: Add/Edit API Service -->
+<div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="serviceForm" method="POST" action="/tools/api/new">
+            <div class="modal-header">
+                <h5 class="modal-title"
+                    id="serviceModalLabel"
+                    data-i18n="api.modal.add_title">
+                    Add API Service
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Hidden input za edit -->
+                <input type="hidden" name="id" id="serviceId">
+  
+                <div class="mb-3">
+                    <label for="serviceName"
+                           class="form-label fw-bold"
+                           data-i18n="api.form.service_name">
+                        Service Name
+                    </label>
+                    <input type="text" class="form-control" id="serviceName" name="name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="serviceEndpoint"
+                           class="form-label fw-bold"
+                           data-i18n="api.form.endpoint">
+                        Endpoint URL
+                    </label>
+                    <input type="text" class="form-control" id="serviceEndpoint" name="endpoint" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="serviceApiKey"
+                           class="form-label fw-bold"
+                           data-i18n="api.form.api_key">
+                        API Key
+                    </label>
+                    <input type="text" class="form-control" id="serviceApiKey" name="api_key" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="serviceParams"
+                           class="form-label fw-bold"
+                           data-i18n="api.form.additional_params">
+                        Additional Params
+                    </label>
+                    <input type="text" class="form-control" id="serviceParams" name="additional_params">
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="serviceActive" name="is_active">
+                    <label class="form-check-label fw-bold"
+                           for="serviceActive"
+                           data-i18n="api.form.active">
+                        Active
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                        data-i18n="api.form.cancel">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="btn btn-primary"
+                        id="serviceSubmitBtn"
+                        data-i18n="api.modal.add_btn">
+                    Add Service
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+  
+<script>
+    // --- FUNKCIJA ZA OTVARANJE MODALA ---
+    function openServiceModal(mode, btn = null) {
+        const modalEl = document.getElementById('serviceModal');
+        const modal = new bootstrap.Modal(modalEl);
+
+        const title = document.getElementById('serviceModalLabel');
+        const submitBtn = document.getElementById('serviceSubmitBtn');
+        const form = document.getElementById('serviceForm');
+
+        const idInput = document.getElementById('serviceId');
+        const nameInput = document.getElementById('serviceName');
+        const endpointInput = document.getElementById('serviceEndpoint');
+        const apiKeyInput = document.getElementById('serviceApiKey');
+        const paramsInput = document.getElementById('serviceParams');
+        const activeInput = document.getElementById('serviceActive');
+
+        if (mode === 'add') {
+            title.textContent = I18N.t('api.modal.add_title');
+            submitBtn.textContent = I18N.t('api.modal.add_btn');
+            form.action = '/tools/api/add';
+
+            idInput.value = '';
+            nameInput.value = '';
+            endpointInput.value = '';
+            apiKeyInput.value = '';
+            paramsInput.value = '';
+            activeInput.checked = false;
+        }
+
+        if (mode === 'edit' && btn) {
+            const service = JSON.parse(btn.dataset.service);
+
+            title.textContent = I18N.t('api.modal.edit_title');
+            submitBtn.textContent = I18N.t('api.modal.save_btn');
+            form.action = '/tools/api/edit';
+
+            idInput.value = service.id;
+            nameInput.value = service.name;
+            endpointInput.value = service.endpoint;
+            apiKeyInput.value = service.api_key;
+            paramsInput.value = service.additional_params || '';
+            activeInput.checked = service.is_active === 1;
+        }
+
+        modal.show();
+    }
+    /*function applyApiI18n() {
+        I18N.apply(['layout','api']).then(() => {
+            // tooltip RE-init POSLE prevoda
+            document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+                const t = bootstrap.Tooltip.getInstance(el);
+                if (t) t.dispose();
+                new bootstrap.Tooltip(el);
+            });
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', applyApiI18n);
+    window.addEventListener('languageChanged', applyApiI18n);*/
+
+    //**********************************************************************************
+    //** Akcija na promenu jezika za svaku stranu isto
+        /*  layout se prevede pri load-u
+            layout se prevede i kad klikneš SR / EN
+            nema bljeska
+            nema potrebe da stranice brinu o layoutu
+        */
+    //***********************************************************************************
+    function applyApiI18n() {
+        I18N.apply(['layout','api']);
+    }
+
+    document.addEventListener('DOMContentLoaded', applyApiI18n);
+    // layout mora da reaguje i na live promenu jezika
+    window.addEventListener('languageChanged', applyApiI18n);
+    //************************************************************************************
+
+    window.confirmDelete = function () {
+        return confirm(I18N.t('api.confirm_delete'));
+    };
+
+</script>
+<script src="/js/confirm-modal.js"></script>    
+  

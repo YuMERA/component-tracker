@@ -1,0 +1,72 @@
+{
+    "add.title_add": "Add New Component",
+    "add.title_edit": "Edit Component",
+  
+    "add.help_icon_title": "About Add / Edit",
+  
+    "add.back_to_details": "Back to Details",
+    "add.subtitle": "Edit an existing item or add a new item to the database.",
+    
+    "add.apiservice_found" : "Find using active API service \"{name}\".",
+  
+    "add.help_edit_title": "About Editing Components",
+    "add.help_edit_p1": "Low Stock Alerts highlight components whose quantity has fallen below the defined minimum stock level.",
+    "add.help_edit_p2": "This helps you notice parts that may soon run out, so you can restock them before they become unavailable during work.",
+    "add.help_edit_p3": "Alerts are informational only — they do not block usage or trigger automatic actions.",
+    "add.help_edit_p4": "Minimum stock values are defined per component and can be adjusted at any time.",
+  
+    "add.help_add_title": "About Adding New Components",
+    "add.help_add_p1": "This form is used to add new physical components to the workshop inventory.",
+    "add.help_add_p2": "Basic details such as category, quantity, and location are entered manually.",
+    "add.help_add_p3": "Optional API services can be used to automatically fill in technical data like name, description, datasheet, and image, helping speed up the initial entry process.",
+    "add.help_add_p4": "API usage is intended as a convenience feature and does not replace manual verification or editing.",
+  
+    "add.section_component_details": "Component Details",
+  
+    "add.part_number_label": "Part Number (Unique)",
+    "add.find_part_title": "Find using active API service",
+    "add.find_part_btn": "Find",
+  
+    "add.name_label": "Component Name",
+  
+    "add.quantity_label": "Quantity",
+    "add.min_stock_label": "Min. Stock Level",
+    "add.min_stock_help": "Alert will be triggered below this level.",
+  
+    "add.location_label": "Location (e.g. Rack B, Drawer 3)",
+  
+    "add.category_label": "Category",
+    "add.category_placeholder": "-- Select Category (Optional) --",
+    "add.add_category_title": "Add new category",
+  
+    "add.datasheet_label": "Datasheet URL",
+  
+    "add.description_label": "Description / Specifications",
+  
+    "add.image_url_label": "Image URL (Optional)",
+    "add.preview_label": "Preview",
+    "add.no_image": "No Image",
+  
+    "add.cancel_btn": "Cancel",
+    "add.save_component": "Save Component",
+    "add.save_changes": "Save Changes",
+  
+    "add.just_added": "Component saved. Ready for next entry.",
+  
+    "add.modal_add_category_title": "Add New Category",
+    "add.category_name_placeholder": "Category name",
+    "add.save_btn": "Save",
+
+    "add.error.required_fields": "Component Name, Part Number, and Category are required.",
+    "add.error.save_failed": "An error occurred while saving the component.",
+    "add.error.part_number_exists": "Error: Part Number already exists in the inventory.",
+    "add.error_part_required": "Part Number are required.",
+
+    "add.edit.error.required_fields": "Name, Quantity, and Min. Stock Level are required.",
+    "add.edit.error.save_failed": "An error occurred while saving changes.",
+    "add.edit.error.part_number_exists": "Error: Part Number already exists in the inventory.",
+
+    "components.delete_success": "Component successfully deleted.",
+    "components.delete_failed": "Failed to delete component."
+  }
+  
