@@ -12,7 +12,7 @@ yarn-error.log*
 *.sqlite3
 db/*.sqlite
 db/*.sqlite3
-inventory.db
+*.db
 
 # Backups
 backup/
