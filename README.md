@@ -58,18 +58,20 @@ component-tracker/
 ├── inventory.db # SQLite database (ignored by git)
 ├── version_info_mock.json
 └── .gitignore
-``
+
 ---
 
 ## ⚠️ **Note:**  
 `inventory.db` is intentionally excluded from the repository.
 Each installation creates and maintains its own local database.
+
 ---
 
 ## ⚙️ Requirements
 - **Node.js** (v18 or newer recommended)
 - **npm**
 - Windows, Linux, or macOS
+
 ---
 
 ## 🚀 Installation
@@ -78,6 +80,7 @@ git clone https://github.com/YuMERA/component-tracker.git
 cd component-tracker
 Install dependencies:
 npm install
+
 ---
 
 ▶️ Running the Application
@@ -87,6 +90,7 @@ node index.js
 Then open your browser at:
 http://localhost:3000
 The SQLite database file will be created automatically if it does not exist.
+
 ---
 
 🗄 Database Notes
@@ -94,6 +98,7 @@ SQLite is used for simplicity and portability
 Database file is local (inventory.db)
 Not tracked by Git
 Backup strategy can be implemented via file copy
+
 ---
 
 🌍 Internationalization (i18n)
@@ -103,6 +108,7 @@ public/i18n/
 Live language switching without page reload
 
 Easily extendable with new languages
+
 ---
 
 🔐 Security & Deployment Notes
@@ -111,6 +117,7 @@ If remote access is required, it is recommended to:
 Use a VPN (e.g. WireGuard)
 Avoid exposing the application directly to the public internet
 Authentication is intentionally not enforced by default.
+
 ---
 
 📌 Project Status
@@ -118,6 +125,7 @@ Stable
 Actively used
 Designed for local environments
 Not intended as a SaaS product
+
 ---
 
 📝 License
