@@ -58,6 +58,8 @@ component-tracker/
 ├── inventory.db # SQLite database (ignored by git)
 ├── version_info_mock.json
 └── .gitignore
+``
+---
 
 > ⚠️ **Note:**  
 > `inventory.db` is intentionally excluded from the repository.
