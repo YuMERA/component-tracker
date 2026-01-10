@@ -1,15 +1,21 @@
 {
-  "name": "workshop_inventory",
+  "name": "component-tracker",
   "version": "1.0.0",
-  "description": "",
+  "description": "Local-first inventory and component tracking application built with Node.js, Express, EJS and SQLite.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "inventory",
+    "components",
+    "electronics",
+    "sqlite",
+    "nodejs",
+    "local-first"
+  ],
+  "author": "mera-system",
+  "license": "CC-BY-NC-4.0",
   "dependencies": {
     "ejs": "^3.1.10",
     "express": "^5.2.1",
