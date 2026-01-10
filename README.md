@@ -1,5 +1,14 @@
 # Component Tracker
 
+![Node.js](https://img.shields.io/badge/Node.js-18+-green)
+![Platform](https://img.shields.io/badge/platform-local--first-blue)
+![Database](https://img.shields.io/badge/database-SQLite-lightgrey)
+![Status](https://img.shields.io/badge/status-stable-brightgreen)
+![License](https://img.shields.io/badge/license-Private-red)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue)](https://paypal.me/yumera)
+
+---
+
 Component Tracker is a local-first web application designed for managing
 electronic components inventory in personal workshops and small labs.
 
@@ -18,13 +27,76 @@ making the system easy to maintain and restore without special tools.
 - Pagination with configurable limits
 - Search and filtering
 - Low-stock monitoring
-- API-assisted component lookup (Element14, Mouser)
+- API-assisted component lookup
 - Image preview support
 - Datasheet links
 - Internationalization (EN / SR) with live language switching
-- Light / Dark theme toggle
+- **Dark / Light mode with live toggle**
 - SQLite local database (file-based)
 - No cloud services, no external database server
+
+---
+
+## Dark / Light Mode
+
+The application supports both Light and Dark themes.
+
+- Theme can be switched at any time
+- Change is applied instantly (no page reload)
+- User preference is preserved across sessions
+
+This improves usability in different working environments
+and during extended use.
+
+---
+
+## Database and Backup Strategy
+
+Component Tracker uses a local SQLite database stored as a single file.
+
+- No database server is required
+- All data is stored locally
+- The database file is excluded from version control
+
+### Backup
+
+Backup is intentionally simple:
+
+- Stop the application
+- Copy the database file (`inventory.db`) to a safe location
+
+Restore is done by placing the file back in the application directory.
+
+This approach keeps full control in the hands of the user
+and avoids hidden or automated processes.
+
+---
+
+## API Services
+
+The application includes a dedicated API services layer.
+
+### Purpose
+
+The API services layer exists to:
+
+- Separate external vendor APIs from application logic
+- Normalize different vendor responses into a common format
+- Allow easy extension with additional vendors in the future
+
+### Design
+
+Each vendor API is implemented as an isolated service module.
+Routes and views never communicate directly with external APIs.
+
+This design:
+- improves maintainability
+- avoids vendor lock-in
+- keeps the core application clean and predictable
+
+Currently supported vendors include:
+- Element14
+- Mouser
 
 ---
 
@@ -35,7 +107,6 @@ making the system easy to maintain and restore without special tools.
 - EJS (server-side rendering)
 - SQLite
 - Bootstrap 5
-- Vanilla JavaScript
 - Custom i18n system
 
 ---
@@ -45,20 +116,20 @@ making the system easy to maintain and restore without special tools.
 Before running this application, the following software must be installed
 and properly configured on the system.
 
-1. Node.js (v18 or newer)
+1. Node.js (v18 or newer)  
    npm is included with Node.js.
 
-   Download from:
+   Download from:  
    https://nodejs.org/
 
    Verify installation:
 
-   node -v
-   npm -v
+   node -v  
+   npm -v  
 
    Both commands must return a version number.
 
-2. A modern web browser
+2. A modern web browser  
    (Chrome, Firefox, Edge, etc.)
 
 No additional services or servers are required.
@@ -92,6 +163,7 @@ component-tracker/
 │   ├── js/
 │   └── i18n/                Translation files (EN / SR)
 ├── inventory.db             SQLite database (ignored by git)
+├── screenshots/             Application screenshots
 ├── version_info_mock.json
 └── .gitignore
 
@@ -120,10 +192,10 @@ on first run if it does not already exist.
 
 ## Database Notes
 
-- SQLite is used as a local, file-based database.
-- No database server installation is required.
-- The database file is intentionally excluded from version control.
-- Backups can be created by copying the database file.
+- SQLite is used as a local, file-based database
+- No database server installation is required
+- The database file is intentionally excluded from version control
+- Backups can be created by copying the database file
 
 ---
 
@@ -170,7 +242,37 @@ Authentication is not enforced by default.
 
 ---
 
+## Screenshots
+
+### Dashboard 
+![Components](screenshots/dashboard.png)
+
+### Components List
+![Components](screenshots/components.png)
+
+### Categories Management
+![Categories](screenshots/categories.png)
+
+### Component Details
+![Details](screenshots/details.png)
+
+### AddNew Component
+![Details](screenshots/addnew.png)
+
+### LowStock Component
+![Details](screenshots/lowstock.png)
+
+### Settings
+![Details](screenshots/settings.png)
+
+### Application Update Center
+![Details](screenshots/update.png)
+
+### Backup Database
+![Details](screenshots/backup.png)
 ## License
 
-Private project.
+---
+
+Private project.  
 All rights reserved.
