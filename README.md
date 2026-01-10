@@ -59,8 +59,7 @@ component-tracker/
 ├── version_info_mock.json
 └── .gitignore
 
-yaml
-Copy code
+```
 
 > ⚠️ **Note:**  
 > `inventory.db` is intentionally excluded from the repository.
@@ -80,24 +79,17 @@ Copy code
 
 Clone the repository:
 
-```bash
 git clone https://github.com/YuMERA/component-tracker.git
 cd component-tracker
 Install dependencies:
 
-bash
-Copy code
 npm install
 ▶️ Running the Application
 Start the server:
 
-bash
-Copy code
 node index.js
 Then open your browser at:
 
-arduino
-Copy code
 http://localhost:3000
 The SQLite database file will be created automatically if it does not exist.
 
@@ -115,8 +107,6 @@ Custom-built i18n system
 
 Language files located in:
 
-swift
-Copy code
 public/i18n/
 Live language switching without page reload
 
