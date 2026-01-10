@@ -39,7 +39,7 @@ filtering, pagination, and category management.
 ---
 
 ## 📁 Project Structure
-``
+
 component-tracker/
 ├── index.js # Main application entry point
 ├── package.json
