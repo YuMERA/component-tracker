@@ -81,16 +81,14 @@ component-tracker/
 
 ---
 
-▶️ Running the Application
-- Start the server:
-- node index.js
-
+## ▶️ Running the Application
+- Start the server: node index.js
 - Then open your browser at: http://localhost:3000
 - The SQLite database file will be created automatically if it does not exist.
 
 ---
 
-🗄 Database Notes
+## 🗄 Database Notes
 - SQLite is used for simplicity and portability
 - Database file is local (inventory.db)
 - Not tracked by Git
@@ -98,7 +96,7 @@ component-tracker/
 
 ---
 
-🌍 Internationalization (i18n)
+## 🌍 Internationalization (i18n)
 - Custom-built i18n system
 - Language files located in: public/i18n/
 - Live language switching without page reload
@@ -106,7 +104,7 @@ component-tracker/
 
 ---
 
-🔐 Security & Deployment Notes
+## 🔐 Security & Deployment Notes
 - This application is intended for local use.
 - If remote access is required, it is recommended to:
 - Use a VPN (e.g. WireGuard)
@@ -115,7 +113,7 @@ component-tracker/
 
 ---
 
-📌 Project Status
+## 📌 Project Status
 - Stable
 - Actively used
 - Designed for local environments
@@ -123,6 +121,6 @@ component-tracker/
 
 ---
 
-📝 License
+## 📝 License
 - Private project.
 - All rights reserved.
