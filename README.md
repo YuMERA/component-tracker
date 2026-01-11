@@ -276,7 +276,7 @@ Authentication is not enforced by default.
 ## Screenshots
 
 ### Dashboard 
-![Components](screenshots/dashboard.png)
+[![Components](screenshots/dashboard_thumb.png)](screenshots/dashboard.png)
 
 ### Components List
 [![Components](screenshots/components_thumb.png)](screenshots/components.png)
