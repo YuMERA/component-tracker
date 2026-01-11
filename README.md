@@ -194,7 +194,7 @@ component-tracker/
 ├── .gitignore
 ├── inventory.db                 SQLite database (local, ignored by git)
 ├── version_info_mock.json
-├── structure.txt                Project structure reference
+├── start_app..bat               Windows quick start
 │
 ├── apiServices/
 │   ├── serviceResolver.js       API service dispatcher
