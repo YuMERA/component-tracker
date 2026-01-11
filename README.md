@@ -111,28 +111,70 @@ Currently supported vendors include:
 
 ---
 
-## Prerequisites
+## Installation
 
-Before running this application, the following software must be installed
-and properly configured on the system.
+### Prerequisites
 
-1. Node.js (v18 or newer)  
-   npm is included with Node.js.
+Before running the application, make sure the following are installed on your system:
 
-   Download from:  
-   https://nodejs.org/
+- **Node.js** (v18 or newer recommended)  
+  https://nodejs.org/
 
-   Verify installation:
+- **npm** (included with Node.js)
 
-   node -v  
-   npm -v  
+---
 
-   Both commands must return a version number.
+### Setup
 
-2. A modern web browser  
-   (Chrome, Firefox, Edge, etc.)
+Clone the repository and install dependencies:
 
-No additional services or servers are required.
+```bash
+    git clone https://github.com/YuMERA/component-tracker.git
+    cd component-tracker
+    npm install
+```
+This will automatically install all required dependencies defined in package.json, including:
+
+- Express (web framework)
+- EJS (template engine)
+- SQLite / sqlite3 (database engine)
+
+---
+
+### Running the Application
+
+Start the local server using npm:
+
+```bash
+    Copy code
+    npm start
+    The application will be available at: http://localhost:3000
+```
+
+---
+
+### Windows Quick Start (.bat)
+
+On Windows, you can optionally create a batch file to start the server and open the browser automatically.
+
+Create a file named start_app.bat in the project root with the following content:
+
+```bat
+@echo off
+echo Starting Component Tracker...
+npm start
+start http://localhost:3000
+```
+Double-click start_app.bat to launch the application and open it in your default browser.
+
+---
+
+### First Run Notes
+
+- The application uses a local SQLite database (inventory.db).
+- If the database file does not exist, it will be created automatically on first run.
+- A backups/ directory is used to store database backup files.
+- The application is designed for local-first usage.
 
 ---
 
