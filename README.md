@@ -4,7 +4,7 @@
 ![Platform](https://img.shields.io/badge/platform-local--first-blue)
 [![Database](https://img.shields.io/badge/database-SQLite-lightgrey)](https://sqlite.org/)
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
-[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](LICENSE)
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-red.svg)](LICENSE)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue)](https://paypal.me/yumera)
 
 ---
@@ -251,13 +251,13 @@ component-tracker/
 After all prerequisites are installed:
 
 1. Install dependencies:
-
+```bash
    npm install
-
+```
 2. Start the application:
-
+```bash
    node index.js
-
+```
 3. Open your browser and navigate to:
 
    http://localhost:3000
