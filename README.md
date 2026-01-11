@@ -1,7 +1,7 @@
 # Component Tracker
 
 [![Node.js](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org/en)
-![Platform](https://img.shields.io/badge/platform-local--first-blue)
+![Architecture](https://img.shields.io/badge/architecture-local--first-blue)
 [![Database](https://img.shields.io/badge/database-SQLite-lightgrey)](https://sqlite.org/)
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-red.svg)](LICENSE)
@@ -144,7 +144,6 @@ This will automatically install all required dependencies defined in package.jso
 Start the local server using npm:
 
 ```bash
-    Copy code
     npm start
     The application will be available at: http://localhost:3000
 ```
@@ -185,8 +184,6 @@ Dependencies are installed using npm.
 
 ## Project Structure
 ```
-## Project Structure
-
 component-tracker/
 ├── index.js                     Main application entry point
 ├── package.json
@@ -194,7 +191,7 @@ component-tracker/
 ├── .gitignore
 ├── inventory.db                 SQLite database (local, ignored by git)
 ├── version_info_mock.json
-├── start_app..bat               Windows quick start
+├── start_app.bat                Windows quick start
 │
 ├── apiServices/
 │   ├── serviceResolver.js       API service dispatcher
@@ -246,55 +243,12 @@ component-tracker/
 ```
 ---
 
-## Running the Application
-
-After all prerequisites are installed:
-
-1. Install dependencies:
-```bash
-   npm install
-```
-2. Start the application:
-```bash
-   node index.js
-```
-3. Open your browser and navigate to:
-
-   http://localhost:3000
-
-The SQLite database file (inventory.db) will be created automatically
-on first run if it does not already exist.
-
----
-
-## Database Notes
-
-- SQLite is used as a local, file-based database
-- No database server installation is required
-- The database file is intentionally excluded from version control
-- Backups can be created by copying the database file
-
----
-
 ## Internationalization (i18n)
 
 - Custom-built i18n system
 - Translation files located in public/i18n/
 - Live language switching without page reload
 - Easily extendable with additional languages
-
----
-
-## Windows Convenience
-
-On Windows systems, a start.bat file may be provided as a convenience.
-
-It:
-- starts the Node.js server
-- opens the default browser at http://localhost:3000
-
-Usage is optional.
-The application can always be started manually using node index.js.
 
 ---
 
