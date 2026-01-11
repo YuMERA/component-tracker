@@ -145,8 +145,8 @@ Start the local server using npm:
 
 ```bash
     npm start
-    The application will be available at: http://localhost:3000
 ```
+The application will be available at: http://localhost:3000
 
 
 ### Windows Quick Start (.bat)
@@ -288,22 +288,22 @@ Authentication is not enforced by default.
 [![Details](screenshots/details_thumb.png)](screenshots/details.png)
 
 ### AddNew Component
-[![Details](screenshots/addnew_thumb.png)](screenshots/addnew.png)
+[![AddNew](screenshots/addnew_thumb.png)](screenshots/addnew.png)
 
 ### LowStock Component
-[![Details](screenshots/lowstock_thumb.png)](screenshots/lowstock.png)
+[![LowStock](screenshots/lowstock_thumb.png)](screenshots/lowstock.png)
 
 ### Api Services
-[![Details](screenshots/api_thumb.png)](screenshots/api.png)
+[![API](screenshots/api_thumb.png)](screenshots/api.png)
 
 ### Settings
-[![Details](screenshots/settings_thumb.png)](screenshots/settings.png)
+[![Settings](screenshots/settings_thumb.png)](screenshots/settings.png)
 
 ### Application Update Center
-[![Details](screenshots/update_thumb.png)](screenshots/update.png)
+[![Update](screenshots/update_thumb.png)](screenshots/update.png)
 
 ### Backup Database
-[![Details](screenshots/backup_thumb.png)](screenshots/backup.png)
+[![Backup](screenshots/backup_thumb.png)](screenshots/backup.png)
 
 ---
 
