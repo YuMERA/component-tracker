@@ -122,7 +122,6 @@ Before running the application, make sure the following are installed on your sy
 
 - **npm** (included with Node.js)
 
----
 
 ### Setup
 
@@ -139,7 +138,6 @@ This will automatically install all required dependencies defined in package.jso
 - EJS (template engine)
 - SQLite / sqlite3 (database engine)
 
----
 
 ### Running the Application
 
@@ -151,7 +149,6 @@ Start the local server using npm:
     The application will be available at: http://localhost:3000
 ```
 
----
 
 ### Windows Quick Start (.bat)
 
@@ -167,7 +164,6 @@ start http://localhost:3000
 ```
 Double-click start_app.bat to launch the application and open it in your default browser.
 
----
 
 ### First Run Notes
 
