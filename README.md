@@ -279,31 +279,31 @@ Authentication is not enforced by default.
 ![Components](screenshots/dashboard.png)
 
 ### Components List
-![Components](screenshots/components.png)
+[![Components](screenshots/components_thumb.png)](screenshots/components.png)
 
 ### Categories Management
-![Categories](screenshots/categories.png)
+[![Categories](screenshots/categories_thumb.png)](screenshots/categories.png)
 
 ### Component Details
-![Details](screenshots/details.png)
+[![Details](screenshots/details_thumb.png)](screenshots/details.png)
 
 ### AddNew Component
-![Details](screenshots/addnew.png)
+[![Details](screenshots/addnew_thumb.png)](screenshots/addnew.png)
 
 ### LowStock Component
-![Details](screenshots/lowstock.png)
+[![Details](screenshots/lowstock_thumb.png)](screenshots/lowstock.png)
 
 ### Api Services
-![Details](screenshots/api.png)
+[![Details](screenshots/api_thumb.png)](screenshots/api.png)
 
 ### Settings
-![Details](screenshots/settings.png)
+[![Details](screenshots/settings_thumb.png)](screenshots/settings.png)
 
 ### Application Update Center
-![Details](screenshots/update.png)
+[![Details](screenshots/update_thumb.png)](screenshots/update.png)
 
 ### Backup Database
-![Details](screenshots/backup.png)
+[![Details](screenshots/backup_thumb.png)](screenshots/backup.png)
 
 ---
 
