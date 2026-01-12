@@ -766,10 +766,17 @@ app.get('/components/details/:id', async (req, res) => {
 
         let returnQuery = null;
 
-        if (qs.has('returnQuery') && qs.get('returnQuery') === '__LOW_STOCK__') {
+        // ✅ LOW STOCK
+        if (qs.get('returnQuery') === '__LOW_STOCK__') {
             qs.delete('returnQuery');
             returnQuery = '__LOW_STOCK__' + (qs.toString() ? '&' + qs.toString() : '');
-        } else {
+        }
+        // ✅ DASHBOARD
+        else if (qs.get('returnQuery') === '__DASHBOARD__') {
+            returnQuery = '__DASHBOARD__';
+        }
+        // ✅ NORMAL LIST (components)
+        else {
             returnQuery = qs.toString() || null;
         }
 

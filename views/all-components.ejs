@@ -198,14 +198,14 @@
                                 </td>
 
                                 <td class="align-middle">
-                                    <a href="/components/details/<%= component.id %>" title="View Component Details"
+                                    <a href="/components/details/<%= component.id %>?<%= queryString %>" title="View Component Details"
                                        class="fw-bold text-decoration-none <%= nameColorClass %>">
                                         <%= component.name %>
                                     </a>
                                 </td>
 
                                 <td class="align-middle">
-                                    <a href="/components/details/<%= component.id %>" title="View Component Details"
+                                    <a href="/components/details/<%= component.id %>?<%= queryString %>" title="View Component Details"
                                         class="fw-normal text-decoration-none <%= nameColorClass %>">
                                         <%= component.part_number || 'N/A' %>
                                     </a>

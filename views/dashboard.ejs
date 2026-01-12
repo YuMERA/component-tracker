@@ -138,10 +138,16 @@
                     <ul class="list-group list-group-flush">
                         <% recentComponents.forEach(component => { %>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <a href="/components/details/<%= component.id %>" class="text-decoration-none fw-bold"><%= component.name %></a><br>
-                                    <small class="d-block text-primary"><%= component.part_number || 'N/A' %></small>
-                                    <small class="d-block text-muted">
+                                <div>                                                                    
+                                    <a href="/components/details/<%= component.id %>?returnQuery=__DASHBOARD__" class="text-decoration-none fw-bold">
+                                        <% if (component.image_url && component.image_url.trim() !== '') { %>                                        
+                                            <img src="<%= component.image_url %>"
+                                                    style="width: 30px; height: 30px; object-fit: contain; border-radius: 4px; background-color: white;">
+                                        <% } %>   
+                                        <%= component.name %>
+                                    </a><br>
+                                    <small class="d-block text-normal fw-normal"><%= component.part_number || 'N/A' %></small>   
+                                    <small class="d-block text-secondary fst-italic">
                                         <span data-i18n="dashboard.recent.added">Added:</span> <%= component.formatted_created_at ? component.formatted_created_at : '—' %>
                                     </small>
                                 </div>
