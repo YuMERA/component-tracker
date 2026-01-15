@@ -76,7 +76,7 @@
 
     <!-- KARTICA 3: LOW STOCK ALERTS -->
     <div class="col-xl-3 col-md-6 mb-4">
-        <a href="/low-stock" class="card border-start-warning shadow-sm h-100 py-2 text-decoration-none">
+        <a href="/components?status=low-stock" class="card border-start-warning shadow-sm h-100 py-2 text-decoration-none">
             <div class="card-body py-2">
                 <div class="row no-gutters align-items-start">
                     <div class="col me-2">
@@ -139,7 +139,7 @@
                         <% recentComponents.forEach(component => { %>
                             <li class="list-group-item d-flex justify-content-between align-items-center">
                                 <div>                                                                    
-                                    <a href="/components/details/<%= component.id %>?returnQuery=__DASHBOARD__" class="text-decoration-none fw-bold">
+                                    <a href="/components/details/<%= component.id %>" class="text-decoration-none fw-bold">
                                         <% if (component.image_url && component.image_url.trim() !== '') { %>                                        
                                             <img src="<%= component.image_url %>"
                                                     style="width: 30px; height: 30px; object-fit: contain; border-radius: 4px; background-color: white;">
@@ -167,7 +167,7 @@
                     <h6 class="m-0 fw-bold" data-i18n="dashboard.lowstock.title">Critical Low Stock Alerts</h6>
                     <small class="text-muted" data-i18n="dashboard.lowstock.subtitle">The last five components</small>
                 </div>
-                <a href="/low-stock" class="btn btn-sm btn-outline-primary" data-i18n="dashboard.lowstock.view_all">View All Alerts</a>
+                <a href="/components?status=low-stock" class="btn btn-sm btn-outline-primary" data-i18n="dashboard.lowstock.view_all">View All Alerts</a>
             </div>
             <div class="card-body">
                 <% if (criticalLowStock.length === 0) { %>
@@ -180,7 +180,13 @@
                         <% criticalLowStock.forEach(component => { %>
                             <li class="list-group-item d-flex justify-content-between align-items-center list-group-item-warning">
                                 <div>
-                                    <a href="/components/details/<%= component.id %>" class="text-decoration-none fw-bold"><%= component.name %></a><br>
+                                    <a href="/components/details/<%= component.id %>" class="text-decoration-none fw-bold">
+                                        <% if (component.image_url && component.image_url.trim() !== '') { %>                                        
+                                            <img src="<%= component.image_url %>"
+                                                    style="width: 30px; height: 30px; object-fit: contain; border-radius: 4px; background-color: white;">
+                                        <% } %>   
+                                        <%= component.name %>
+                                    </a><br>
                                     <small class="d-block text-primary"><%= component.part_number || 'N/A' %></small>
                                     <small class="d-block text-muted"><span data-i18n="dashboard.lowstock.needed">Needed: </span><%= component.min_stock %> pcs</small>
                                 </div>

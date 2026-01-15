@@ -55,17 +55,19 @@
             <i class="bi bi-trash me-1"></i>
             <span data-i18n="details.delete">Delete</span>
         </button>
-        <a href="<%= 
-                returnQuery && returnQuery.startsWith('__DASHBOARD__')
-                    ? '/'
-                    : returnQuery && returnQuery.startsWith('__LOW_STOCK__')
-                        ? `/low-stock?${returnQuery.replace('__LOW_STOCK__&', '')}`
-                        : returnQuery
-                            ? `/components?${returnQuery}`
-                            : '/components'
-            %>"
-            class="btn btn-outline-secondary">
-
+        
+        <!--<a href="<%= returnQuery && returnQuery.startsWith('__LOW_STOCK__')
+                            ? `/low-stock?${returnQuery.replace('__LOW_STOCK__&', '')}`
+                            : returnQuery
+                                ? `/components?${returnQuery}`
+                                : '/components'
+                %>"-->
+        
+        <% if (queryString) { %>
+            <a href="/components?<%= queryString %>" class="btn btn-outline-secondary">
+        <% } else { %>
+            <a href="/components" class="btn btn-outline-secondary">
+        <% } %>
             <i class="bi bi-list me-1"></i>
             <span data-i18n="details.back">Back to List</span>
         </a>

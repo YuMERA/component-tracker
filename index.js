@@ -160,6 +160,12 @@ app.set('views', 'views');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true })); 
 app.use(express.json());
+app.use((req, res, next) => {
+    res.locals.currentCategory = req.query.category || null;
+    res.locals.currentStatus = req.query.status || null;
+    res.locals.currentPath = req.path;
+    next();
+});
 
 // RUTA: Dashboard
 app.get('/', async (req, res) => {
@@ -188,7 +194,7 @@ app.get('/', async (req, res) => {
 
     // 3. Dohvaćanje 5 najkritičnijih Low Stock komponenti
     const criticalLowStock = await db.all(
-        `SELECT id, name, part_number, quantity, min_stock FROM components 
+        `SELECT id, name, part_number, quantity, min_stock, image_url FROM components 
          WHERE quantity <= min_stock AND min_stock > 0 
          ORDER BY quantity ASC 
          LIMIT 5`
@@ -209,7 +215,8 @@ app.get('/', async (req, res) => {
         pageTitle: 'Dashboard | Component Tracker',
         stats,
         recentComponents,
-        criticalLowStock
+        criticalLowStock,
+        status: null
     });
 });
 
@@ -762,34 +769,27 @@ app.get('/components/details/:id', async (req, res) => {
             return res.status(404).render('404', { pageTitle: 'Not Found | Component Tracker' });
         }
         
-        const qs = new URLSearchParams(req.query);
+        //const qs = new URLSearchParams(req.query);
 
-        let returnQuery = null;
+        //let returnQuery = null;
 
-        // ✅ LOW STOCK
-        if (qs.get('returnQuery') === '__LOW_STOCK__') {
-            qs.delete('returnQuery');
-            returnQuery = '__LOW_STOCK__' + (qs.toString() ? '&' + qs.toString() : '');
-        }
-        // ✅ DASHBOARD
-        else if (qs.get('returnQuery') === '__DASHBOARD__') {
-            returnQuery = '__DASHBOARD__';
-        }
-        // ✅ NORMAL LIST (components)
-        else {
-            returnQuery = qs.toString() || null;
-        }
+        //if (qs.has('returnQuery') && qs.get('returnQuery') === '__LOW_STOCK__') {
+        //    qs.delete('returnQuery');
+        //    returnQuery = '__LOW_STOCK__' + (qs.toString() ? '&' + qs.toString() : '');
+        //} else {
+        //    returnQuery = qs.toString() || null;
+        //}
 
-        const queryString = returnQuery;
-
+        //const queryString = returnQuery;
+        const queryString = new URLSearchParams(req.query).toString() || null;
 
         // NOVO: Prosleđujemo CEO 'req' objekat EJS fajlu!
         res.render('details', {
             pageTitle: 'Details | Component Tracker',
             component: component,
             req: req,
-            queryString,
-            returnQuery 
+            queryString
+            //returnQuery 
         });
 
     } catch (error) {
@@ -800,7 +800,7 @@ app.get('/components/details/:id', async (req, res) => {
 
 // RUTA: Prikaz svih komponenti (READ) sa pagination
 app.get('/components', async (req, res) => {
-    const filterCategory = req.query.category;
+    const filterCategory = req.query.category || null;
     const filterStatus = req.query.status;
     const searchQuery = req.query.search; 
     const successMessage = req.query.message; // poruka
@@ -813,6 +813,7 @@ app.get('/components', async (req, res) => {
     let sqlParams = [];
     let whereClauses = [];
     let pageTitleSuffix = 'All Components';
+
 
     // 1. PRETRAGA
     if (searchQuery) {
@@ -837,6 +838,11 @@ app.get('/components', async (req, res) => {
     if (filterStatus === 'out-of-stock') {
         whereClauses.push('quantity = 0');
         if (!searchQuery && !filterCategory) pageTitleSuffix = 'Out of Stock Components';
+    }
+
+    if (filterStatus === 'low-stock') {
+        whereClauses.push('quantity <= min_stock AND min_stock > 0');
+        if (!searchQuery && !filterCategory) pageTitleSuffix = 'Low Stock Components';
     }
     
     // 4. SQL COUNT za pagination (da znamo totalItems)
@@ -896,7 +902,7 @@ app.get('/components', async (req, res) => {
         queryWithoutSearch.set('page', 1);
 
         const clearSearchQueryString = queryWithoutSearch.toString();
-
+        const status = req.query.status || null;
         // 6. Renderujemo EJS
         res.render('all-components', {
             pageTitle: `${pageTitleSuffix} | Component Tracker`,
@@ -913,7 +919,7 @@ app.get('/components', async (req, res) => {
             totalItems,
             justAdded: req.query.added === '1',
             queryString,
-            clearSearchQueryString 
+            clearSearchQueryString          
         });
 
     } catch (error) {
@@ -1062,6 +1068,7 @@ app.get('/settings/update', (req, res) => {
         currentVersionInfo: { title: 'No details', features: [] }, 
         versions: [], 
         error: null // Dodato polje za poruku o grešci
+       
     };
 
     // PUtanja do JSON fajla
@@ -1310,6 +1317,7 @@ app.post('/tools/api/delete/:id', async (req, res) => {
 
 // GET: pretraga dela preko aktivnog API servisa
 const { resolveApiService } = require('./apiServices/serviceResolver');
+const { URLSearchParams } = require('url');
 
 app.get('/tools/api/find-part', async (req, res) => {
     try {

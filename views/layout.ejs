@@ -263,9 +263,6 @@
                 window.addEventListener('languageChanged', updateLanguageLabel);
             });
 
-            
-
-
         </script>
         
         <!-- 1. MOBILNI HEADER (Prikazan samo na malim ekranima) -->
@@ -413,10 +410,17 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="/low-stock"
+                        <a href="/components?status=low-stock"
                         class="nav-link rounded-2 <%= pageTitle.includes('Low Stock') ? 'bg-warning text-body' : 'text-body' %>">
                             <i class="bi bi-exclamation-triangle me-2"></i>
                             <span data-i18n="nav.low_stock">Low Stock</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/components?status=out-of-stock"
+                        class="nav-link rounded-2 <%= pageTitle.includes('Low Stock') ? 'bg-warning text-body' : 'text-body' %>">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <span data-i18n="nav.low_stock">Out Of Stock</span>
                         </a>
                     </li>
                 </ul>
@@ -550,6 +554,14 @@
                     </div>
                     
                 </div>
+                <%  const isComponentsSection =
+                        currentPath === '/components' ||
+                        currentPath.startsWith('/components/');
+
+                    const isAddComponent =
+                        currentPath === '/components/add' ||
+                        currentPath === '/components/new';
+                %>
                 <nav class="p-3 flex-grow-1">
                     <h2 class="text-uppercase small fw-bold text-secondary mb-0 sidebar-text" data-i18n="nav.navigation">Navigation</h2>
                     <ul class="nav flex-column mb-3">
@@ -562,23 +574,28 @@
                     <h3 class="text-uppercase small fw-bold text-secondary bg-body mb-0 sidebar-text" data-i18n="nav.components">Components</h3>
                     <ul class="nav flex-column mb-3">
                         <li class="nav-item">
-                            <a href="/components" class="nav-link rounded-2 <%= pageTitle.includes('All Components') ? 'bg-primary text-white' : 'text-body' %>">
+                            <a href="/components" class="nav-link rounded-2 <%= isComponentsSection && !currentCategory && !currentStatus && !isAddComponent ? 'bg-primary text-white' : 'text-body' %>">
                                 <i class="bi bi-list me-2"></i> <span class="sidebar-text" data-i18n="nav.all_components">All Components</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/components/new" class="nav-link rounded-2 <%= pageTitle.includes('Add New') ? 'bg-primary text-white' : 'text-body' %>">
+                            <a href="/components/new" class="nav-link rounded-2 <%= isAddComponent ? 'bg-primary text-white' : 'text-body' %>">
                                 <i class="bi bi-plus-circle me-2"></i> <span class="sidebar-text" data-i18n="nav.add_new">Add New</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/categories" class="nav-link rounded-2 <%= pageTitle.includes('Categories') ? 'bg-primary text-white' : 'text-body' %>">
+                            <a href="/categories" class="nav-link rounded-2 <%= pageTitle.includes('Categories') || currentCategory ? 'bg-primary text-white' : 'text-body' %>">
                                 <i class="bi bi-folder me-2"></i> <span class="sidebar-text" data-i18n="nav.categories">Categories</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/low-stock" class="nav-link rounded-2 <%= pageTitle.includes('Low Stock') ? 'bg-warning text-body' : 'text-body' %>">
+                            <a href="/components?status=low-stock" class="nav-link rounded-2 <%= currentStatus === 'low-stock' ? 'bg-warning text-body' : 'text-body' %>">
                                 <i class="bi bi-exclamation-triangle me-2"></i> <span class="sidebar-text" data-i18n="nav.low_stock">Low Stock</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/components?status=out-of-stock" class="nav-link rounded-2 <%= currentStatus === 'out-of-stock' ? 'bg-danger text-body': 'text-body' %>">
+                                <i class="bi bi-x-octagon me-2"></i> <span class="sidebar-text" data-i18n="nav.out_of_stock">Out Of Stock</span>
                             </a>
                         </li>
                     </ul>
