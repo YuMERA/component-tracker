@@ -8,6 +8,7 @@ const expressLayouts = require('express-ejs-layouts');
 const sqlite = require('sqlite'); 
 const sqlite3 = require('sqlite3'); 
 let db;
+let server;
 
 // Trenutna verzija instalirane aplikacije.
 const CURRENT_APP_VERSION = "1.0.0"; 
@@ -1349,7 +1350,7 @@ app.get('/tools/api/find-part', async (req, res) => {
 initializeDb()
     .then(() => {
         // Ako je inicijalizacija uspešna, startuj server
-        app.listen(port, () => {
+        server = app.listen(port, () => {
             console.log(`Server pokrenut na http://localhost:${port}`);
             console.log('Aplikacija spremna za rad.');
         });
@@ -1360,3 +1361,50 @@ initializeDb()
         // Izlaz iz procesa sa greškom
         process.exit(1); 
     });
+
+// Robusni graceful shutdown
+const FORCE_EXIT_TIMEOUT_MS = 10_000; // forsiraj exit posle 10s
+
+async function shutdown(signal) {
+    console.log(`\n[shutdown] Received ${signal}. Starting graceful shutdown...`);
+    const forceTimer = setTimeout(() => {
+        console.error('[shutdown] Forcing exit after timeout.');
+        process.exit(1);
+    }, FORCE_EXIT_TIMEOUT_MS);
+    forceTimer.unref && forceTimer.unref();
+
+    try {
+        if (server && typeof server.close === 'function') {
+        console.log('[shutdown] Closing HTTP server...');
+        await new Promise((resolve, reject) => {
+            server.close(err => (err ? reject(err) : resolve()));
+        });
+        console.log('[shutdown] HTTP server closed.');
+        }
+
+        if (db && typeof db.close === 'function') {
+        console.log('[shutdown] Closing database connection...');
+        await db.close();
+        console.log('[shutdown] Database connection closed.');
+        }
+
+        console.log('[shutdown] Graceful shutdown completed. Exiting.');
+        clearTimeout(forceTimer);
+        process.exit(0);
+
+    } catch (err) {
+        console.error('[shutdown] Error during shutdown:', err);
+        process.exit(1);
+    }
+    }
+
+    process.on('SIGINT', () => shutdown('SIGINT'));
+    process.on('SIGTERM', () => shutdown('SIGTERM'));
+    process.on('uncaughtException', err => {
+    console.error('[shutdown] Uncaught Exception:', err);
+    shutdown('uncaughtException');
+    });
+process.on('unhandledRejection', (reason) => {
+    console.error('[shutdown] Unhandled Rejection:', reason);
+    shutdown('unhandledRejection');
+});
