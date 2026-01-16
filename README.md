@@ -234,7 +234,6 @@ component-tracker/
     ├── add-new.ejs
     ├── categories.ejs
     ├── categories-admin.ejs
-    ├── low-stock.ejs
     ├── backup.ejs
     ├── settings.ejs
     ├── tools-api.ejs

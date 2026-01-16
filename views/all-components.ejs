@@ -70,12 +70,12 @@
         <% if (locals.currentCategory || locals.currentStatus) { %>
             <span class="input-group-text bg-body-tertiary text-primary fw-bold small">
                 <% if (locals.currentCategory) { %>
-                    <span data-i18n="components.filter_category">Category:</span>
+                    <span data-i18n="components.filter_category">Category:</span>&nbsp;
                     <%= currentCategory %>
                 <% } %>
                 <% if (locals.currentStatus) { %>
-                    <span data-i18n="components.filter_status">Status:</span>
-                    <%= currentStatus.replace('-', ' ') %>
+                    <span data-i18n="components.filter_status">Status:</span>&nbsp;
+                    <%= currentStatus %>
                 <% } %>
             </span>
         <% } %>
