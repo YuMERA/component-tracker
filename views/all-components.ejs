@@ -266,7 +266,7 @@
                                             <i class="bi bi-pencil"></i>
                                         </a>
 
-                                        <a href="/components/delete/<%= component.id %>?returnQuery=<%= encodeURIComponent(queryString) %>"
+                                        <a href="/components/delete/<%= component.id %><%= queryString ? '?' + queryString : '' %>"
                                             class="btn btn-sm btn-outline-danger me-1 mb-1 js-confirm"
                                             data-i18n-attr="title"
                                             data-i18n="components.delete"

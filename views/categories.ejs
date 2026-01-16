@@ -195,7 +195,8 @@
                                             data-confirm-title="categories.confirm_title"
                                             data-confirm-message="categories.confirm_delete"
                                             data-confirm-params='{"name":"<%= category.category %>"}'
-                                            data-confirm-url="/categories/delete/<%= encodeURIComponent(category.category) %><%= qs ? '?returnQuery=' + encodeURIComponent(qs) : '' %>">
+                                            data-confirm-url="/categories/delete/<%= encodeURIComponent(category.category) %><%= qs ? '?' + qs : '' %>">
+
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     
@@ -454,32 +455,64 @@
             nema potrebe da stranice brinu o layoutu
         */
     //***********************************************************************************
+    let activeAlert = null;
+    // { type: 'success' | 'danger', key: 'i18n.key', params?: {} }
+
     async function applyCategoriesI18n() {
-        await I18N.apply(['layout','categories']);
+        await I18N.apply(['layout', 'categories']);
 
         const params = new URLSearchParams(window.location.search);
+
+        // Ako već imamo alert u state-u (live language switch)
+        if (activeAlert) {
+            showAlert(
+                activeAlert.type,
+                activeAlert.params
+                    ? I18N.interpolate(
+                        I18N.translations[activeAlert.key],
+                        activeAlert.params
+                    )
+                    : I18N.translations[activeAlert.key]
+            );
+            return;
+        }
+
+        // Prvi load – čitanje iz URL-a
         const messageKey = params.get('message');
         const errorKey = params.get('error');
         const name = params.get('name');
 
         if (messageKey && I18N.translations[messageKey]) {
+            activeAlert = {
+                type: 'success',
+                key: messageKey,
+                params: name ? { name } : null
+            };
+
             showAlert(
                 'success',
-                I18N.interpolate(
-                    I18N.translations[messageKey],
-                    name ? { name } : {}
-                )
+                activeAlert.params
+                    ? I18N.interpolate(
+                        I18N.translations[messageKey],
+                        activeAlert.params
+                    )
+                    : I18N.translations[messageKey]
             );
         }
 
         if (errorKey && I18N.translations[errorKey]) {
+            activeAlert = {
+                type: 'danger',
+                key: errorKey
+            };
+
             showAlert(
                 'danger',
                 I18N.translations[errorKey]
             );
         }
 
-        // ✅ KLJUČNO — očisti URL posle prikaza poruke
+        // ✅ Čistimo URL SAMO JEDNOM
         if (messageKey || errorKey) {
             const cleanUrl = new URL(window.location.href);
             cleanUrl.searchParams.delete('message');
@@ -488,6 +521,7 @@
             window.history.replaceState({}, '', cleanUrl.pathname + cleanUrl.search);
         }
     }
+
 
 
     document.addEventListener('DOMContentLoaded', applyCategoriesI18n);

@@ -137,7 +137,11 @@
 
         <form
             id="addComponentForm"
-            action="<%= isEdit ? `/components/edit/${component.id}` : '/components/new' %>"
+            action="<%=
+                isEdit
+                    ? `/components/edit/${component.id}${queryString ? '?' + queryString : ''}`
+                    : `/components/new${queryString ? '?' + queryString : ''}`
+            %>"
             method="POST"
             data-just-added="<%= locals.justAdded ? '1' : '0' %>">
 
@@ -324,20 +328,12 @@
             <hr class="my-4">
 
             <div class="d-flex justify-content-end">
-                <% if (isEdit && queryString) { %>
-                    <input type="hidden" name="returnQuery" value="<%= queryString %>">
-                <% } %>
-
-                <a href="<%=
-                isEdit && queryString === 'returnQuery=__LOW_STOCK__'
-                    ? '/low-stock'
-                    : isEdit && queryString
-                        ? `/components?${queryString}`
-                        : '/components' %>"
-                    class="btn btn-outline-secondary me-2"
-                    data-i18n="add.cancel_btn">
+                <a href="<%= queryString ? `/components?${queryString}` : '/components' %>"
+                   class="btn btn-outline-secondary me-2"
+                   data-i18n="add.cancel_btn">
                     Cancel
                 </a>
+            
                 <button type="submit" class="btn btn-primary px-4">
                     <i class="bi bi-save me-2"></i>
                     <span data-i18n="<%= isEdit ? 'add.save_changes' : 'add.save_component' %>">
@@ -346,7 +342,6 @@
                 </button>
             </div>
         </form>
-        
     </div>
 </div>
 

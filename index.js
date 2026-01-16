@@ -73,37 +73,7 @@ async function initializeDb() {
         `)
 
         console.log('Tabela API servisa je spremne.');
-
-        /*// 3. Opciono: Inicijalno ubacivanje test podataka (samo ako baza prazna)
-        const count = await db.get('SELECT COUNT(*) AS count FROM components');
-        if (count.count === 0) {
-            await db.run(`
-                INSERT INTO components (name, part_number, quantity, min_stock, location, category, datasheet_url)
-                VALUES (?, ?, ?, ?, ?, ?, ?);
-            `, [
-                'Otpornik 1k Ohm (Test)', 'R1K-TEST', 500, 50, 'Fioka A1', 'Resistors', 'http://example.com/datasheet/r1k.pdf'
-            ]);
-            await db.run(`
-                INSERT INTO components (name, part_number, quantity, min_stock, location, category, datasheet_url)
-                VALUES (?, ?, ?, ?, ?, ?, ?);
-            `, [
-                'Kondenzator 100nF (Low Stock)', 'C100N-01', 10, 100, 'Fioka C2', 'Capacitors', 'http://example.com/datasheet/c100n.pdf'
-            ]);
-            console.log('Ubačena 2 test podatka.');
-        }
-
-        // 4. Inicijalizacija KATEGORIJA (ako tabela kategorija prazna)
-        const catCount = await db.get('SELECT COUNT(*) AS count FROM categories');
-        if (catCount.count === 0) {
-            // Robusnije ubacivanje (jedna po jedna stavka) za eliminisanje sintaksne greške
-            const initialCategories = ['Resistors', 'Capacitors', 'Diodes', 'Transistors', 'IC - Logic', 'IC - Analog'];
-            for (const cat of initialCategories) {
-                await db.run(`INSERT INTO categories (name) VALUES (?)`, [cat]);
-            }
-            console.log('Ubačene početne kategorije.');
-        }*/
-
-
+        // Pokretanje Express servera nakon uspešne inicijalizacije baze
     } catch (error) {
         // Kritičan log u slučaju greške
         console.error('KRITIČNA GREŠKA pri inicijalizaciji baze podataka:', error);
@@ -165,6 +135,12 @@ app.use((req, res, next) => {
     res.locals.currentCategory = req.query.category || null;
     res.locals.currentStatus = req.query.status || null;
     res.locals.currentPath = req.path;
+
+    const qs = new URLSearchParams(req.query);
+    qs.delete('message');
+    qs.delete('error');
+    res.locals.queryString = qs.toString() || null;
+    
     next();
 });
 
@@ -172,20 +148,20 @@ app.use((req, res, next) => {
 app.get('/', async (req, res) => {
     // 1. Dohvaćanje statistike za Dashboard
     
-    // ISPRAVKA: Dohvaćanje UKUPNE KOLIČINE (SUMA svih quantity) - Ovo je Primarni Veliki Broj (Total Items)
+    // Dohvaćanje UKUPNE KOLIČINE (SUMA svih quantity) - Ovo je Primarni Veliki Broj (Total Items)
     const totalQuantityResult = await db.get('SELECT SUM(quantity) AS sum FROM components');
 
-    // NOVO: Dohvaćanje BROJA JEDINSTVENIH KOMPONENTI (COUNT) - Ovo je Sekundarni Mali Broj (Unique Components)
+    // Dohvaćanje BROJA JEDINSTVENIH KOMPONENTI (COUNT) - Ovo je Sekundarni Mali Broj (Unique Components)
     const uniqueComponentsCount = await db.get('SELECT COUNT(id) AS count FROM components'); 
     
-    const totalDefinedCategories = await db.get('SELECT COUNT(id) AS count FROM categories'); // Prethodno je brojao samo kategorije iz tabele components
+    const totalDefinedCategories = await db.get('SELECT COUNT(id) AS count FROM categories');
     
     const lowStockCount = await db.get('SELECT COUNT(*) AS count FROM components WHERE quantity <= min_stock AND min_stock > 0');
     const outOfStockCount = await db.get('SELECT COUNT(*) AS count FROM components WHERE quantity = 0');
 
     // 2. Dohvaćanje 5 najnovije dodatih komponenti
     let recentComponents = await db.all('SELECT * FROM components ORDER BY id DESC LIMIT 5');
-    // Ovde formatiraš created_at
+    // Ovde formatiramo created_at
     recentComponents = recentComponents.map(component => {
         return {
             ...component,
@@ -246,6 +222,7 @@ app.post('/admin/categories/add', async (req, res) => {
     }
 });
 
+// RUTA: Kreiranje nove kategorije 
 app.post('/admin/categories/add-json', async (req, res) => {
     const name = req.body.name ? req.body.name.trim() : null;
 
@@ -276,9 +253,7 @@ app.get('/categories', async (req, res) => {
     const offset = limit ? (page - 1) * limit : 0;
 
     try {
-        // =============================
         // 1. COUNT QUERY (za pagination)
-        // =============================
         let countSql = `
             SELECT COUNT(*) as total
             FROM (
@@ -298,9 +273,7 @@ app.get('/categories', async (req, res) => {
 
         const currentPage = Math.min(page, totalPages || 1);
 
-        // =============================
         // 2. MAIN DATA QUERY
-        // =============================
         let sql = `
             SELECT 
                 cat.name AS category, 
@@ -425,6 +398,7 @@ app.get('/categories/delete/:name', async (req, res) => {
     }
 });
 
+// RUTA: Izmena naziva kategorije (EDIT)
 app.post('/categories/edit', async (req, res) => {
     const { oldName, newName } = req.body;
 
@@ -474,126 +448,27 @@ app.get('/api/categories', async (req, res) => {
     }
 });
 
-// RUTA: Prikaz komponenti sa niskim zalihama (LOW STOCK) + PAGINATION + LIMIT SELECT
-app.get('/low-stock', async (req, res) => {
-    try {
-        const page = parseInt(req.query.page) || 1;
-        let limit = req.query.limit === 'All' ? null : parseInt(req.query.limit) || 10;
-        const offset = limit ? (page - 1) * limit : 0;
 
-        // 1️⃣ Ukupan broj low-stock komponenti
-        const totalResult = await db.get(`
-            SELECT COUNT(*) AS total
-            FROM components
-            WHERE quantity <= min_stock AND min_stock > 0
-        `);
-        const totalItems = totalResult.total;
-
-        // 2️⃣ Izračunaj broj stranica
-        const totalPages = limit ? Math.ceil(totalItems / limit) : 1;
-
-        // 3️⃣ Dohvati low-stock komponente za trenutnu stranu
-        let lowStockComponents;
-        if (limit) {
-            lowStockComponents = await db.all(`
-                SELECT *
-                FROM components
-                WHERE quantity <= min_stock AND min_stock > 0
-                ORDER BY quantity ASC
-                LIMIT ? OFFSET ?
-            `, [limit, offset]);
-        } else {
-            // Ako je 'All', dohvatimo sve
-            lowStockComponents = await db.all(`
-                SELECT *
-                FROM components
-                WHERE quantity <= min_stock AND min_stock > 0
-                ORDER BY quantity ASC
-            `);
-        }
-
-        //const queryString = new URLSearchParams(req.query).toString();
-
-        const qs = new URLSearchParams(req.query);
-
-        // ⛔ poruke se NE vraćaju kao kontekst liste
-        qs.delete('message');
-        qs.delete('error');
-
-        const queryString = qs.toString();
-
-
-        res.render('low-stock', {
-            pageTitle: 'Low Stock Alerts | Component Tracker',
-            lowStockComponents,
-            currentPage: page,
-            totalPages,
-            totalItems,
-            limit,
-            queryString,
-            returnQuery: queryString || null
-        });
-
-    } catch (error) {
-        console.error('Error fetching low stock components:', error);
-        res.status(500).send('Internal Server Error loading low stock.');
-    }
-});
-
-// RUTA: Export Low Stock Components u CSV
-app.get('/low-stock/export', async (req, res) => {
-    try {
-        const lowStockComponents = await db.all(
-            `SELECT name, part_number, category, location, quantity, min_stock
-             FROM components
-             WHERE quantity <= min_stock AND min_stock > 0
-             ORDER BY quantity ASC`
-        );
-
-        if (!lowStockComponents || lowStockComponents.length === 0) {
-            return res.status(404).send('No low stock components to export.');
-        }
-
-        // Napravi CSV string "ručno"
-        const header = ['name', 'part_number', 'category', 'location', 'quantity', 'min_stock'];
-        const csvRows = [
-            header.join(','), // zaglavlje
-            ...lowStockComponents.map(c => 
-                [c.name, c.part_number, c.category, c.location, c.quantity, c.min_stock]
-                    .map(v => `"${v || ''}"`) // obavezno stavimo u navodnike da nema problema sa zarezima
-                    .join(',')
-            )
-        ];
-
-        const csv = csvRows.join('\n');
-
-        res.header('Content-Type', 'text/csv');
-        res.attachment('low_stock_components.csv');
-        return res.send(csv);
-
-    } catch (err) {
-        console.error('Error exporting low stock:', err);
-        res.status(500).send('Internal Server Error exporting CSV.');
-    }
-});
 
 /// RUTA: Brisanje komponente (DELETE)
 app.get('/components/delete/:id', async (req, res) => {
     const componentId = req.params.id;
 
-    // 👇 ceo kontekst liste (page, limit, filteri, search...)
-    const returnQuery = req.query.returnQuery;
+    // 👇 postojeći query string (page, limit, filters, search...)
+    const qs = new URLSearchParams(req.query);
+
+    // ⛔ poruke ne vraćamo kao deo konteksta liste
+    qs.delete('message');
+    qs.delete('error');
 
     try {
         await db.run('DELETE FROM components WHERE id = ?', [componentId]);
 
-        // 👇 AKO JE DOŠLO IZ LOW-STOCK
-        if (returnQuery === 'returnQuery=__LOW_STOCK__') {
-            return res.redirect('/low-stock?message=components.delete_success');
-        }
+        // ✅ dodaj success poruku
+        qs.set('message', 'components.delete_success');
 
-        const redirectUrl = returnQuery
-            ? `/components?${returnQuery}&message=components.delete_success`
+        const redirectUrl = qs.toString()
+            ? `/components?${qs.toString()}`
             : '/components?message=components.delete_success';
 
         res.redirect(redirectUrl);
@@ -601,17 +476,17 @@ app.get('/components/delete/:id', async (req, res) => {
     } catch (error) {
         console.error('Error deleting component:', error);
 
-        if (returnQuery === 'returnQuery=__LOW_STOCK__') {
-            return res.redirect('/low-stock?error=components.delete_failed');
-        }
+        // ❌ success → error
+        qs.set('error', 'components.delete_failed');
 
-        const redirectUrl = returnQuery
-            ? `/components?${returnQuery}&error=components.delete_failed`
+        const redirectUrl = qs.toString()
+            ? `/components?${qs.toString()}`
             : '/components?error=components.delete_failed';
 
         res.redirect(redirectUrl);
     }
 });
+
 
 // RUTA: Prikaz forme za izmenu (GET)
 app.get('/components/edit/:id', async (req, res) => {
@@ -651,21 +526,54 @@ app.get('/components/edit/:id', async (req, res) => {
 
 // RUTA: Obrada izmene komponente (POST)
 app.post('/components/edit/:id', async (req, res) => {
-
     const componentId = req.params.id;
-    const { name, part_number, quantity, min_stock, location, category, description, datasheet_url, image_url } = req.body;
-    const returnQuery = req.body.returnQuery;
+
+    const {
+        name,
+        part_number,
+        quantity,
+        min_stock,
+        location,
+        category,
+        description,
+        datasheet_url,
+        image_url
+    } = req.body;
 
     // dohvat aktivnog API servisa
     const activeService = await db.get(
         'SELECT * FROM api_services WHERE is_active = 1'
     );
 
-    if (!name || !quantity || !min_stock) {
-        const categories = await db.all('SELECT name FROM categories ORDER BY name ASC');
-        const component = await db.get('SELECT * FROM components WHERE id = ?', [componentId]);
+    try {
+        // =========================
+        // VALIDACIJA – OBAVEZNA POLJA
+        // =========================
+        if (!name || quantity == null || min_stock == null) {
+            const categories = await db.all(
+                'SELECT name FROM categories ORDER BY name ASC'
+            );
+            const component = await db.get(
+                'SELECT * FROM components WHERE id = ?',
+                [componentId]
+            );
 
-        // PROVERA: part_number mora biti jedinstven (osim za ovu komponentu)
+            return res.render('add-new', {
+                pageTitle: 'Edit Component | Component Tracker',
+                component,
+                categories,
+                error: 'add.edit.error.required_fields',
+                activeService,
+                message: null,
+                justAdded: false,
+                formData: null,
+                queryString: null
+            });
+        }
+
+        // ==================================
+        // VALIDACIJA – UNIQUE part_number
+        // ==================================
         if (part_number) {
             const existing = await db.get(
                 'SELECT id FROM components WHERE part_number = ? AND id != ?',
@@ -688,76 +596,89 @@ app.post('/components/edit/:id', async (req, res) => {
                     error: 'add.edit.error.part_number_exists',
                     activeService,
                     message: null,
-                    returnQuery,
                     justAdded: false,
                     formData: null,
-                    queryString: returnQuery || null
+                    queryString: null
                 });
             }
         }
-    }
 
-    try {
+        // =========================
+        // UPDATE
+        // =========================
         await db.run(
             `UPDATE components SET 
-                name = ?, part_number = ?, quantity = ?, min_stock = ?, location = ?, 
-                category = ?, description = ?, datasheet_url = ?, image_url = ?
-             WHERE id = ?`, 
+                name = ?, 
+                part_number = ?, 
+                quantity = ?, 
+                min_stock = ?, 
+                location = ?, 
+                category = ?, 
+                description = ?, 
+                datasheet_url = ?, 
+                image_url = ?
+             WHERE id = ?`,
             [
-                name, 
-                part_number || null, 
-                parseInt(quantity), 
-                parseInt(min_stock), 
-                location || null, 
-                category || null, 
-                description || null, 
-                datasheet_url || null, 
+                name,
+                part_number || null,
+                parseInt(quantity, 10),
+                parseInt(min_stock, 10),
+                location || null,
+                category || null,
+                description || null,
+                datasheet_url || null,
                 image_url || null,
                 componentId
             ]
         );
 
-        if (returnQuery === 'returnQuery=__LOW_STOCK__') {
-            return res.redirect('/low-stock');
-        }
+        // =========================
+        // POVRATAK NA LISTU
+        // =========================
+        const qs = new URLSearchParams(req.query);
+        qs.delete('message');
+        qs.delete('error');
+        qs.set('message', 'components.edit_success');
 
-        const redirectUrl = returnQuery
-            ? `/components?${returnQuery}&message=components.edit_success`
-            : `/components?message=components.edit_success`;
+        const redirectUrl = qs.toString()
+            ? `/components?${qs.toString()}`
+            : '/components?message=components.edit_success';
 
         res.redirect(redirectUrl);
 
     } catch (err) {
+        console.error('Database Update Error:', err);
 
         let errorKey = 'add.edit.error.save_failed';
 
-        if (err.message && err.message.includes('UNIQUE constraint failed: components.part_number')) {
-
+        if (
+            err.message &&
+            err.message.includes('UNIQUE constraint failed: components.part_number')
+        ) {
             errorKey = 'add.edit.error.part_number_exists';
         }
 
-        console.error("Database Update Error:", err);
-        
-        const categories = await db.all('SELECT name FROM categories ORDER BY name ASC');
-        const component = await db.get('SELECT * FROM components WHERE id = ?', [componentId]);
+        const categories = await db.all(
+            'SELECT name FROM categories ORDER BY name ASC'
+        );
+        const component = await db.get(
+            'SELECT * FROM components WHERE id = ?',
+            [componentId]
+        );
 
-
-
-        res.render('add-new', { 
+        res.render('add-new', {
             pageTitle: 'Edit Component | Component Tracker',
-            component: component,
-            categories: categories,
+            component,
+            categories,
             error: errorKey,
             activeService,
             message: null,
-            returnQuery,
             justAdded: false,
             formData: null,
-            queryString: returnQuery || null
+            queryString: null
         });
     }
 });
-
 
 // RUTA: Prikaz detalja komponente (READ ONE)
 app.get('/components/details/:id', async (req, res) => {
@@ -770,18 +691,6 @@ app.get('/components/details/:id', async (req, res) => {
             return res.status(404).render('404', { pageTitle: 'Not Found | Component Tracker' });
         }
         
-        //const qs = new URLSearchParams(req.query);
-
-        //let returnQuery = null;
-
-        //if (qs.has('returnQuery') && qs.get('returnQuery') === '__LOW_STOCK__') {
-        //    qs.delete('returnQuery');
-        //    returnQuery = '__LOW_STOCK__' + (qs.toString() ? '&' + qs.toString() : '');
-        //} else {
-        //    returnQuery = qs.toString() || null;
-        //}
-
-        //const queryString = returnQuery;
         const queryString = new URLSearchParams(req.query).toString() || null;
 
         // NOVO: Prosleđujemo CEO 'req' objekat EJS fajlu!
@@ -790,7 +699,6 @@ app.get('/components/details/:id', async (req, res) => {
             component: component,
             req: req,
             queryString
-            //returnQuery 
         });
 
     } catch (error) {
@@ -1012,18 +920,10 @@ app.post('/components/new', async (req, res) => {
 
     } catch (err) {
 
-        // OLD
-        // let errorMessage = 'An error occurred while saving the component.';
-
-        // NEW (default key)
         let errorKey = 'add.error.save_failed';
 
         if (err.message && err.message.includes('UNIQUE constraint failed: components.part_number')) {
 
-            // OLD
-            // errorMessage = 'Error: Part Number already exists in the inventory.';
-
-            // NEW
             errorKey = 'add.error.part_number_exists';
         }
 
@@ -1038,7 +938,6 @@ app.post('/components/new', async (req, res) => {
             categories: categories,
             activeService,
             justAdded: req.query.added === '1',
-            // ✅ NOVO – vraćamo unete podatke
             formData: req.body
         });
     }
@@ -1200,7 +1099,6 @@ app.post('/backup', (req, res) => {
         res.render('backup', {
             layout: 'layout',
             pageTitle: "Backup | Component Tracker",
-            //message: `Backup successfully created: ${backupFileName}`,
             messageKey: 'backup.success.created',
             msgType: "success",
             dbSize: Math.round(fs.statSync(dbPath).size / 1024),
@@ -1216,7 +1114,6 @@ app.post('/backup', (req, res) => {
         res.render('backup', {
             layout: 'layout',
             pageTitle: "Backup | Component Tracker",
-            //message: "Backup failed. Check folder permissions.",
             messageKey: 'backup.error.failed',
             msgType: "danger",
             dbSize: Math.round(fs.statSync(dbPath).size / 1024),
@@ -1309,7 +1206,7 @@ app.post('/tools/api/edit', async (req, res) => {
     res.redirect('/tools/api');
 });
 
-// POST: delete servisa
+// POST: delete API servisa
 app.post('/tools/api/delete/:id', async (req, res) => {
     const { id } = req.params;
     await db.run('DELETE FROM api_services WHERE id=?', [id]);
@@ -1403,8 +1300,14 @@ async function shutdown(signal) {
     process.on('uncaughtException', err => {
     console.error('[shutdown] Uncaught Exception:', err);
     shutdown('uncaughtException');
-    });
+});
+
 process.on('unhandledRejection', (reason) => {
     console.error('[shutdown] Unhandled Rejection:', reason);
     shutdown('unhandledRejection');
 });
+
+process.on('uncaughtException', err => {
+    console.error('[shutdown] Uncaught Exception:', err);
+    shutdown('uncaughtException').finally(() => process.exit(1));
+  });
