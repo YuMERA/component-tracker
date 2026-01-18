@@ -293,7 +293,7 @@ Authentication is not enforced by default.
 [![LowStock](screenshots/lowstock_thumb.png)](screenshots/lowstock.png)
 
 ### Out Of Stock Component
-[![OutOfStock](screenshots/outstockk_thumb.png)](screenshots/outstock.png)
+[![OutOfStock](screenshots/outstock_thumb.png)](screenshots/outstock.png)
 
 ### Api Services
 [![API](screenshots/api_thumb.png)](screenshots/api.png)
