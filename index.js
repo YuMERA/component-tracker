@@ -10,6 +10,9 @@ const sqlite3 = require('sqlite3');
 let db;
 let server;
 
+const fs = require('fs');
+const path = require('path');
+
 // Trenutna verzija instalirane aplikacije.
 const CURRENT_APP_VERSION = "1.0.0"; 
 // URL putanja do eksternog JSON fajla sa informacijama o najnovijoj verziji.
@@ -883,9 +886,8 @@ app.post('/components/new', async (req, res) => {
 
         return res.render('add-new', { 
             pageTitle: 'Add New Component | Component Tracker',
-            // OLD (hardcoded)
-            // error: 'Component Name, Part Number, and Category are required.',
-            // NEW (i18n key)
+            
+            // i18n key
             error: 'add.error.required_fields',
 
             message: null,
@@ -1023,9 +1025,6 @@ app.get('/settings/update', (req, res) => {
 });
 
 // --- RUTA ZA BACKUP BAZE PODATAKA ---
-const fs = require('fs');
-const path = require('path');
-
 // GET ruta — prikazuje backup stranicu
 app.get('/backup', (req, res) => {
     const dbPath = path.join(__dirname, 'inventory.db');
@@ -1260,54 +1259,63 @@ initializeDb()
     });
 
 // Robusni graceful shutdown
-const FORCE_EXIT_TIMEOUT_MS = 10_000; // forsiraj exit posle 10s
+const FORCE_EXIT_TIMEOUT_MS = 10_000; // forsiraj exit posle 10s ako shutdown zapne
+let isShuttingDown = false;
 
-async function shutdown(signal) {
-    console.log(`\n[shutdown] Received ${signal}. Starting graceful shutdown...`);
-    const forceTimer = setTimeout(() => {
-        console.error('[shutdown] Forcing exit after timeout.');
-        process.exit(1);
-    }, FORCE_EXIT_TIMEOUT_MS);
-    forceTimer.unref && forceTimer.unref();
+async function shutdown(signal, info) {
+  if (isShuttingDown) {
+    console.log('[shutdown] Already shutting down, ignoring duplicate signal:', signal);
+    return;
+  }
+  isShuttingDown = true;
 
-    try {
-        if (server && typeof server.close === 'function') {
-        console.log('[shutdown] Closing HTTP server...');
-        await new Promise((resolve, reject) => {
-            server.close(err => (err ? reject(err) : resolve()));
-        });
-        console.log('[shutdown] HTTP server closed.');
-        }
+  console.log(`\n[shutdown] Received ${signal}. Starting graceful shutdown...`, info || '');
+  const forceTimer = setTimeout(() => {
+    console.error('[shutdown] Forcing exit after timeout.');
+    process.exit(1);
+  }, FORCE_EXIT_TIMEOUT_MS);
+  if (forceTimer.unref) forceTimer.unref();
 
-        if (db && typeof db.close === 'function') {
-        console.log('[shutdown] Closing database connection...');
-        await db.close();
-        console.log('[shutdown] Database connection closed.');
-        }
-
-        console.log('[shutdown] Graceful shutdown completed. Exiting.');
-        clearTimeout(forceTimer);
-        process.exit(0);
-
-    } catch (err) {
-        console.error('[shutdown] Error during shutdown:', err);
-        process.exit(1);
-    }
+  try {
+    // 1) Stop accepting new connections
+    if (server && typeof server.close === 'function') {
+      console.log('[shutdown] Closing HTTP server...');
+      await new Promise((resolve, reject) => {
+        server.close(err => (err ? reject(err) : resolve()));
+      });
+      console.log('[shutdown] HTTP server closed.');
     }
 
-    process.on('SIGINT', () => shutdown('SIGINT'));
-    process.on('SIGTERM', () => shutdown('SIGTERM'));
-    process.on('uncaughtException', err => {
-    console.error('[shutdown] Uncaught Exception:', err);
-    shutdown('uncaughtException');
+    // 2) Close DB connection (sqlite Database ima .close())
+    if (db && typeof db.close === 'function') {
+      console.log('[shutdown] Closing database connection...');
+      await db.close();
+      console.log('[shutdown] Database connection closed.');
+    }
+
+    clearTimeout(forceTimer);
+    console.log('[shutdown] Graceful shutdown completed. Exiting.');
+    process.exit(0);
+
+  } catch (err) {
+    console.error('[shutdown] Error during shutdown:', err);
+    process.exit(1);
+  }
+}
+
+// Signals
+process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGQUIT', () => shutdown('SIGQUIT'));
+
+// Unexpected errors: try graceful shutdown, then force exit
+process.on('uncaughtException', (err) => {
+  console.error('[shutdown] Uncaught Exception:', err);
+  // prosledi err kao dodatni info (može pomoći u logu)
+  shutdown('uncaughtException', err).catch(() => process.exit(1));
 });
 
-process.on('unhandledRejection', (reason) => {
-    console.error('[shutdown] Unhandled Rejection:', reason);
-    shutdown('unhandledRejection');
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('[shutdown] Unhandled Rejection at:', promise, 'reason:', reason);
+  shutdown('unhandledRejection', reason).catch(() => process.exit(1));
 });
-
-process.on('uncaughtException', err => {
-    console.error('[shutdown] Uncaught Exception:', err);
-    shutdown('uncaughtException').finally(() => process.exit(1));
-  });

@@ -279,7 +279,7 @@
                        data-i18n="add.description_label">
                     Description / Specifications
                 </label>
-                <textarea class="form-control" id="description" name="description" data-order="8" rows="3"><%= isEdit ? component.description : ( formData?.description || '') %></textarea>
+                <textarea class="form-control" id="description" name="description" data-order="8" rows="5"><%= isEdit ? component.description : ( formData?.description || '') %></textarea>
             </div>
 
             <div class="mb-3">
@@ -589,6 +589,11 @@
         fields.forEach((field, index) => {
             field.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
+                    
+                     // DOZVOLI Enter u textarea
+                    if (e.target.tagName === 'TEXTAREA') {
+                        return;
+                    }
                     e.preventDefault();
 
                     // Ako nije poslednje polje → idi na sledeće
