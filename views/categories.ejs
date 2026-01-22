@@ -2,7 +2,6 @@
 <% const qs = typeof queryString !== 'undefined' ? queryString : '' %>
 
 <header class="d-flex justify-content-between align-items-center">
-
     <div class="d-flex">    
         <h1 class="h3 text-body mb-0"
             data-i18n="categories.title">
@@ -15,27 +14,6 @@
            data-i18n="categories.help_title"
            onclick="toggleCategoryHelp()"></i>
     </div>
-
-    <!-- INLINE ADD CATEGORY -->
-    <div class="input-group shadow-sm w-50 ">
-        <input
-            type="text"
-            id="newCategoryInput"
-            class="form-control "
-            placeholder="New category name"
-            data-i18n-attr="placeholder"
-            data-i18n="categories.new_placeholder"
-        >
-
-        <button
-            class="btn btn-primary"
-            id="addCategoryBtn"
-        >
-            <i class="bi bi-plus-lg"></i>
-            <span data-i18n="categories.add_btn">Add</span>
-        </button>
-    </div>
-
 </header>
 
 <p class="card-text text-muted small mb-3"
@@ -70,6 +48,24 @@
 </div>
 
 <div id="alertPlaceholder"></div>
+
+<!-- INLINE ADD CATEGORY -->
+<div class="input-group shadow-sm mb-2">
+    <input
+        type="text"
+        id="newCategoryInput"
+        class="form-control "
+        placeholder="New category name"
+        data-i18n-attr="placeholder"
+        data-i18n="categories.new_placeholder"
+    >
+    <button
+        class="btn btn-primary"
+        id="addCategoryBtn">
+        <i class="bi bi-plus-lg"></i>
+        <span data-i18n="categories.add_btn">Add</span>
+    </button>
+</div>
 
 <form action="/categories" method="GET" class="mb-4">
     <div class="input-group shadow-sm">
@@ -243,7 +239,7 @@
 
     <% if (totalPages > 1) { %>
         <nav class="mx-auto">
-            <ul class="pagination mb-0 justify-content-center">
+            <ul class="pagination pagination-sm mb-0 justify-content-center">
 
                 <!-- Prev -->
                 <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">

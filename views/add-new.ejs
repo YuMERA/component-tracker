@@ -620,6 +620,31 @@
             fields[0].focus();
             fields[0].select();
         }
+
+        // UX Hook Nestajanje poruke za success nakon dodavanja
+        const alertEl = document.getElementById('justAddedAlert');
+        if (!alertEl) return;
+
+        // ⛔ čim korisnik krene da unosi novi podatak
+        const form = document.getElementById('addComponentForm');
+        if (!form) return;
+
+        const clearJustAdded = () => {
+            // ukloni alert
+            alertEl.remove();
+
+            // očisti URL (?added=1)
+            const url = new URL(window.location.href);
+            url.searchParams.delete('added');
+            window.history.replaceState({}, '', url.pathname + url.search);
+
+            // ukloni listener da se ne poziva više puta
+            form.removeEventListener('input', clearJustAdded);
+        };
+
+        // prvi input = kraj poruke
+        form.addEventListener('input', clearJustAdded);
+
     });
 
     //**********************************************************************************

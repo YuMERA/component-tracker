@@ -65,59 +65,65 @@
 <% } %>
 
 <form action="/components" method="GET" class="mb-4">
-    <div class="input-group shadow-sm">
+    <div class="input-group shadow-sm flex-wrap">
 
         <% if (locals.currentCategory || locals.currentStatus) { %>
-            <span class="input-group-text bg-body-tertiary text-primary fw-bold small">
+            <span class="input-group-text bg-body-tertiary text-primary fw-bold small w-100">
                 <% if (locals.currentCategory) { %>
                     <span data-i18n="components.filter_category">Category:</span>&nbsp;
                     <%= currentCategory %>
                 <% } %>
                 <% if (locals.currentStatus) { %>
+                    &nbsp;·&nbsp;
                     <span data-i18n="components.filter_status">Status:</span>&nbsp;
                     <%= currentStatus %>
                 <% } %>
             </span>
         <% } %>
 
-        <input
-            type="text"
-            class="form-control"
-            placeholder="Search by Name, Part Number, or Location..."
-            data-i18n-attr="placeholder"
-            data-i18n="components.search_placeholder"
-            name="search"
-            value="<%= locals.searchQuery || '' %>"
-        >
+        <!-- 👇 OVO JE KLJUČNI WRAPPER -->
+        <div class="input-group w-100 mt-2 mt-sm-0">
+            <input
+                type="text"
+                class="form-control"
+                placeholder="Search by Name, Part Number, or Location..."
+                data-i18n-attr="placeholder"
+                data-i18n="components.search_placeholder"
+                name="search"
+                value="<%= locals.searchQuery || '' %>"
+            >
 
-        <% if (locals.currentStatus) { %>
-            <input type="hidden" name="status" value="<%= currentStatus %>">
-        <% } %>
+            <% if (locals.currentStatus) { %>
+                <input type="hidden" name="status" value="<%= currentStatus %>">
+            <% } %>
 
-        <% if (locals.currentCategory) { %>
-            <input type="hidden" name="category" value="<%= currentCategory %>">
-        <% } %>
+            <% if (locals.currentCategory) { %>
+                <input type="hidden" name="category" value="<%= currentCategory %>">
+            <% } %>
 
-        <% if (locals.limit) { %>
-            <input type="hidden" name="limit" value="<%= limit %>">
-        <% } %>
+            <% if (locals.limit) { %>
+                <input type="hidden" name="limit" value="<%= limit %>">
+            <% } %>
 
-        <button class="btn btn-primary" type="submit">
-            <i class="bi bi-search"></i>
-            <span data-i18n="components.search">Search</span>
-        </button>
+            <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i>
+                <span data-i18n="components.search">Search</span>
+            </button>
 
-        <% if (locals.searchQuery) { %>
-            <a href="/components?<%= clearSearchQueryString %>"
-               class="btn btn-outline-danger"
-               title="Clear Search"
-               data-i18n-attr="title"
-               data-i18n="components.clear_search">
-                <i class="bi bi-x-lg"></i>
-            </a>
-        <% } %>
+            <% if (locals.searchQuery) { %>
+                <a href="/components?<%= clearSearchQueryString %>"
+                   class="btn btn-outline-danger"
+                   data-i18n="components.clear_search"
+                   data-i18n-attr="title"
+                   title="Clear Search">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            <% } %>
+        </div>
+
     </div>
 </form>
+
 
 <div class="card shadow-sm border-0">
     <div class="card-body p-0">
@@ -125,16 +131,16 @@
             <table class="table table-hover table-striped mb-0" id="componentsTable">
                 <thead class="table-secondary">
                     <tr>
-                        <th style="width: 50px;"></th> 
+                        <th style="width: 40px;"></th> 
                         <th data-sort="text" class="text small text-uppercase">
                             <span data-i18n="components.col_name">Name</span>
                             <span class="sort-indicator"></span>
                         </th>
-                        <th data-sort="text" class="small text-uppercase">
+                        <th data-sort="text" class="small text-uppercase d-none d-sm-table-cell">
                             <span data-i18n="components.col_part">Part No.</span>
                             <span class="sort-indicator"></span>
                         </th>
-                        <th data-sort="text" class="small text-uppercase">
+                        <th data-sort="text" class="small text-uppercase d-none d-sm-table-cell">
                             <span data-i18n="components.col_category">Category</span>
                             <span class="sort-indicator"></span>
                         </th>
@@ -192,26 +198,26 @@
                                     <% if (component.image_url && component.image_url.trim() !== '') { %>
                                         <a href="<%= component.image_url %>" target="_blank" title="Show big picture">
                                             <img src="<%= component.image_url %>"
-                                                 style="width: 40px; height: 40px; object-fit: contain; border-radius: 4px; background-color: white; border: 1px solid #b8b8b8;">
+                                                 style="width: 40px; height: 40px; object-fit: contain; border-radius: 4px; background-color: white; border: 1px solid #d1d1d1; padding: 2px;">
                                         </a>
                                     <% } %>
                                 </td>
 
-                                <td class="align-middle">
+                                <td class="align-middle text-break" style="min-width: 110px;">
                                     <a href="/components/details/<%= component.id %>?<%= queryString %>" title="View Component Details"
                                        class="fw-bold text-decoration-none <%= nameColorClass %>">
                                         <%= component.name %>
                                     </a>
                                 </td>
 
-                                <td class="align-middle">
+                                <td class="align-middle d-none d-sm-table-cell">
                                     <a href="/components/details/<%= component.id %>?<%= queryString %>" title="View Component Details"
                                         class="fw-normal text-decoration-none <%= nameColorClass %>">
                                         <%= component.part_number || 'N/A' %>
                                     </a>
                                 </td>
 
-                                <td class="align-middle">
+                                <td class="align-middle d-none d-sm-table-cell">
                                     <a href="/components?category=<%= encodeURIComponent(component.category || 'Uncategorized') %>"
                                        title="View all items in <%= component.category %> category"
                                        class="fst-italic text-decoration-none <%= nameColorClass %>"> 
@@ -334,7 +340,7 @@
         %>
 
         <nav class="mx-auto">
-            <ul class="pagination mb-0 justify-content-center">
+            <ul class="pagination pagination-sm mb-0 justify-content-center">
 
                 <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
                     <a class="page-link" href="?page=<%= currentPage - 1 %>&<%= baseQuery %>">«</a>
