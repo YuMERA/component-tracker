@@ -1,6 +1,7 @@
 {
     "components.title": "Sve komponente",
     "components.add_new": "Dodaj novo",
+    "components.add_new.title": "Dodaj novu komponentu",
     "components.subtitle": "Kompletna lista svih stavki u inventaru.",
   
     "components.help_title": "O svim komponentama",
@@ -12,6 +13,11 @@
     "components.search_placeholder": "Pretraga po nazivu, kataloškom broju ili lokaciji...",
     "components.search": "Pretraga",
     "components.clear_search": "Očisti pretragu",
+
+    "components.export_csv":"Izvezi CSV",
+    "components.export_csv.title":"Izvoz podataka (CSV)",
+    "components.export_list":"Izvezi Listu",
+    "components.export_list.title":"Izvoz inventarske liste (TXT)",
   
     "components.filter_category": "Kategorija:",
     "components.filter_status": "Status:",

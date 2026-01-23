@@ -1,6 +1,7 @@
 {
     "components.title": "All Components",
     "components.add_new": "Add New",
+    "components.add_new.title": "Add New Component",
     "components.subtitle": "A complete list of all items in the inventory.",
   
     "components.help_title": "About all components",
@@ -9,9 +10,14 @@
     "components.help_p2": "Each component represents a physical part you have available.",
     "components.help_p3": "Stock levels shown here reflect current availability.",
   
-    "components.search_placeholder": "Search by Name, Part Number, or Location...",
+    "components.search_placeholder": "Search by Name, PartNo or Location...",
     "components.search": "Search",
     "components.clear_search": "Clear search",
+
+    "components.export_csv":"Export CSV",
+    "components.export_csv.title":"Export data (CSV)",
+    "components.export_list":"Export List",
+    "components.export_list.title":"Export inventory list (TXT)",
   
     "components.filter_category": "Category:",
     "components.filter_status": "Status:",

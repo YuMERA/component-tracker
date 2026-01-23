@@ -11,16 +11,15 @@
            title="About categories"
            data-i18n-attr="title"
            data-i18n="components.help_title"
-           onclick="togglePageHelp()"></i>
+           onclick="togglePageHelp()">
+        </i>
     </div>
+        
 
-    <a href="/components/new" class="btn btn-primary shadow-sm">
-        <i class="bi bi-plus-circle me-2"></i>
-        <span data-i18n="components.add_new">Add New</span>
-    </a>
+        
 </header>
 
-<p class="card-text text-muted small mb-3"
+<p class="card-text text-muted small mb-2"
    data-i18n="components.subtitle">
     A complete list of all items in the inventory.
 </p>
@@ -64,7 +63,7 @@
     </div>
 <% } %>
 
-<form action="/components" method="GET" class="mb-4">
+<form action="/components" method="GET" class="mb-3">
     <div class="input-group shadow-sm flex-wrap">
 
         <% if (locals.currentCategory || locals.currentStatus) { %>
@@ -74,7 +73,6 @@
                     <%= currentCategory %>
                 <% } %>
                 <% if (locals.currentStatus) { %>
-                    &nbsp;·&nbsp;
                     <span data-i18n="components.filter_status">Status:</span>&nbsp;
                     <%= currentStatus %>
                 <% } %>
@@ -82,11 +80,11 @@
         <% } %>
 
         <!-- 👇 OVO JE KLJUČNI WRAPPER -->
-        <div class="input-group w-100 mt-2 mt-sm-0">
+        <div class="input-group w-100 mt-sm-0">
             <input
                 type="text"
                 class="form-control"
-                placeholder="Search by Name, Part Number, or Location..."
+                placeholder="Search by Name, PartNo or Location..."
                 data-i18n-attr="placeholder"
                 data-i18n="components.search_placeholder"
                 name="search"
@@ -124,6 +122,39 @@
     </div>
 </form>
 
+<div class="mb-1 d-flex flex-wrap gap-2 justify-content-between align-items-center">
+    <div>
+        <!-- Export TXT (Inventory List) -->
+        <a
+            href="/components/export/list<%= queryString ? '?' + queryString : '' %>"
+            class="btn btn-outline-secondary btn-sm"
+            title="Export inventory list (TXT)"
+            data-i18n-attr="title"
+            data-i18n="components.export_list.title">
+            <i class="bi bi-file-text me-1"></i>
+            <span data-i18n="components.export_list">Export List</span>
+        </a>
+
+        <!-- Export CSV -->
+        <a
+            href="/components/export/csv<%= queryString ? '?' + queryString : '' %>"
+            class="btn btn-outline-secondary btn-sm"
+            title="Export data (CSV)"
+            data-i18n-attr="title"
+            data-i18n="components.export_csv.title">
+            <i class="bi bi-file-earmark-spreadsheet me-1"></i>
+            <span data-i18n="components.export_csv">Export CSV</span>
+        </a>
+    </div>
+    <a href="/components/new" 
+        class="btn btn-primary btn-sm shadow-sm"
+        title="Add New Component"
+        data-i18n-attr="title"
+        data-i18n="components.add_new.title">
+        <i class="bi bi-plus-circle me-2"></i>
+        <span data-i18n="components.add_new">Add New</span>
+    </a>
+</div>
 
 <div class="card shadow-sm border-0">
     <div class="card-body p-0">
@@ -159,7 +190,7 @@
                         <th class="data-sort small text-uppercase text-center d-none d-sm-table-cell">
                             <span data-i18n="components.col_status">Status</span>
                         </th>
-                        <th class="small text-uppercase text-end">
+                        <th class="small text-uppercase text-end" style="min-width: 90px;">
                             <span data-i18n="components.col_actions">Actions</span>
                         </th>
                     </tr>
@@ -279,7 +310,7 @@
                                             data-confirm-title="components.confirm_title"
                                             data-confirm-message="components.confirm_delete"
                                             data-confirm-params='{"name":"<%= component.name %>"}'>
-                                             <i class="bi bi-trash"></i>
+                                            <i class="bi bi-trash"></i>
                                          </a>                                         
                                     </div>
                                 </td>
@@ -292,7 +323,7 @@
     </div>
 </div>
 
-<div class="d-flex flex-wrap justify-content-between align-items-center mt-3 mb-2">
+<div class="d-flex flex-wrap justify-content-between align-items-center mt-3 mb-2 gap-2">
 
     <form id="limitForm" method="GET" class="d-flex align-items-center">
         <% if (searchQuery) { %>

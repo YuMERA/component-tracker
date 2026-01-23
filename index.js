@@ -715,27 +715,40 @@ app.get('/components', async (req, res) => {
     const filterCategory = req.query.category || null;
     const filterStatus = req.query.status;
     const searchQuery = req.query.search; 
-    const successMessage = req.query.message; // poruka
-    const errorMessage = req.query.error;     // greška
+    const successMessage = req.query.message;
+    const errorMessage = req.query.error;
     
     // PAGINATION: page i limit
-    const page = parseInt(req.query.page) || 1;        // trenutna strana
-    const limit = req.query.limit === 'All' ? null : parseInt(req.query.limit) || 10; // koliko po strani
+    const page = parseInt(req.query.page) || 1;
+    const limit = req.query.limit === 'All' ? null : parseInt(req.query.limit) || 10;
 
     let sqlParams = [];
     let whereClauses = [];
     let pageTitleSuffix = 'All Components';
 
-
-    // 1. PRETRAGA
+    // =========================
+    // 1. PRETRAGA (simple, predictable)
+    // =========================
     if (searchQuery) {
-        const searchPattern = `%${searchQuery}%`;
-        whereClauses.push('(name LIKE ? OR part_number LIKE ? OR location LIKE ?)');
-        sqlParams.push(searchPattern, searchPattern, searchPattern);
+        const tokens = searchQuery
+            .split(/\s+/)
+            .map(t => t.trim())
+            .filter(Boolean);
+
+        for (const token of tokens) {
+            const pattern = `%${token}%`;
+            whereClauses.push(
+                '(name LIKE ? OR part_number LIKE ? OR location LIKE ? OR description LIKE ? OR category LIKE ?)'
+            );
+            sqlParams.push(pattern, pattern, pattern, pattern, pattern);
+        }
+
         pageTitleSuffix = `Search: "${searchQuery}"`;
     }
 
+    // =========================
     // 2. FILTER KATEGORIJA
+    // =========================
     if (filterCategory) {
         if (filterCategory === 'Uncategorized') {
             whereClauses.push('(category IS NULL OR category = "")');
@@ -746,7 +759,9 @@ app.get('/components', async (req, res) => {
         if (!searchQuery) pageTitleSuffix = `${filterCategory} Components`;
     }
 
+    // =========================
     // 3. FILTER STATUS
+    // =========================
     if (filterStatus === 'out-of-stock') {
         whereClauses.push('quantity = 0');
         if (!searchQuery && !filterCategory) pageTitleSuffix = 'Out of Stock Components';
@@ -756,17 +771,21 @@ app.get('/components', async (req, res) => {
         whereClauses.push('quantity <= min_stock AND min_stock > 0');
         if (!searchQuery && !filterCategory) pageTitleSuffix = 'Low Stock Components';
     }
-    
-    // 4. SQL COUNT za pagination (da znamo totalItems)
+
+    // =========================
+    // 4. COUNT (pagination)
+    // =========================
     let countQuery = 'SELECT COUNT(*) as total FROM components';
-    if (whereClauses.length > 0) countQuery += ' WHERE ' + whereClauses.join(' AND ');
+    if (whereClauses.length > 0) {
+        countQuery += ' WHERE ' + whereClauses.join(' AND ');
+    }
 
     try {
         const countResult = await db.get(countQuery, sqlParams);
         const totalItems = countResult.total;
         const totalPages = limit ? Math.ceil(totalItems / limit) : 1;
 
-        // 🛡 UX zaštita: ako smo na strani koja više ne postoji (npr. posle delete)
+        // UX zaštita
         if (page > totalPages && totalPages > 0) {
             const query = new URLSearchParams({
                 ...(filterCategory && { category: filterCategory }),
@@ -779,43 +798,40 @@ app.get('/components', async (req, res) => {
             return res.redirect(`/components?${query}`);
         }
 
-
         const offset = limit ? (page - 1) * limit : 0;
 
-        // 5. GLAVNI SELECT (sa limit i offset)
+        // =========================
+        // 5. GLAVNI SELECT
+        // =========================
         let sqlQuery = 'SELECT * FROM components';
-        if (whereClauses.length > 0) sqlQuery += ' WHERE ' + whereClauses.join(' AND ');
+        if (whereClauses.length > 0) {
+            sqlQuery += ' WHERE ' + whereClauses.join(' AND ');
+        }
         sqlQuery += ' ORDER BY name ASC';
         if (limit) sqlQuery += ' LIMIT ? OFFSET ?';
-        const finalParams = limit ? [...sqlParams, limit, offset] : sqlParams;
 
+        const finalParams = limit ? [...sqlParams, limit, offset] : sqlParams;
         const components = await db.all(sqlQuery, finalParams);
 
-        //const queryString = new URLSearchParams(req.query).toString();
-
+        // =========================
+        // QUERY STRING HELPERS
+        // =========================
         const qs = new URLSearchParams(req.query);
-
-        // ⛔ poruke se NE vraćaju kao kontekst liste
         qs.delete('message');
         qs.delete('error');
-
         const queryString = qs.toString();
 
-
-        // ===== CLEAR SEARCH QUERY (UX) =====
-        // uklanjamo samo 'search', ostalo ostaje (limit, category, status)
-        // page resetujemo na 1
         const queryWithoutSearch = new URLSearchParams(
             Object.fromEntries(
                 Object.entries(req.query).filter(([key]) => key !== 'search')
             )
         );
-
         queryWithoutSearch.set('page', 1);
-
         const clearSearchQueryString = queryWithoutSearch.toString();
-        const status = req.query.status || null;
-        // 6. Renderujemo EJS
+
+        // =========================
+        // 6. RENDER
+        // =========================
         res.render('all-components', {
             pageTitle: `${pageTitleSuffix} | Component Tracker`,
             components,
@@ -824,14 +840,13 @@ app.get('/components', async (req, res) => {
             searchQuery,
             message: successMessage,
             error: errorMessage,
-            // pagination
             currentPage: page,
             totalPages,
             limit,
             totalItems,
             justAdded: req.query.added === '1',
             queryString,
-            clearSearchQueryString          
+            clearSearchQueryString
         });
 
     } catch (error) {
@@ -845,10 +860,11 @@ app.get('/components', async (req, res) => {
             limit: 10,
             totalItems: 0,
             justAdded: req.query.added === '1',
-            queryString
+            queryString: ''
         });
     }
 });
+
 
 // RUTA: Prikaz forme za dodavanje nove komponente (GET)
 app.get('/components/new', async (req, res) => { // Dodat async
@@ -942,6 +958,250 @@ app.post('/components/new', async (req, res) => {
             justAdded: req.query.added === '1',
             formData: req.body
         });
+    }
+});
+
+app.get('/components/export/csv', async (req, res) => {
+    const filterCategory = req.query.category || null;
+    const filterStatus = req.query.status || null;
+    const searchQuery = req.query.search || null;
+
+    let whereClauses = [];
+    let sqlParams = [];
+
+    // === SEARCH (simple tokens, isto kao lista) ===
+    if (searchQuery) {
+        const tokens = searchQuery
+            .split(/\s+/)
+            .map(t => t.trim())
+            .filter(Boolean);
+
+        for (const token of tokens) {
+            const pattern = `%${token}%`;
+            whereClauses.push(
+                '(name LIKE ? OR part_number LIKE ? OR location LIKE ? OR description LIKE ? OR category LIKE ?)'
+            );
+            sqlParams.push(pattern, pattern, pattern, pattern, pattern);
+        }
+    }
+
+    // === CATEGORY ===
+    if (filterCategory) {
+        if (filterCategory === 'Uncategorized') {
+            whereClauses.push('(category IS NULL OR category = "")');
+        } else {
+            whereClauses.push('category = ?');
+            sqlParams.push(filterCategory);
+        }
+    }
+
+    // === STATUS ===
+    if (filterStatus === 'out-of-stock') {
+        whereClauses.push('quantity = 0');
+    }
+
+    if (filterStatus === 'low-stock') {
+        whereClauses.push('quantity <= min_stock AND min_stock > 0');
+    }
+
+    // === SQL ===
+    let sqlQuery = `
+        SELECT
+            name,
+            part_number,
+            category,
+            location,
+            quantity,
+            min_stock,
+            description
+        FROM components
+    `;
+
+    if (whereClauses.length) {
+        sqlQuery += ' WHERE ' + whereClauses.join(' AND ');
+    }
+
+    sqlQuery += ' ORDER BY name ASC';
+
+    try {
+        const rows = await db.all(sqlQuery, sqlParams);
+
+        // === CSV HEADER ===
+        const header = [
+            'Name',
+            'Part Number',
+            'Category',
+            'Location',
+            'Quantity',
+            'Min Stock',
+            'Description'
+        ];
+
+        // === CSV ESCAPE ===
+        const csvEscape = (val) => {
+            const str = String(val ?? '')
+                .replace(/"/g, '""')     // escape quotes
+                .replace(/\r?\n+/g, ' | '); // flatten newlines
+        
+            return `"${str}"`;
+        };
+
+        const csvLines = [
+            header.join(','),
+            ...rows.map(row =>
+                [
+                    row.name,
+                    row.part_number,
+                    row.category,
+                    row.location,
+                    row.quantity,
+                    row.min_stock,
+                    row.description
+                ].map(csvEscape).join(',')
+            )
+        ];
+
+        const csvContent = csvLines.join('\n');
+
+        // === RESPONSE ===
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename="components_export.csv"'
+        );
+
+        res.send(csvContent);
+
+    } catch (err) {
+        console.error('CSV export failed:', err);
+        res.status(500).send('CSV export failed');
+    }
+});
+
+app.get('/components/export/list', async (req, res) => {
+    const filterCategory = req.query.category || null;
+    const filterStatus = req.query.status || null;
+    const searchQuery = req.query.search || null;
+
+    let whereClauses = [];
+    let sqlParams = [];
+
+    // SEARCH (simple tokens)
+    if (searchQuery) {
+        const tokens = searchQuery
+            .split(/\s+/)
+            .map(t => t.trim())
+            .filter(Boolean);
+
+        for (const token of tokens) {
+            const pattern = `%${token}%`;
+            whereClauses.push(
+                '(name LIKE ? OR part_number LIKE ? OR location LIKE ? OR category LIKE ?)'
+            );
+            sqlParams.push(pattern, pattern, pattern, pattern);
+        }
+    }
+
+    // CATEGORY
+    if (filterCategory) {
+        if (filterCategory === 'Uncategorized') {
+            whereClauses.push('(category IS NULL OR category = "")');
+        } else {
+            whereClauses.push('category = ?');
+            sqlParams.push(filterCategory);
+        }
+    }
+
+    // STATUS
+    if (filterStatus === 'out-of-stock') {
+        whereClauses.push('quantity = 0');
+    }
+
+    if (filterStatus === 'low-stock') {
+        whereClauses.push('quantity <= min_stock AND min_stock > 0');
+    }
+
+    let sqlQuery = `
+        SELECT
+            name,
+            category,
+            location,
+            quantity
+        FROM components
+    `;
+
+    if (whereClauses.length) {
+        sqlQuery += ' WHERE ' + whereClauses.join(' AND ');
+    }
+
+    sqlQuery += ' ORDER BY category ASC, name ASC';
+
+    try {
+        const rows = await db.all(sqlQuery, sqlParams);
+
+        const today = new Date().toISOString().split('T')[0];
+
+        // column widths (A4 friendly)
+        const COLS = {
+            no: 4,
+            name: 26,
+            category: 20,
+            location: 24,
+            qty: 5
+        };
+
+        const pad = (str, len) =>
+            String(str ?? '')
+                .slice(0, len)
+                .padEnd(len, ' ');
+
+        const line = '-'.repeat(
+            COLS.no +
+            COLS.name +
+            COLS.category +
+            COLS.location +
+            COLS.qty +
+            5
+        );
+
+        let output = '';
+        output += `Workshop Inventory – ${filterCategory || 'All Components'}\n`;
+        output += `Generated: ${today}\n`;
+        output += `${line}\n`;
+        output +=
+            pad('No', COLS.no) +
+            pad('Name', COLS.name) +
+            pad('Category', COLS.category) +
+            pad('Location', COLS.location) +
+            pad('Qty', COLS.qty) +
+            '\n';
+        output += `${line}\n`;
+
+        rows.forEach((row, idx) => {
+            output +=
+                pad(idx + 1, COLS.no) +
+                pad(row.name, COLS.name) +
+                pad(row.category, COLS.category) +
+                pad(row.location, COLS.location) +
+                pad(row.quantity, COLS.qty) +
+                '\n';
+        });
+
+        output += `${line}\n`;
+        output += `Total items: ${rows.length}\n`;
+
+
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename="workshop_inventory_list.txt"'
+        );
+
+        res.send(output);
+
+    } catch (err) {
+        console.error('List export failed:', err);
+        res.status(500).send('List export failed');
     }
 });
 
