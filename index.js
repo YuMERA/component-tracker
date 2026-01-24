@@ -1078,6 +1078,7 @@ app.get('/components/export/csv', async (req, res) => {
     }
 });
 
+// RUTA: Tekstualni izvoz liste komponenti
 app.get('/components/export/list', async (req, res) => {
     const filterCategory = req.query.category || null;
     const filterStatus = req.query.status || null;
@@ -1086,21 +1087,23 @@ app.get('/components/export/list', async (req, res) => {
     let whereClauses = [];
     let sqlParams = [];
 
-    // SEARCH (simple tokens)
+    // SEARCH — MUST MATCH UI SEMANTICS (AND between tokens)
     if (searchQuery) {
         const tokens = searchQuery
             .split(/\s+/)
             .map(t => t.trim())
             .filter(Boolean);
 
+        // ISTA LOGIKA KAO U /components RUTI
         for (const token of tokens) {
             const pattern = `%${token}%`;
             whereClauses.push(
-                '(name LIKE ? OR part_number LIKE ? OR location LIKE ? OR category LIKE ?)'
+                '(name LIKE ? OR part_number LIKE ? OR location LIKE ? OR category LIKE ? OR description LIKE ?)'
             );
-            sqlParams.push(pattern, pattern, pattern, pattern);
+            sqlParams.push(pattern, pattern, pattern, pattern, pattern);
         }
     }
+
 
     // CATEGORY
     if (filterCategory) {
@@ -1163,9 +1166,35 @@ app.get('/components/export/list', async (req, res) => {
             COLS.qty +
             5
         );
+        
+        const titleParts = [];
+
+        // Category
+        if (filterCategory) {
+            titleParts.push(filterCategory);
+        } else {
+            titleParts.push('All Components');
+        }
+
+        // Status
+        if (filterStatus === 'low-stock') {
+            titleParts.push('Low Stock');
+        }
+
+        if (filterStatus === 'out-of-stock') {
+            titleParts.push('Out of Stock');
+        }
+
+        // Search
+        if (searchQuery) {
+            titleParts.push(`Search: ${searchQuery}`);
+        }
+
+        const titleLine = titleParts.join(' | ');
 
         let output = '';
-        output += `Workshop Inventory – ${filterCategory || 'All Components'}\n`;
+        //output += `Workshop Inventory – ${filterCategory || 'All Components'}\n`;
+        output += `Workshop Inventory – ${titleLine}\n`;
         output += `Generated: ${today}\n`;
         output += `${line}\n`;
         output +=
@@ -1204,8 +1233,6 @@ app.get('/components/export/list', async (req, res) => {
         res.status(500).send('List export failed');
     }
 });
-
-
 
 // RUTA: SETTINGS PAGE
 app.get('/settings', async (req, res) => {
