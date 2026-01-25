@@ -161,7 +161,6 @@ async function checkForUpdates() {
 // ✔ POZIV JEDNOM (pri startu aplikacije)
 checkForUpdates();
 
-
 // ****************************
 // 2. EXPRESS KONFIGURACIJA (Middleware)
 // ****************************
@@ -493,8 +492,6 @@ app.get('/api/categories', async (req, res) => {
     }
 });
 
-
-
 /// RUTA: Brisanje komponente (DELETE)
 app.get('/components/delete/:id', async (req, res) => {
     const componentId = req.params.id;
@@ -531,7 +528,6 @@ app.get('/components/delete/:id', async (req, res) => {
         res.redirect(redirectUrl);
     }
 });
-
 
 // RUTA: Prikaz forme za izmenu (GET)
 app.get('/components/edit/:id', async (req, res) => {
@@ -907,7 +903,6 @@ app.get('/components', async (req, res) => {
     }
 });
 
-
 // RUTA: Prikaz forme za dodavanje nove komponente (GET)
 app.get('/components/new', async (req, res) => { // Dodat async
     const categories = await db.all('SELECT name FROM categories ORDER BY name ASC');
@@ -1145,7 +1140,6 @@ app.get('/components/export/list', async (req, res) => {
             sqlParams.push(pattern, pattern, pattern, pattern, pattern);
         }
     }
-
 
     // CATEGORY
     if (filterCategory) {
@@ -1587,11 +1581,9 @@ app.get('/about', (req, res) => {
     });
 });
 
-
 // ****************************
 // 4. POKRETANJE SERVERA (ROBUSTNO)
 // ****************************
-
 // Provereni, robustni lanac za inicijalizaciju i startovanje
 initializeDb()
     .then(() => {
