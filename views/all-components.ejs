@@ -15,8 +15,6 @@
         </i>
     </div>
         
-
-        
 </header>
 
 <p class="card-text text-muted small mb-2"
@@ -122,38 +120,44 @@
     </div>
 </form>
 
-<div class="mb-1 d-flex flex-wrap gap-2 justify-content-between align-items-center">
-    <div>
-        <!-- Export TXT (Inventory List) -->
-        <a
-            href="/components/export/list<%= queryString ? '?' + queryString : '' %>"
-            class="btn btn-outline-secondary btn-sm"
-            title="Export inventory list (TXT)"
+<div class="mb-2 d-flex flex-wrap gap-2 justify-content-end align-items-center">
+    <div class="dropdown">
+        <button 
+            class="btn btn-primary dropdown-toggle shadow-sm" 
+            type="button" 
+            data-bs-toggle="dropdown" 
+            aria-expanded="false"
+            title="Export data to file"
             data-i18n-attr="title"
-            data-i18n="components.export_list.title">
-            <i class="bi bi-file-text me-1"></i>
-            <span data-i18n="components.export_list">Export List</span>
-        </a>
-
-        <!-- Export CSV -->
-        <a
-            href="/components/export/csv<%= queryString ? '?' + queryString : '' %>"
-            class="btn btn-outline-secondary btn-sm"
-            title="Export data (CSV)"
-            data-i18n-attr="title"
-            data-i18n="components.export_csv.title">
-            <i class="bi bi-file-earmark-spreadsheet me-1"></i>
-            <span data-i18n="components.export_csv">Export CSV</span>
-        </a>
-    </div>
-    <a href="/components/new" 
-        class="btn btn-primary btn-sm shadow-sm"
-        title="Add New Component"
-        data-i18n-attr="title"
-        data-i18n="components.add_new.title">
-        <i class="bi bi-plus-circle me-2"></i>
-        <span data-i18n="components.add_new">Add New</span>
-    </a>
+            data-i18n="components.export.title">
+            <i class="bi bi-save me-1"></i>
+            <span data-i18n="components.export">Export Data</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+            <li>
+                <!-- Export TXT (Inventory List) -->
+                <a class="dropdown-item" 
+                    href="/components/export/list<%= queryString ? '?' + queryString : '' %>"
+                    title="Export inventory list (ata)"
+                    data-i18n-attr="title"
+                    data-i18n="components.export_list.title">
+                    <i class="bi bi-file-text me-1"></i>
+                    <span data-i18n="components.export_list">Export TXT</span>
+                </a>
+            </li>
+            <li>
+                <!-- Export CSV -->
+                <a class="dropdown-item" 
+                    href="/components/export/csv<%= queryString ? '?' + queryString : '' %>"
+                    title="Export data (CSV)"
+                    data-i18n-attr="title"
+                    data-i18n="components.export_csv.title">
+                    <i class="bi bi-file-earmark-spreadsheet me-1"></i>
+                    <span data-i18n="components.export_csv">Export CSV</span>
+                </a>
+            </li>
+        </ul>
+    </div>  
 </div>
 
 <div class="card shadow-sm border-0">
