@@ -447,6 +447,13 @@
                             <span data-i18n="nav.api_services">API Services</span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a href="/backup"
+                        class="nav-link rounded-2 <%= pageTitle.includes('Backup') ? 'bg-primary text-white' : 'text-body' %>">
+                            <i class="bi bi-database-up me-2"></i>
+                            <span data-i18n="nav.backup">Database Backup</span>
+                        </a>
+                    </li>
                 </ul>
 
                 <!-- NOVO: Sekcija OPTIONS (za mobilni) -->
@@ -471,13 +478,6 @@
                             <% if (updateAvailable) { %>
                                 <span class="badge bg-danger ms-2">NEW</span>
                             <% } %>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/backup"
-                        class="nav-link rounded-2 <%= pageTitle.includes('Backup') ? 'bg-primary text-white' : 'text-body' %>">
-                            <i class="bi bi-database-up me-2"></i>
-                            <span data-i18n="nav.backup">Database Backup</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -621,6 +621,12 @@
                                 <span class="sidebar-text" data-i18n="nav.api_services">API Services</span>
                             </a>
                         </li>
+                        <!-- NOVI LINK ZA DATABASE BACKUP - DESKTOP -->
+                        <li class="nav-item">
+                            <a href="/backup" class="nav-link rounded-2 <%= pageTitle.includes('Backup') ? 'bg-primary text-white' : 'text-body' %>">
+                                <i class="bi bi-database-up me-2"></i> <span class="sidebar-text" data-i18n="nav.backup">Database Backup</span>
+                            </a>
+                        </li>
                     </ul>
                     
                     <!-- Sekcija OPTIONS (za desktop) -->
@@ -639,12 +645,6 @@
                                 <% if (updateAvailable) { %>
                                     <span class="badge  bg-danger ms-1" style="font-size: 0.65rem;">NEW</span>
                                 <% } %>
-                            </a>
-                        </li>
-                        <!-- NOVI LINK ZA DATABASE BACKUP - DESKTOP -->
-                        <li class="nav-item">
-                            <a href="/backup" class="nav-link rounded-2 <%= pageTitle.includes('Backup') ? 'bg-primary text-white' : 'text-body' %>">
-                                <i class="bi bi-database-up me-2"></i> <span class="sidebar-text" data-i18n="nav.backup">Database Backup</span>
                             </a>
                         </li>
                         <!-- NOVI LINK ZA ABOUT - DESKTOP -->
