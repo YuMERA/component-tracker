@@ -227,7 +227,11 @@
                             <tr class="<%= rowClass %>">
                                 <td class="text-center p-2 align-middle">
                                     <% if (component.image_url && component.image_url.trim() !== '') { %>
-                                        <a href="<%= component.image_url %>" target="_blank" title="Show big picture">
+                                        <a href="<%= component.image_url %>" 
+                                            target="_blank" 
+                                            title="Show big picture"
+                                            data-i18n-attr="title"
+                                            data-i18n="components.show_big_picture">
                                             <img src="<%= component.image_url %>"
                                                  style="width: 40px; height: 40px; object-fit: contain; border-radius: 4px; background-color: white; border: 1px solid #d1d1d1; padding: 2px;">
                                         </a>
@@ -235,14 +239,20 @@
                                 </td>
 
                                 <td class="align-middle text-break" style="min-width: 110px;">
-                                    <a href="/components/details/<%= component.id %>?<%= queryString %>" title="View Component Details"
-                                       class="fw-bold text-decoration-none <%= nameColorClass %>">
+                                    <a href="/components/details/<%= component.id %>?<%= queryString %>" 
+                                        title="View Component Details"
+                                        data-i18n-attr="title"
+                                        data-i18n="components.view_details"
+                                        class="fw-bold text-decoration-none <%= nameColorClass %>">
                                         <%= component.name %>
                                     </a>
                                 </td>
 
                                 <td class="align-middle d-none d-sm-table-cell">
-                                    <a href="/components/details/<%= component.id %>?<%= queryString %>" title="View Component Details"
+                                    <a href="/components/details/<%= component.id %>?<%= queryString %>" 
+                                        title="View Component Details"
+                                        data-i18n-attr="title"
+                                        data-i18n="components.view_details"
                                         class="fw-normal text-decoration-none <%= nameColorClass %>">
                                         <%= component.part_number || 'N/A' %>
                                     </a>
@@ -250,8 +260,11 @@
 
                                 <td class="align-middle d-none d-sm-table-cell">
                                     <a href="/components?category=<%= encodeURIComponent(component.category || 'Uncategorized') %>"
-                                       title="View all items in <%= component.category %> category"
-                                       class="fst-italic text-decoration-none <%= nameColorClass %>"> 
+                                        title="View all items in <%= component.category %> category"
+                                        data-i18n-attr="title"
+                                        data-i18n="components.view_category_items"
+                                        data-i18n-params='{"category":"<%= component.category || "Uncategorized" %>"}'
+                                        class="fst-italic text-decoration-none <%= nameColorClass %>"> 
                                         <%= component.category || 'Uncategorized' %>
                                     </a>
                                 </td>

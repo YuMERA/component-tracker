@@ -53,6 +53,10 @@
 
     "components.modal_delete": "Obriši",
     "components.confirm_title": "Brisanje komponente",
-    "components.confirm_delete": "Da li ste sigurni da želite da obrišete komponentu \"{name}\"?"
+    "components.confirm_delete": "Da li ste sigurni da želite da obrišete komponentu \"{name}\"?",
+
+    "components.show_big_picture": "Prikaži veću sliku",
+    "components.view_details": "Pogledaj detalje komponente",
+    "components.view_category_items": "Prikaži sve stavke iz kategorije {category}"
   }
   

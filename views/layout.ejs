@@ -464,9 +464,13 @@
                     </li>
                     <li class="nav-item">
                         <a href="/settings/update"
-                        class="nav-link rounded-2 <%= pageTitle.includes('Updates') ? 'bg-primary text-white' : 'text-body' %>">
+                           class="nav-link rounded-2
+                                  <%= pageTitle.includes('Updates') ? 'bg-primary text-white' : 'text-body' %>">
                             <i class="bi bi-arrow-clockwise me-2"></i>
                             <span data-i18n="nav.updates">Check New Update</span>
+                            <% if (updateAvailable) { %>
+                                <span class="badge bg-danger ms-2">NEW</span>
+                            <% } %>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -623,7 +627,11 @@
                         <!-- NOVI LINK KOJI ZAHTEVA KORISNIK - 2/2 -->
                         <li class="nav-item">
                             <a href="/settings/update" class="nav-link rounded-2 <%= pageTitle.includes('Updates') ? 'bg-primary text-white' : 'text-body' %>">
-                                <i class="bi bi-arrow-clockwise me-2"></i> <span class="sidebar-text" data-i18n="nav.updates">Check New Update</span>
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                <span class="sidebar-text" data-i18n="nav.updates">Check New Update</span>
+                                <% if (updateAvailable) { %>
+                                    <span class="badge  bg-danger ms-1" style="font-size: 0.65rem;">NEW</span>
+                                <% } %>
                             </a>
                         </li>
                         <!-- NOVI LINK ZA DATABASE BACKUP - DESKTOP -->
@@ -690,6 +698,8 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <script src="/js/i18n.js"></script>
         <script>
+            console.log('latest:', "<%= latestVersion %>");
+console.log('seen:', localStorage.getItem('seenUpdateVersion'));
 
             // =====================================================
             // GLOBAL CONFIRM MODAL HANDLER

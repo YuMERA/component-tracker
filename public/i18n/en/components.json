@@ -53,6 +53,10 @@
 
     "components.modal_delete" : "Delete",
     "components.confirm_title": "Delete Component",
-    "components.confirm_delete": "Are you sure you want to delete components \"{name}\"?"
+    "components.confirm_delete": "Are you sure you want to delete components \"{name}\"?",
+
+    "components.show_big_picture": "Show large image",
+    "components.view_details": "View component details",
+    "components.view_category_items": "View all items in {category} category"
   }
   

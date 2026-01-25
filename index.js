@@ -14,9 +14,17 @@ const fs = require('fs');
 const path = require('path');
 
 // Trenutna verzija instalirane aplikacije.
-const CURRENT_APP_VERSION = "1.0.0"; 
+const CURRENT_APP_VERSION = "2.0.0"; 
 // URL putanja do eksternog JSON fajla sa informacijama o najnovijoj verziji.
 const EXTERNAL_VERSION_URL = 'https://vassajt.com/version_info.json'; 
+
+// ==============================
+// UPDATE STATE (MORA BITI OVDE)
+// ==============================
+let updateState = {
+    updateAvailable: false,
+    latestVersion: null
+};
 
 // ****************************
 // 1. INICIJALIZACIJA BAZE PODATAKA
@@ -124,6 +132,36 @@ function formatCustomDate(date) {
     return `${day}-${month}-${year}, ${hours}:${minutes}:${seconds}`;
 }
 
+// *******************************
+// Provera nove verzije za update
+// *******************************
+const semver = require('semver');
+
+async function checkForUpdates() {
+    try {
+        // Za sada može lokalni fajl ili fetch kasnije
+        const jsonPath = path.join(__dirname, 'version_info_mock.json');
+        const data = JSON.parse(
+            await fs.promises.readFile(jsonPath, 'utf-8')
+        );
+
+        updateState.latestVersion = data.latest_version;
+        updateState.updateAvailable =
+            semver.gt(data.latest_version, CURRENT_APP_VERSION);
+
+        console.log('[update] Current:', CURRENT_APP_VERSION);
+        console.log('[update] Latest:', data.latest_version);
+        console.log('[update] Update available:', updateState.updateAvailable);
+
+    } catch (err) {
+        console.error('[update] Check failed:', err.message);
+    }
+}
+
+// ✔ POZIV JEDNOM (pri startu aplikacije)
+checkForUpdates();
+
+
 // ****************************
 // 2. EXPRESS KONFIGURACIJA (Middleware)
 // ****************************
@@ -143,6 +181,10 @@ app.use((req, res, next) => {
     qs.delete('message');
     qs.delete('error');
     res.locals.queryString = qs.toString() || null;
+
+    // 🔔 UPDATE SIGNAL (layout global)
+    res.locals.updateAvailable = updateState.updateAvailable;
+    res.locals.latestVersion = updateState.latestVersion;
     
     next();
 });
@@ -1137,7 +1179,7 @@ app.get('/components/export/list', async (req, res) => {
         sqlQuery += ' WHERE ' + whereClauses.join(' AND ');
     }
 
-    sqlQuery += ' ORDER BY category ASC, name ASC';
+    sqlQuery += ' ORDER BY name ASC';
 
     try {
         const rows = await db.all(sqlQuery, sqlParams);
@@ -1148,7 +1190,7 @@ app.get('/components/export/list', async (req, res) => {
         const COLS = {
             no: 4,
             name: 26,
-            category: 20,
+            category: 25,
             location: 24,
             qty: 5
         };
