@@ -1,0 +1,108 @@
+<!-- PAGE HEADER -->
+<header class="d-flex justify-content-between align-items-center mb-0">
+    <div class="d-flex">
+        <h1 class="h3 text-body mb-0" data-i18n="about.title">
+            About Component Tracker
+        </h1>
+    </div>
+</header>
+
+<p class="card-text text-muted small mb-3"
+   data-i18n="about.subtitle">
+    Information about the application, its purpose, and license.
+</p>
+
+<!-- PAGE CONTENT -->
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <!-- INTRO -->
+        <p data-i18n="about.intro">
+            Component Tracker is a local-first inventory application designed for managing electronic components.
+        </p>
+
+        <!-- PURPOSE -->
+        <h5 class="mt-2" data-i18n="about.purpose.title">
+            Purpose
+        </h5>
+        <p data-i18n="about.purpose.text">
+            The main goal of the application is to provide a simple and reliable way to track components.
+        </p>
+
+        <!-- FEATURES -->
+        <h5 class="mt-2" data-i18n="about.features.title">
+            Key Features
+        </h5>
+        <ul class="mb-3">
+            <li data-i18n="about.features.item1">
+                Centralized component list
+            </li>
+            <li data-i18n="about.features.item2">
+                Low-stock and out-of-stock tracking
+            </li>
+            <li data-i18n="about.features.item3">
+                TXT and CSV export
+            </li>
+            <li data-i18n="about.features.item4">
+                Local SQLite database
+            </li>
+            <li data-i18n="about.features.item5">
+                Live language switching
+            </li>
+            <li data-i18n="about.features.item6">
+                Light and dark theme support
+            </li>
+        </ul>
+
+        <!-- DESIGN PHILOSOPHY -->
+        <h5 class="mt-2" data-i18n="about.philosophy.title">
+            Design Philosophy
+        </h5>
+        <p data-i18n="about.philosophy.text">
+            Simplicity, predictability, and full user control over data.
+        </p>
+
+        <!-- LICENSE -->
+        <h5 class="mt-2" data-i18n="about.license.title">
+            License
+        </h5>
+
+        <pre class="border rounded p-3 small bg-body-tertiary mb-2">
+            <%= licenseText %>
+        </pre>
+
+        <!-- SUPPORT / LINKS -->
+        <h6 data-i18n="about.support.title">
+            Support & Links
+        </h6>
+        <p data-i18n="about.support.text">
+            If you find this project useful, you can support its development.
+        </p>
+
+        <div class="d-flex gap-3 fs-4">
+            <a href="https://paypal.me/yumera" target="_blank" aria-label="PayPal">
+                <i class="bi bi-paypal"></i>
+            </a>
+            <a href="https://github.com/YuMERA/component-tracker" target="_blank" aria-label="GitHub">
+                <i class="bi bi-github"></i>
+            </a>
+            <a href="https://instagram.com/mera_system/" target="_blank" aria-label="Instagram">
+                <i class="bi bi-instagram"></i>
+            </a>
+            <a href="https://youtube.com/@mera-system" target="_blank" aria-label="YouTube">
+                <i class="bi bi-youtube"></i>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<!-- PAGE-SPECIFIC i18n INIT -->
+<script>
+    function applyAboutI18n() {
+        I18N.apply(['layout', 'about']);
+    }
+
+    document.addEventListener('DOMContentLoaded', applyAboutI18n);
+    window.addEventListener('languageChanged', applyAboutI18n);
+</script>

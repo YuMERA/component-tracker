@@ -1567,6 +1567,27 @@ app.get('/tools/api/find-part', async (req, res) => {
     }
 });
 
+//*********************************/
+// Ruta: About
+//*********************************/
+app.get('/about', (req, res) => {
+    const fs = require('fs');
+    const path = require('path');
+
+    let licenseText = '';
+    try {
+        licenseText = fs.readFileSync(path.join(__dirname, 'LICENSE'), 'utf8');
+    } catch {
+        licenseText = '';
+    }
+
+    res.render('about', {
+        pageTitle: 'About | Component Tracker',
+        licenseText
+    });
+});
+
+
 // ****************************
 // 4. POKRETANJE SERVERA (ROBUSTNO)
 // ****************************

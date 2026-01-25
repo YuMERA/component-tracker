@@ -1,0 +1,26 @@
+{
+    "about.title": "About Component Tracker",
+    "about.subtitle": "Information about the application, its purpose, and license.",
+  
+    "about.intro": "Component Tracker is a local-first inventory application designed for managing electronic components in a personal workshop or laboratory.",
+  
+    "about.purpose.title": "Purpose",
+    "about.purpose.text": "The main goal of Component Tracker is to provide a simple, fast, and reliable way to keep track of electronic components without relying on cloud services or external accounts.",
+  
+    "about.features.title": "Key Features",
+    "about.features.item1": "Centralized component list with search and filters",
+    "about.features.item2": "Low-stock and out-of-stock tracking",
+    "about.features.item3": "Human-readable TXT and machine-readable CSV exports",
+    "about.features.item4": "Local SQLite database stored on your machine",
+    "about.features.item5": "Live language switching (EN / SR)",
+    "about.features.item6": "Light and dark theme support",
+  
+    "about.philosophy.title": "Design Philosophy",
+    "about.philosophy.text": "The application follows a simplicity-first approach: predictable behavior, stable URLs, no hidden state, and no unnecessary abstractions. All data stays local and under user control.",
+  
+    "about.license.title": "License",
+  
+    "about.support.title": "Support & Links",
+    "about.support.text": "If you find this project useful, you can support its development or follow related content using the links below."
+  }
+  

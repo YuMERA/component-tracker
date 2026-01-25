@@ -1,0 +1,25 @@
+{
+  "about.title": "O aplikaciji Component Tracker",
+  "about.subtitle": "Informacije o aplikaciji, njenoj nameni i licenci.",
+
+  "about.intro": "Component Tracker je lokalna aplikacija za vođenje evidencije elektronskih komponenti namenjena ličnoj radionici ili laboratoriji.",
+
+  "about.purpose.title": "Namena",
+  "about.purpose.text": "Glavni cilj aplikacije je da obezbedi jednostavan, brz i pouzdan način za praćenje elektronskih komponenti bez oslanjanja na cloud servise ili korisničke naloge.",
+
+  "about.features.title": "Glavne mogućnosti",
+  "about.features.item1": "Centralna lista komponenti sa pretragom i filterima",
+  "about.features.item2": "Praćenje stanja male količine i nestalih komponenti",
+  "about.features.item3": "Izvoz u TXT (čitljiv) i CSV (mašinski) format",
+  "about.features.item4": "Lokalna SQLite baza podataka na računaru korisnika",
+  "about.features.item5": "Promena jezika u realnom vremenu (EN / SR)",
+  "about.features.item6": "Podrška za svetlu i tamnu temu",
+
+  "about.philosophy.title": "Dizajnerska filozofija",
+  "about.philosophy.text": "Aplikacija je dizajnirana sa fokusom na jednostavnost: predvidljivo ponašanje, stabilni URL-ovi, bez skrivenog stanja i bez nepotrebnih apstrakcija. Svi podaci ostaju lokalno i pod kontrolom korisnika.",
+
+  "about.license.title": "Licenca",
+
+  "about.support.title": "Podrška i linkovi",
+  "about.support.text": "Ako smatraš da je projekat koristan, možeš podržati njegov razvoj ili zapratiti povezani sadržaj putem linkova ispod."
+}

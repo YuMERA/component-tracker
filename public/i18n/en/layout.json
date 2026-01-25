@@ -13,6 +13,7 @@
     "nav.settings": "Settings",
     "nav.updates": "Check New Update",
     "nav.backup": "Database Backup",
+    "nav.about": "About",
 
     "layout.mobile.toggle_navigation": "Toggle navigation",
     "layout.mobile.navigation_menu": "Navigation Menu",
