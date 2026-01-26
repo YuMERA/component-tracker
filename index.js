@@ -168,6 +168,7 @@ const semver = require('semver');
 }*/
 async function checkForUpdates() {
     try {
+        // Za sada može lokalni fajl ili fetch kasnije
         const jsonPath = path.join(__dirname, 'version_info_mock.json');
         const data = JSON.parse(
             await fs.promises.readFile(jsonPath, 'utf-8')
@@ -191,8 +192,8 @@ async function checkForUpdates() {
     }
 }
 
-
 // ✔ POZIV JEDNOM (pri startu aplikacije)
+// Update check is performed once at application startup
 checkForUpdates();
 
 // ****************************

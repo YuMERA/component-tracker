@@ -47,7 +47,7 @@
 
     <!-- CURRENT VERSION -->
     <div class="col-12 mb-4">
-        <div class="card shadow-sm border-0">
+        <div class="card shadow-sm border-a">
             <div class="card-header bg-body-tertiary fw-bold" data-i18n="update.current.title">
                 Current Installed Version
             </div>
@@ -85,7 +85,7 @@
 
     <!-- UPDATE STATUS -->
     <div class="col-12 mb-4">
-        <div class="card shadow-sm border-0">
+        <div class="card shadow-sm border-1">
             <div class="card-header bg-body-tertiary fw-bold"
                 data-i18n="update.status.title">
                 Update Status
@@ -144,7 +144,7 @@
 
     <!-- HISTORY -->
     <div class="col-12 mb-4">
-        <div class="card shadow-sm border-0">
+        <div class="card shadow-sm border-1">
             <div class="card-header bg-body-tertiary fw-bold"
                 data-i18n="update.history.title">
                 All Version History
@@ -155,7 +155,7 @@
 
                 <div style="max-height:350px;overflow-y:auto" class="border rounded">
                     <div class="accordion accordion-flush" id="versionAccordion">
-                        <% versions.reverse().forEach((version, index) => { %>
+                        <% versions.slice().reverse().forEach((version, index) => { %>
                         <div class="accordion-item">
                             <h2 class="accordion-header">
                                 <button class="accordion-button py-2 ps-3 <%= version.version === latestVersion ? '' : 'collapsed' %>"
