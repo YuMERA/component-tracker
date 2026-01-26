@@ -22,8 +22,7 @@
     A complete list of all items in the inventory.
 </p>
 
-<div id="pageHelp"
-     class="card border-0 bg-body-tertiary my-2 d-none">
+<div id="pageHelp" class="card border-0 bg-body-tertiary my-2 d-none">
     <div class="card-body small text-body-secondary">
         <div class="d-flex align-items-start">
             <i class="bi bi-info-circle-fill me-2 mt-1"></i>
@@ -61,7 +60,7 @@
     </div>
 <% } %>
 
-<form action="/components" method="GET" class="mb-3">
+<form action="/components" method="GET" class="mb-2">
     <div class="input-group shadow-sm flex-wrap">
 
         <% if (locals.currentCategory || locals.currentStatus) { %>
@@ -120,7 +119,7 @@
     </div>
 </form>
 
-<div class="mb-2 d-flex flex-wrap gap-2 justify-content-end align-items-center">
+<div class="mb-2 d-flex flex-wrap gap-2 justify-content-start align-items-center">
     <div class="dropdown">
         <button 
             class="btn btn-primary dropdown-toggle shadow-sm" 

@@ -658,8 +658,9 @@
                         
                     </ul>
                 </nav>
+                <p class="text-muted text-small text-center"> V<%= appVersion %></p>
                 <!-- Footer sa Copyrightom (za desktop) -->
-                <div class="sidebar-footer p-3 border-top d-flex justify-content-center align-items-center">
+                <div class="sidebar-footer p-2 border-top d-flex justify-content-center align-items-center">
                     <small class="text-muted small sidebar-text">© Copyright 2026 by mera-system</small>
                 </div>
             </aside>
@@ -715,7 +716,7 @@
         <script src="/js/i18n.js"></script>
         <script>
             console.log('latest:', "<%= latestVersion %>");
-console.log('seen:', localStorage.getItem('seenUpdateVersion'));
+            console.log('seen:', localStorage.getItem('seenUpdateVersion'));
 
             // =====================================================
             // GLOBAL CONFIRM MODAL HANDLER

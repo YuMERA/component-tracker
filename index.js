@@ -21,10 +21,19 @@ const EXTERNAL_VERSION_URL = 'https://vassajt.com/version_info.json';
 // ==============================
 // UPDATE STATE (MORA BITI OVDE)
 // ==============================
-let updateState = {
+/*let updateState = {
     updateAvailable: false,
     latestVersion: null
+};*/
+let updateState = {
+    updateAvailable: false,
+    latestVersion: null,
+    downloadLink: null,
+    versions: [],
+    lastChecked: null,
+    error: null
 };
+
 
 // ****************************
 // 1. INICIJALIZACIJA BAZE PODATAKA
@@ -137,7 +146,7 @@ function formatCustomDate(date) {
 // *******************************
 const semver = require('semver');
 
-async function checkForUpdates() {
+/*async function checkForUpdates() {
     try {
         // Za sada može lokalni fajl ili fetch kasnije
         const jsonPath = path.join(__dirname, 'version_info_mock.json');
@@ -156,7 +165,32 @@ async function checkForUpdates() {
     } catch (err) {
         console.error('[update] Check failed:', err.message);
     }
+}*/
+async function checkForUpdates() {
+    try {
+        const jsonPath = path.join(__dirname, 'version_info_mock.json');
+        const data = JSON.parse(
+            await fs.promises.readFile(jsonPath, 'utf-8')
+        );
+
+        updateState.latestVersion = data.latest_version;
+        updateState.downloadLink = data.download_link || null;
+        updateState.versions = data.versions || [];
+        updateState.updateAvailable =
+            semver.gt(data.latest_version, CURRENT_APP_VERSION);
+
+        updateState.lastChecked = new Date();
+        updateState.error = null;
+
+        console.log('[update] Current:', CURRENT_APP_VERSION);
+        console.log('[update] Latest:', data.latest_version);
+        console.log('[update] Update available:', updateState.updateAvailable);
+
+    } catch (err) {
+        updateState.error = err.message;
+    }
 }
+
 
 // ✔ POZIV JEDNOM (pri startu aplikacije)
 checkForUpdates();
@@ -184,6 +218,7 @@ app.use((req, res, next) => {
     // 🔔 UPDATE SIGNAL (layout global)
     res.locals.updateAvailable = updateState.updateAvailable;
     res.locals.latestVersion = updateState.latestVersion;
+    res.locals.appVersion = CURRENT_APP_VERSION;
     
     next();
 });
@@ -1280,72 +1315,59 @@ app.get('/settings', async (req, res) => {
     });
 });
 
-// --- RUTA ZA PROVERU AŽURIRANJA (Dodajte je u sekciju Vaših Express ruta) ---
+// --- RUTA ZA PROVERU AŽURIRANJA ---
 app.get('/settings/update', (req, res) => {
+
     // Inicijalizacija podataka za renderovanje
     const renderData = { 
-        pageTitle: 'Updates | Component Tracker', 
-        currentVersion: CURRENT_APP_VERSION, 
-        latestVersion: CURRENT_APP_VERSION, 
-        updateAvailable: false, 
-        downloadLink: '', 
-        latestVersionInfo: null, 
-        currentVersionInfo: { title: 'No details', features: [] }, 
-        versions: [], 
-        error: null // Dodato polje za poruku o grešci
-       
+        pageTitle: 'Updates | Component Tracker',
+
+        // Trenutna verzija aplikacije
+        currentVersion: CURRENT_APP_VERSION,
+
+        // PODACI IZ CENTRALNOG UPDATE STATE-a
+        latestVersion: updateState.latestVersion || CURRENT_APP_VERSION,
+        updateAvailable: updateState.updateAvailable || false,
+        downloadLink: updateState.downloadLink || '',
+
+        // Detalji verzija (ako postoje)
+        versions: updateState.versions || [],
+
+        // Placeholder-i (popunjavaju se ispod)
+        latestVersionInfo: null,
+        currentVersionInfo: { title: 'No details', features: [] },
+
+        // Greška ako postoji
+        error: updateState.error || null
     };
 
-    // PUtanja do JSON fajla
-    const jsonPath = path.join(__dirname, 'version_info_mock.json');
-    let versionInfo = null;
-
     try {
-        // 1. Provera postojanja fajla
-        if (!fs.existsSync(jsonPath)) {
-            throw new Error(`File 'version_info_mock.json' not found in path: ${jsonPath}`);
+        const allVersions = renderData.versions;
+
+        // Pronađi detalje za najnoviju verziju
+        if (renderData.latestVersion && allVersions.length > 0) {
+            renderData.latestVersionInfo =
+                allVersions.find(v => v.version === renderData.latestVersion)
+                || { title: "Not available", features: [] };
         }
 
-        // 2. Učitavanje i parsiranje JSON-a
-        // Koristimo sinhrono čitanje jer se ovo dešava samo pri ruti.
-        const jsonContent = fs.readFileSync(jsonPath, 'utf8');
-        versionInfo = JSON.parse(jsonContent);
+        // Pronađi detalje za trenutnu verziju
+        renderData.currentVersionInfo =
+            allVersions.find(v => v.version === CURRENT_APP_VERSION)
+            || {
+                title: "No details found",
+                features: ["There is no description for the installed version."]
+            };
 
-        // 3. Provera da li su podaci pravilno učitani
-        if (!versionInfo || !versionInfo.latest_version || !versionInfo.versions) {
-            throw new Error("The JSON data is formatted incorrectly. Missing 'latest_version' or 'versions' keys.");
-        }
-
-        const latestVersion = versionInfo.latest_version;
-        const downloadLink = versionInfo.download_link;
-        const allVersions = versionInfo.versions || [];
-
-        // 4. Pronađi detalje za najnoviju i trenutnu verziju
-        const latestVersionInfo = allVersions.find(v => v.version === latestVersion);
-        const currentVersionInfo = allVersions.find(v => v.version === CURRENT_APP_VERSION);
-
-        // 5. Upoređivanje verzija (Jednostavna string komparacija)
-        if (latestVersion && latestVersion > CURRENT_APP_VERSION) {
-            renderData.updateAvailable = true;
-        }
-
-        // 6. Priprema podataka za prikaz
-        renderData.latestVersion = latestVersion;
-        renderData.downloadLink = downloadLink;
-        renderData.latestVersionInfo = latestVersionInfo || { title: "Not available", features: [] };
-        renderData.currentVersionInfo = currentVersionInfo || { title: "No details found", features: ["There is no description for the installed version."] };
-        renderData.versions = allVersions;
-        
     } catch (error) {
-        // Greška pri čitanju, parsiranju ili obradi JSON-a
-        console.error("KRITIČNA GREŠKA pri učitavanju ili obradi version_info_mock.json:", error.message);
-        // Postavljamo poruku o grešci u renderData, koja će biti prikazana u update-check.ejs
+        console.error('[update] Render error:', error.message);
         renderData.error = `Data processing error: ${error.message}`;
     }
 
     // Renderovanje templejta
     res.render('update-check', renderData);
 });
+
 
 // --- RUTA ZA BACKUP BAZE PODATAKA ---
 // GET ruta — prikazuje backup stranicu
