@@ -163,6 +163,11 @@
                                     data-bs-target="#collapse<%= index %>">
                                     <strong class="me-2">V<%= version.version %></strong>
                                     <span class="text-muted"><%= version.title %></span>
+                                    <% if (version.released_at) { %>
+                                        <small class="text-muted p-2">
+                                            (<%= version.released_at %>)
+                                        </small>
+                                    <% } %>
                                 </button>
                             </h2>
                             <div id="collapse<%= index %>" 

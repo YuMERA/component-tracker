@@ -1,10 +1,11 @@
 {
   "latest_version": "2.0.0",
-  "download_link": "https://vassajt.com/download/elektro_v2.0.0.zip",
+  "download_url": "https://vassajt.com/download/elektro_v2.0.0.zip",
   "versions": [
     {
       "version": "1.0.0",
       "title": "Initial Stable Release",
+      "released_at": "2025-13-12",
       "features": [
         "Core inventory management for electronic components.",
         "Create, edit and delete components.",
@@ -19,6 +20,7 @@
     {
       "version": "2.0.0",
       "title": "Major Update: Inventory Search and Export Improvements",
+      "released_at": "2026-25-01",
       "features": [
         "Advanced multi-token search across name, category, location and description fields.",
         "Consistent search behavior across component list and export functions.",

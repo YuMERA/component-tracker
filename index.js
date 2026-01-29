@@ -168,14 +168,23 @@ const semver = require('semver');
 }*/
 async function checkForUpdates() {
     try {
-        // Za sada može lokalni fajl ili fetch kasnije
-        const jsonPath = path.join(__dirname, 'version_info_mock.json');
+        /*// Za sada može lokalni fajl ili fetch kasnije
+        const jsonPath = path.join(__dirname, 'version_info.json');
         const data = JSON.parse(
             await fs.promises.readFile(jsonPath, 'utf-8')
-        );
+        );*/
+        
+        // TODO: Remove token when repository becomes public
+        // https://raw.githubusercontent.com/<USER>/<REPO>/<BRANCH>/<FILE>
+        const UPDATE_INFO_URL = 'https://raw.githubusercontent.com/YuMERA/component-tracker/refs/heads/main/version_info.json?token=GHSAT0AAAAAADR6E5TNBMHPN3DBJGC2Q5B42L3WMQQ';
+        const response = await fetch(UPDATE_INFO_URL);
+        if (!response.ok) {
+            throw new Error('Failed to fetch update info');
+        }
+        const data = await response.json();
 
         updateState.latestVersion = data.latest_version;
-        updateState.downloadLink = data.download_link || null;
+        updateState.downloadLink = data.download_url || null;
         updateState.versions = data.versions || [];
         updateState.updateAvailable =
             semver.gt(data.latest_version, CURRENT_APP_VERSION);
@@ -186,6 +195,7 @@ async function checkForUpdates() {
         console.log('[update] Current:', CURRENT_APP_VERSION);
         console.log('[update] Latest:', data.latest_version);
         console.log('[update] Update available:', updateState.updateAvailable);
+        console.log('[update] Released at:', updateState.released);
 
     } catch (err) {
         updateState.error = err.message;
@@ -1334,7 +1344,7 @@ app.get('/settings/update', (req, res) => {
         // Detalji verzija (ako postoje)
         versions: updateState.versions || [],
 
-        // Placeholder-i (popunjavaju se ispod)
+        // Placeholder-i
         latestVersionInfo: null,
         currentVersionInfo: { title: 'No details', features: [] },
 
@@ -1345,14 +1355,14 @@ app.get('/settings/update', (req, res) => {
     try {
         const allVersions = renderData.versions;
 
-        // Pronađi detalje za najnoviju verziju
+        // Detalji za najnoviju verziju
         if (renderData.latestVersion && allVersions.length > 0) {
             renderData.latestVersionInfo =
                 allVersions.find(v => v.version === renderData.latestVersion)
                 || { title: "Not available", features: [] };
         }
 
-        // Pronađi detalje za trenutnu verziju
+        // Detalji za trenutnu verziju
         renderData.currentVersionInfo =
             allVersions.find(v => v.version === CURRENT_APP_VERSION)
             || {
@@ -1368,7 +1378,6 @@ app.get('/settings/update', (req, res) => {
     // Renderovanje templejta
     res.render('update-check', renderData);
 });
-
 
 // --- RUTA ZA BACKUP BAZE PODATAKA ---
 // GET ruta — prikazuje backup stranicu
