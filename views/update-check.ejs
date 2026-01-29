@@ -47,18 +47,18 @@
 
     <!-- CURRENT VERSION -->
     <div class="col-12 mb-4">
-        <div class="card shadow-sm border-a">
+        <div class="card shadow-sm border-1">
             <div class="card-header bg-body-tertiary fw-bold" data-i18n="update.current.title">
                 Current Installed Version
             </div>
             <div class="card-body pt-2 pb-2">
-                <p class="card-text text-muted small"
+                <p class="card-text text-muted small mb-0"
                 data-i18n="update.current.subtitle">
                 </p>
 
                 <div class="list-group list-group-flush">
                     <div class="list-group-item d-flex align-items-center">
-                        <i class="bi bi-info-circle me-2 h5 p-2 text-primary"></i>
+                        <i class="bi bi-info-circle-fill me-2 h5 p-2 text-primary"></i>
                         <div>
                             <div class="fw-bold">
                                 <span data-i18n="update.current.version"></span>
@@ -96,9 +96,9 @@
 
                 <div class="list-group list-group-flush">
                     <div class="list-group-item d-flex align-items-center
-                        <%= updateAvailable ? 'border-start border-danger border-4' : 'border-start border-success border-4' %>">
+                        <%= updateAvailable ? 'border-start border-danger border-2' : 'border-start border-success border-2' %>">
 
-                        <i class="bi bi-cloud-download me-2 h5 p-2
+                        <i class="bi bi-cloud-download-fill me-2 h5 p-2
                             <%= updateAvailable ? 'text-danger' : 'text-success' %>"></i>
 
                         <div>
