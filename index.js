@@ -176,7 +176,7 @@ async function checkForUpdates() {
         
         // TODO: Remove token when repository becomes public
         // https://raw.githubusercontent.com/<USER>/<REPO>/<BRANCH>/<FILE>
-        const UPDATE_INFO_URL = 'https://raw.githubusercontent.com/YuMERA/component-tracker/refs/heads/main/version_info.json?token=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';
+        const UPDATE_INFO_URL = 'https://raw.githubusercontent.com/YuMERA/component-tracker/refs/heads/main/version_info.json?token=GHSAT0AAAAAADR6E5TNU4X53O2YUCHJWEJQ2L4PPWA';
         const response = await fetch(UPDATE_INFO_URL);
         if (!response.ok) {
             throw new Error('Failed to fetch update info');
