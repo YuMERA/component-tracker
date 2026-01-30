@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Trenutna verzija instalirane aplikacije.
-const CURRENT_APP_VERSION = "2.0.0"; 
+const CURRENT_APP_VERSION = "1.0.0"; 
 // URL putanja do eksternog JSON fajla sa informacijama o najnovijoj verziji.
 const EXTERNAL_VERSION_URL = 'https://vassajt.com/version_info.json'; 
 
@@ -176,7 +176,7 @@ async function checkForUpdates() {
         
         // TODO: Remove token when repository becomes public
         // https://raw.githubusercontent.com/<USER>/<REPO>/<BRANCH>/<FILE>
-        const UPDATE_INFO_URL = 'https://raw.githubusercontent.com/YuMERA/component-tracker/refs/heads/main/version_info.json?token=GHSAT0AAAAAADR6E5TNTQRPGKX62GC6FH4Q2L4OVNA';
+        const UPDATE_INFO_URL = 'https://raw.githubusercontent.com/YuMERA/component-tracker/refs/heads/main/version_info.json?token=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';
         const response = await fetch(UPDATE_INFO_URL);
         if (!response.ok) {
             throw new Error('Failed to fetch update info');
