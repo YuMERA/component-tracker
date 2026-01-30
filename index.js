@@ -14,17 +14,14 @@ const fs = require('fs');
 const path = require('path');
 
 // Trenutna verzija instalirane aplikacije.
-const CURRENT_APP_VERSION = "1.0.0"; 
+const CURRENT_APP_VERSION = "2.0.0"; 
 // URL putanja do eksternog JSON fajla sa informacijama o najnovijoj verziji.
-const EXTERNAL_VERSION_URL = 'https://vassajt.com/version_info.json'; 
-
+const EXTERNAL_VERSION_URL = 'https://api.github.com/repos/YuMERA/component-tracker/contents/version_info.json';
+// 2. Tvoj stalni token 
+const MY_TOKEN = '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';
 // ==============================
 // UPDATE STATE (MORA BITI OVDE)
 // ==============================
-/*let updateState = {
-    updateAvailable: false,
-    latestVersion: null
-};*/
 let updateState = {
     updateAvailable: false,
     latestVersion: null,
@@ -33,7 +30,6 @@ let updateState = {
     lastChecked: null,
     error: null
 };
-
 
 // ****************************
 // 1. INICIJALIZACIJA BAZE PODATAKA
@@ -146,26 +142,6 @@ function formatCustomDate(date) {
 // *******************************
 const semver = require('semver');
 
-/*async function checkForUpdates() {
-    try {
-        // Za sada može lokalni fajl ili fetch kasnije
-        const jsonPath = path.join(__dirname, 'version_info_mock.json');
-        const data = JSON.parse(
-            await fs.promises.readFile(jsonPath, 'utf-8')
-        );
-
-        updateState.latestVersion = data.latest_version;
-        updateState.updateAvailable =
-            semver.gt(data.latest_version, CURRENT_APP_VERSION);
-
-        console.log('[update] Current:', CURRENT_APP_VERSION);
-        console.log('[update] Latest:', data.latest_version);
-        console.log('[update] Update available:', updateState.updateAvailable);
-
-    } catch (err) {
-        console.error('[update] Check failed:', err.message);
-    }
-}*/
 async function checkForUpdates() {
     try {
         /*// Za sada može lokalni fajl ili fetch kasnije
@@ -175,9 +151,14 @@ async function checkForUpdates() {
         );*/
         
         // TODO: Remove token when repository becomes public
-        // https://raw.githubusercontent.com/<USER>/<REPO>/<BRANCH>/<FILE>
-        const UPDATE_INFO_URL = 'https://raw.githubusercontent.com/YuMERA/component-tracker/refs/heads/main/version_info.json?token=GHSAT0AAAAAADR6E5TNU4X53O2YUCHJWEJQ2L4PPWA';
-        const response = await fetch(UPDATE_INFO_URL);
+        
+        const token = MY_TOKEN;
+        const response = await fetch(EXTERNAL_VERSION_URL, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Accept': 'application/vnd.github.v3.raw' // vraća raw JSON
+            }
+        });
         if (!response.ok) {
             throw new Error('Failed to fetch update info');
         }
@@ -195,7 +176,6 @@ async function checkForUpdates() {
         console.log('[update] Current:', CURRENT_APP_VERSION);
         console.log('[update] Latest:', data.latest_version);
         console.log('[update] Update available:', updateState.updateAvailable);
-        console.log('[update] Released at:', updateState.released);
 
     } catch (err) {
         updateState.error = err.message;
