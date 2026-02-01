@@ -119,7 +119,7 @@
     </div>
 </form>
 
-<div class="mb-2 d-flex flex-wrap gap-2 justify-content-start align-items-center">
+<div class="mb-2 d-flex flex-wrap gap-2 justify-content-between align-items-center">
     <div class="dropdown">
         <button 
             class="btn btn-primary dropdown-toggle shadow-sm" 
@@ -156,192 +156,310 @@
                 </a>
             </li>
         </ul>
-    </div>  
-</div>
-
-<div class="card shadow-sm border-0">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-striped mb-0" id="componentsTable">
-                <thead class="table-secondary">
-                    <tr>
-                        <th style="width: 40px;"></th> 
-                        <th data-sort="text" class="text small text-uppercase">
-                            <span data-i18n="components.col_name">Name</span>
-                            <span class="sort-indicator"></span>
-                        </th>
-                        <th data-sort="text" class="small text-uppercase d-none d-sm-table-cell">
-                            <span data-i18n="components.col_part">Part No.</span>
-                            <span class="sort-indicator"></span>
-                        </th>
-                        <th data-sort="text" class="small text-uppercase d-none d-sm-table-cell">
-                            <span data-i18n="components.col_category">Category</span>
-                            <span class="sort-indicator"></span>
-                        </th>
-                        <th data-sort="text" class="small text-uppercase d-none d-sm-table-cell">
-                            <span data-i18n="components.col_location">Location</span>
-                            <span class="sort-indicator"></span>
-                        </th>
-                        <th data-sort="number" class="small text-uppercase text-center">
-                            <span data-i18n="components.col_stock">Stock</span>
-                            <span class="sort-indicator"></span>
-                        </th>
-                        <th data-sort="number" class="small text-uppercase text-center d-none d-sm-table-cell">
-                            <span data-i18n="components.col_min">Min. Stock</span>
-                            <span class="sort-indicator"></span>
-                        </th>
-                        <th class="data-sort small text-uppercase text-center d-none d-sm-table-cell">
-                            <span data-i18n="components.col_status">Status</span>
-                        </th>
-                        <th class="small text-uppercase text-end" style="min-width: 90px;">
-                            <span data-i18n="components.col_actions">Actions</span>
-                        </th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <% if (components.length === 0) { %>
-                        <tr>
-                            <td colspan="9" class="text-center p-4 text-muted">
-                                <span data-i18n="components.empty">No components found.</span>
-                            </td>
-                        </tr>
-                    <% } else { %>
-                        <% components.forEach(component => { %>
-                            <% 
-                                let statusClass = 'bg-success';
-                                let statusText = 'OK';
-                                let rowClass = ''; 
-                                let nameColorClass = 'text-body';
-
-                                if (component.quantity <= 0) {
-                                    statusClass = 'bg-danger';
-                                    statusText = 'OUT';
-                                    rowClass = 'table-danger';
-                                    nameColorClass = 'text-primary';
-                                } else if (component.quantity <= component.min_stock) {
-                                    statusClass = 'bg-warning';
-                                    statusText = 'LOW';
-                                    rowClass = 'table-warning';
-                                    nameColorClass = 'text-primary';
-                                }
-                            %>
-
-                            <tr class="<%= rowClass %>">
-                                <td class="text-center p-2 align-middle">
-                                    <% if (component.image_url && component.image_url.trim() !== '') { %>
-                                        <a href="<%= component.image_url %>" 
-                                            target="_blank" 
-                                            title="Show big picture"
-                                            data-i18n-attr="title"
-                                            data-i18n="components.show_big_picture">
-                                            <img src="<%= component.image_url %>"
-                                                 style="width: 40px; height: 40px; object-fit: contain; border-radius: 4px; background-color: white; border: 1px solid #d1d1d1; padding: 2px;">
-                                        </a>
-                                    <% } %>
-                                </td>
-
-                                <td class="align-middle text-break" style="min-width: 110px;">
-                                    <a href="/components/details/<%= component.id %>?<%= queryString %>" 
-                                        title="View Component Details"
-                                        data-i18n-attr="title"
-                                        data-i18n="components.view_details"
-                                        class="fw-bold text-decoration-none <%= nameColorClass %>">
-                                        <%= component.name %>
-                                    </a>
-                                </td>
-
-                                <td class="align-middle d-none d-sm-table-cell">
-                                    <a href="/components/details/<%= component.id %>?<%= queryString %>" 
-                                        title="View Component Details"
-                                        data-i18n-attr="title"
-                                        data-i18n="components.view_details"
-                                        class="fw-normal text-decoration-none <%= nameColorClass %>">
-                                        <%= component.part_number || 'N/A' %>
-                                    </a>
-                                </td>
-
-                                <td class="align-middle d-none d-sm-table-cell">
-                                    <a href="/components?category=<%= encodeURIComponent(component.category || 'Uncategorized') %>"
-                                        title="View all items in <%= component.category %> category"
-                                        data-i18n-attr="title"
-                                        data-i18n="components.view_category_items"
-                                        data-i18n-params='{"category":"<%= component.category || "Uncategorized" %>"}'
-                                        class="fst-italic text-decoration-none <%= nameColorClass %>"> 
-                                        <%= component.category || 'Uncategorized' %>
-                                    </a>
-                                </td>
-
-                                <td class="align-middle d-none d-sm-table-cell fst-italic">
-                                    <%= component.location || 'N/A' %>
-                                </td>
-
-                                <td class="text-center fw-bold align-middle">
-                                    <%= component.quantity %>
-                                </td>
-
-                                <td class="text-center text-muted align-middle d-none d-sm-table-cell">
-                                    <%= component.min_stock %>
-                                </td>
-
-                                <td class="text-center align-middle d-none d-sm-table-cell">
-                                    <span class="badge rounded-pill <%= statusClass %> text-white"
-                                          data-i18n="components.status.<%= statusText.toLowerCase() %>">
-                                        <%= statusText %>
-                                    </span>
-                                </td>
-
-                                <td class="text-end align-middle">
-                                    <div class="d-flex flex-row flex-wrap justify-content-end"> 
-                                        <% if (component.datasheet_url && component.datasheet_url.trim() !== '') { %>
-                                            <a href="<%= component.datasheet_url %>" target="_blank"
-                                                title="Datasheet"
-                                                data-i18n-attr="title"
-                                                data-i18n="components.datasheet"
-                                                class="btn btn-sm btn-outline-secondary me-1 mb-1">
-                                                <i class="bi bi-file-earmark-pdf-fill"></i>
-                                            </a>
-                                        <% } %>
-
-                                        <a href="/components/details/<%= component.id %>?<%= queryString %>"
-                                            title="Details"
-                                            data-i18n-attr="title"
-                                            data-i18n="components.view"
-                                            class="btn btn-sm btn-outline-primary me-1 mb-1">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-
-                                        <a href="/components/edit/<%= component.id %>?<%= queryString %>"
-                                            title="Edit"
-                                            data-i18n-attr="title"
-                                            data-i18n="components.edit"
-                                            class="btn btn-sm btn-outline-secondary me-1 mb-1">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-
-                                        <a href="/components/delete/<%= component.id %><%= queryString ? '?' + queryString : '' %>"
-                                            class="btn btn-sm btn-outline-danger me-1 mb-1 js-confirm"
-                                            data-i18n-attr="title"
-                                            data-i18n="components.delete"
-                                            data-confirm-title="components.confirm_title"
-                                            data-confirm-message="components.confirm_delete"
-                                            data-confirm-params='{"name":"<%= component.name %>"}'>
-                                            <i class="bi bi-trash"></i>
-                                         </a>                                         
-                                    </div>
-                                </td>
-                            </tr>
-                        <% }) %>
-                    <% } %>
-                </tbody>
-            </table>
-        </div>
+    </div>
+    <div class="btn-group btn-group-sm" role="group">
+        <%
+            const qsList = new URLSearchParams(queryString || '');
+            qsList.set('view', 'list');
+        %>
+        <a href="?<%= qsList.toString() %>"
+        class="btn btn-outline-secondary <%= currentView === 'list' ? 'active' : '' %>">
+            <i class="bi bi-list"></i>
+        </a>
+    
+        <%
+            const qsGrid = new URLSearchParams(queryString || '');
+            qsGrid.set('view', 'grid');
+        %>
+        <a href="?<%= qsGrid.toString() %>"
+        class="btn btn-outline-secondary <%= currentView === 'grid' ? 'active' : '' %>">
+            <i class="bi bi-grid"></i>
+        </a>
     </div>
 </div>
+<% if (currentView === 'grid') { %>
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-3">
+            <div class="row g-2">
+   
+                <% components.forEach(component => { %>
+    
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/components/details/<%= component.id %><%= queryString ? '?' + queryString : '' %>"
+                            class="text-decoration-none text-body">
+                            <div class="card h-100 border-2">
+    
+                                <!-- IMAGE ZONE -->
+                                <div class="d-flex align-items-center justify-content-center bg-white border-bottom"
+                                     style="height:80px;">
+    
+                                    <% if (component.image_url) { %>
+                                        <img src="<%= component.image_url %>"
+                                             width="64"
+                                             height="64"
+                                             style="object-fit: contain;"
+                                             alt="<%= component.name %>">
+                                    <% } else { %>
+                                        <i class="bi bi-cpu text-muted fs-4"></i>
+                                    <% } %>
+    
+                                </div>
+    
+                                <!-- INFO ZONE -->
+                                <div class="p-2 bg-body-tertiary d-flex flex-column">
+    
+                                    <!-- NAME -->
+                                    <div class="fw-semibold text-truncate mb-1"
+                                         title="<%= component.name %>">
+                                        <%= component.name %>
+                                    </div>
+    
+                                    <!-- STOCK -->
+                                    <div class="mt-auto">
+    
+                                        <% if (component.quantity <= 0) { %>
+                                            <span class="badge bg-danger">Stock: 0</span>
+                                        <% } else if (component.min_stock && component.quantity <= component.min_stock) { %>
+                                            <span class="badge bg-warning text-dark">
+                                                Stock: <%= component.quantity %>
+                                            </span>
+                                        <% } else { %>
+                                            <span class="badge bg-secondary">
+                                                Stock: <%= component.quantity %>
+                                            </span>
+                                        <% } %>
+    
+                                    </div>
+    
+                                </div>
+    
+                            </div>
+    
+                        </a>
+                    </div>
+    
+                <% }) %>
 
+            </div>
+        </div>
+    </div>
+    
+<% } else { %>
+    
+    
+    
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped mb-0" id="componentsTable">
+                    <thead class="table-secondary">
+                        <tr>
+                            <th style="width: 40px;"></th> 
+                            <th data-sort="text" class="text small text-uppercase">
+                                <span data-i18n="components.col_name">Name</span>
+                                <span class="sort-indicator"></span>
+                            </th>
+                            <th data-sort="text" class="small text-uppercase d-none d-sm-table-cell">
+                                <span data-i18n="components.col_part">Part No.</span>
+                                <span class="sort-indicator"></span>
+                            </th>
+                            <th data-sort="text" class="small text-uppercase d-none d-sm-table-cell">
+                                <span data-i18n="components.col_category">Category</span>
+                                <span class="sort-indicator"></span>
+                            </th>
+                            <th data-sort="text" class="small text-uppercase d-none d-sm-table-cell">
+                                <span data-i18n="components.col_location">Location</span>
+                                <span class="sort-indicator"></span>
+                            </th>
+                            <th data-sort="number" class="small text-uppercase text-center">
+                                <span data-i18n="components.col_stock">Stock</span>
+                                <span class="sort-indicator"></span>
+                            </th>
+                            <th data-sort="number" class="small text-uppercase text-center d-none d-sm-table-cell">
+                                <span data-i18n="components.col_min">Min. Stock</span>
+                                <span class="sort-indicator"></span>
+                            </th>
+                            <th class="data-sort small text-uppercase text-center d-none d-sm-table-cell">
+                                <span data-i18n="components.col_status">Status</span>
+                            </th>
+                            <th class="small text-uppercase text-end" style="min-width: 90px;">
+                                <span data-i18n="components.col_actions">Actions</span>
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <% if (components.length === 0) { %>
+                            <tr>
+                                <td colspan="9" class="text-center p-4 text-muted">
+                                    <span data-i18n="components.empty">No components found.</span>
+                                </td>
+                            </tr>
+                        <% } else { %>
+                            <% components.forEach(component => { %>
+                                <% 
+                                    let statusClass = 'bg-success';
+                                    let statusText = 'OK';
+                                    let rowClass = ''; 
+                                    let nameColorClass = 'text-body';
+
+                                    if (component.quantity <= 0) {
+                                        statusClass = 'bg-danger';
+                                        statusText = 'OUT';
+                                        rowClass = 'table-danger';
+                                        nameColorClass = 'text-primary';
+                                    } else if (component.quantity <= component.min_stock) {
+                                        statusClass = 'bg-warning';
+                                        statusText = 'LOW';
+                                        rowClass = 'table-warning';
+                                        nameColorClass = 'text-primary';
+                                    }
+                                %>
+
+                                <tr class="<%= rowClass %>">
+                                    <td class="text-center p-2 align-middle">
+                                        <% if (component.image_url && component.image_url.trim() !== '') { %>
+                                            <a href="<%= component.image_url %>" 
+                                                target="_blank" 
+                                                title="Show big picture"
+                                                data-i18n-attr="title"
+                                                data-i18n="components.show_big_picture">
+                                                <img src="<%= component.image_url %>"
+                                                    style="width: 40px; height: 40px; object-fit: contain; border-radius: 4px; background-color: white; border: 1px solid #d1d1d1; padding: 2px;">
+                                            </a>
+                                        <% } %>
+                                    </td>
+
+                                    <td class="align-middle text-break" style="min-width: 110px;">
+                                        <a href="/components/details/<%= component.id %>?<%= queryString %>" 
+                                            title="View Component Details"
+                                            data-i18n-attr="title"
+                                            data-i18n="components.view_details"
+                                            class="fw-bold text-decoration-none <%= nameColorClass %>">
+                                            <%= component.name %>
+                                        </a>
+                                    </td>
+
+                                    <td class="align-middle d-none d-sm-table-cell">
+                                        <a href="/components/details/<%= component.id %>?<%= queryString %>" 
+                                            title="View Component Details"
+                                            data-i18n-attr="title"
+                                            data-i18n="components.view_details"
+                                            class="fw-normal text-decoration-none <%= nameColorClass %>">
+                                            <%= component.part_number || 'N/A' %>
+                                        </a>
+                                    </td>
+
+                                    <td class="align-middle d-none d-sm-table-cell">
+                                        <a href="/components?category=<%= encodeURIComponent(component.category || 'Uncategorized') %>"
+                                            title="View all items in <%= component.category %> category"
+                                            data-i18n-attr="title"
+                                            data-i18n="components.view_category_items"
+                                            data-i18n-params='{"category":"<%= component.category || "Uncategorized" %>"}'
+                                            class="fst-italic text-decoration-none <%= nameColorClass %>"> 
+                                            <%= component.category || 'Uncategorized' %>
+                                        </a>
+                                    </td>
+
+                                    <td class="align-middle d-none d-sm-table-cell fst-italic">
+                                        <%= component.location || 'N/A' %>
+                                    </td>
+
+                                    <td class="text-center fw-bold align-middle">
+                                        <%= component.quantity %>
+                                    </td>
+
+                                    <td class="text-center text-muted align-middle d-none d-sm-table-cell">
+                                        <%= component.min_stock %>
+                                    </td>
+
+                                    <td class="text-center align-middle d-none d-sm-table-cell">
+                                        <span class="badge rounded-pill <%= statusClass %> text-white"
+                                            data-i18n="components.status.<%= statusText.toLowerCase() %>">
+                                            <%= statusText %>
+                                        </span>
+                                    </td>
+
+                                    <td class="text-end align-middle">
+                                        <div class="d-flex flex-row flex-wrap justify-content-end"> 
+                                            <% if (component.datasheet_url && component.datasheet_url.trim() !== '') { %>
+                                                <a href="<%= component.datasheet_url %>" target="_blank"
+                                                    title="Datasheet"
+                                                    data-i18n-attr="title"
+                                                    data-i18n="components.datasheet"
+                                                    class="btn btn-sm btn-outline-secondary me-1 mb-1">
+                                                    <i class="bi bi-file-earmark-pdf-fill"></i>
+                                                </a>
+                                            <% } %>
+
+                                            <a href="/components/details/<%= component.id %>?<%= queryString %>"
+                                                title="Details"
+                                                data-i18n-attr="title"
+                                                data-i18n="components.view"
+                                                class="btn btn-sm btn-outline-primary me-1 mb-1">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+
+                                            <a href="/components/edit/<%= component.id %>?<%= queryString %>"
+                                                title="Edit"
+                                                data-i18n-attr="title"
+                                                data-i18n="components.edit"
+                                                class="btn btn-sm btn-outline-secondary me-1 mb-1">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+
+                                            <a href="/components/delete/<%= component.id %><%= queryString ? '?' + queryString : '' %>"
+                                                class="btn btn-sm btn-outline-danger me-1 mb-1 js-confirm"
+                                                data-i18n-attr="title"
+                                                data-i18n="components.delete"
+                                                data-confirm-title="components.confirm_title"
+                                                data-confirm-message="components.confirm_delete"
+                                                data-confirm-params='{"name":"<%= component.name %>"}'>
+                                                <i class="bi bi-trash"></i>
+                                            </a>                                         
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+<% } %>
 <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 mb-2 gap-2">
 
-    <form id="limitForm" method="GET" class="d-flex align-items-center">
+    <%
+    // =====================================================
+    // GENERIČKI QUERY BUILDER
+    // - pagination menja SAMO page / limit
+    // - sve ostalo ostaje netaknuto
+    // =====================================================
+    function buildQuery(overrides = {}) {
+        const params = new URLSearchParams();
+
+        if (searchQuery) params.set('search', searchQuery);
+        if (currentCategory) params.set('category', currentCategory);
+        if (currentStatus) params.set('status', currentStatus);
+        if (currentView) params.set('view', currentView);
+        if (limit !== null && limit !== undefined) params.set('limit', limit);
+
+        Object.entries(overrides).forEach(([key, value]) => {
+            if (value === null || value === undefined) {
+                params.delete(key);
+            } else {
+                params.set(key, value);
+            }
+        });
+
+        return '?' + params.toString();
+    }
+    %>
+
+    <!-- LIMIT SELECT -->
+    <form method="GET" action="/components" class="d-flex align-items-center">
+
         <% if (searchQuery) { %>
             <input type="hidden" name="search" value="<%= searchQuery %>">
         <% } %>
@@ -351,23 +469,27 @@
         <% if (currentStatus) { %>
             <input type="hidden" name="status" value="<%= currentStatus %>">
         <% } %>
+        <% if (currentView) { %>
+            <input type="hidden" name="view" value="<%= currentView %>">
+        <% } %>
 
-        <label for="limitSelect"
-               class="me-2 mb-0 fst-italic"
+        <label class="me-2 mb-0 fst-italic"
                data-i18n="components.show">
             Show:
         </label>
-        <select id="limitSelect"
-                name="limit"
+
+        <select name="limit"
                 class="form-select form-select-sm fw-bold"
-                style="width: auto;"
+                style="width:auto"
                 onchange="this.form.submit()">
+
             <% [10, 20, 50, 100, 'All'].forEach(opt => { %>
                 <option value="<%= opt %>"
                     <%= (limit === opt || (limit === null && opt === 'All')) ? 'selected' : '' %>>
                     <%= opt %>
                 </option>
             <% }) %>
+
         </select>
 
         <span class="ms-2 text-muted fst-italic">
@@ -375,22 +497,15 @@
         </span>
     </form>
 
+    <!-- PAGINATION -->
     <% if (totalPages > 1) { %>
-
-        <% 
-            const qs = [];
-            if (searchQuery) qs.push(`search=${encodeURIComponent(searchQuery)}`);
-            if (currentCategory) qs.push(`category=${encodeURIComponent(currentCategory)}`);
-            if (currentStatus) qs.push(`status=${encodeURIComponent(currentStatus)}`);
-            qs.push(`limit=${limit || 'All'}`);
-            const baseQuery = qs.join('&');
-        %>
-
         <nav class="mx-auto">
             <ul class="pagination pagination-sm mb-0 justify-content-center">
 
+                <!-- PREVIOUS -->
                 <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-                    <a class="page-link" href="?page=<%= currentPage - 1 %>&<%= baseQuery %>">«</a>
+                    <a class="page-link"
+                       href="<%= buildQuery({ page: currentPage - 1 }) %>">«</a>
                 </li>
 
                 <%
@@ -404,7 +519,7 @@
 
                 <% if (startPage > 1) { %>
                     <li class="page-item">
-                        <a class="page-link" href="?page=1&<%= baseQuery %>">1</a>
+                        <a class="page-link" href="<%= buildQuery({ page: 1 }) %>">1</a>
                     </li>
                     <% if (startPage > 2) { %>
                         <li class="page-item disabled"><span class="page-link">…</span></li>
@@ -413,7 +528,8 @@
 
                 <% for (let p = startPage; p <= endPage; p++) { %>
                     <li class="page-item <%= currentPage === p ? 'active' : '' %>">
-                        <a class="page-link" href="?page=<%= p %>&<%= baseQuery %>"><%= p %></a>
+                        <a class="page-link"
+                           href="<%= buildQuery({ page: p }) %>"><%= p %></a>
                     </li>
                 <% } %>
 
@@ -422,18 +538,24 @@
                         <li class="page-item disabled"><span class="page-link">…</span></li>
                     <% } %>
                     <li class="page-item">
-                        <a class="page-link" href="?page=<%= totalPages %>&<%= baseQuery %>"><%= totalPages %></a>
+                        <a class="page-link"
+                           href="<%= buildQuery({ page: totalPages }) %>"><%= totalPages %></a>
                     </li>
                 <% } %>
 
+                <!-- NEXT -->
                 <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
-                    <a class="page-link" href="?page=<%= currentPage + 1 %>&<%= baseQuery %>">»</a>
+                    <a class="page-link"
+                       href="<%= buildQuery({ page: currentPage + 1 }) %>">»</a>
                 </li>
 
             </ul>
         </nav>
     <% } %>
+
 </div>
+
+
 
 <script>
 

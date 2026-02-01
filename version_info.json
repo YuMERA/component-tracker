@@ -1,5 +1,5 @@
 {
-  "latest_version": "2.0.0",
+  "latest_version": "2.1.0",
   "download_url": "https://github.com/YuMERA/component-tracker/archive/refs/heads/main.zip",
   "versions": [
     {
@@ -30,6 +30,18 @@
         "Improved navigation and active state handling in sidebar and menus.",
         "Enhanced mobile responsiveness for component lists and action buttons.",
         "Stability improvements and internal code cleanup."
+      ]
+    },
+    {
+      "version": "2.1.0",
+      "released_at": "2026-03-02",
+      "title": "Grid View and Pagination Improvements",
+      "features": [
+        "Added grid view for browsing components with compact card layout.",
+        "Preserved filters, search, view mode and limits across pagination.",
+        "Improved pagination logic to update only page and limit parameters.",
+        "Introduced different default limits for list and grid views.",
+        "Visual refinements for component cards to improve browsing experience."
       ]
     }
   ]

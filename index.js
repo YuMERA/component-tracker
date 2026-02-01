@@ -14,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Trenutna verzija instalirane aplikacije.
-const CURRENT_APP_VERSION = "2.0.0"; 
+const CURRENT_APP_VERSION = "2.1.0"; 
 // URL putanja do eksternog JSON fajla sa informacijama o najnovijoj verziji.
 const EXTERNAL_VERSION_URL = 'https://api.github.com/repos/YuMERA/component-tracker/contents/version_info.json';
 // 2. Tvoj stalni token 
@@ -200,13 +200,15 @@ app.use((req, res, next) => {
     res.locals.currentCategory = req.query.category || null;
     res.locals.currentStatus = req.query.status || null;
     res.locals.currentPath = req.path;
+    res.locals.currentView = req.query.view === 'grid' ? 'grid' : 'list';
 
     const qs = new URLSearchParams(req.query);
     qs.delete('message');
     qs.delete('error');
+    qs.delete('view');
     res.locals.queryString = qs.toString() || null;
 
-    // 🔔 UPDATE SIGNAL (layout global)
+    // UPDATE SIGNAL (layout global)
     res.locals.updateAvailable = updateState.updateAvailable;
     res.locals.latestVersion = updateState.latestVersion;
     res.locals.appVersion = CURRENT_APP_VERSION;
@@ -782,9 +784,21 @@ app.get('/components', async (req, res) => {
     const successMessage = req.query.message;
     const errorMessage = req.query.error;
     
+    const view = req.query.view === 'grid' ? 'grid' : 'list';
     // PAGINATION: page i limit
     const page = parseInt(req.query.page) || 1;
-    const limit = req.query.limit === 'All' ? null : parseInt(req.query.limit) || 10;
+    //const limit = req.query.limit === 'All' ? null : parseInt(req.query.limit) || 10;
+
+    let limit;
+
+    if (req.query.limit === 'All') {
+        limit = null;
+    } else if (req.query.limit) {
+        limit = parseInt(req.query.limit, 10);
+    } else {
+        // DEFAULT BEHAVIOR
+        limit = view === 'grid' ? 20 : 10;
+    }
 
     let sqlParams = [];
     let whereClauses = [];
