@@ -231,14 +231,16 @@
                                     <div class="mt-auto">
     
                                         <% if (component.quantity <= 0) { %>
-                                            <span class="badge bg-danger">Stock: 0</span>
+                                            <span class="badge bg-danger">
+                                                <span data-i18n="components.col_stock">Stock</span>: 0
+                                            </span>
                                         <% } else if (component.min_stock && component.quantity <= component.min_stock) { %>
                                             <span class="badge bg-warning text-dark">
-                                                Stock: <%= component.quantity %>
+                                                <span data-i18n="components.col_stock">Stock</span>: <%= component.quantity %>
                                             </span>
                                         <% } else { %>
                                             <span class="badge bg-secondary">
-                                                Stock: <%= component.quantity %>
+                                                <span data-i18n="components.col_stock">Stock</span>: <%= component.quantity %>
                                             </span>
                                         <% } %>
     

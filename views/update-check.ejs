@@ -52,7 +52,7 @@
                 Current Installed Version
             </div>
             <div class="card-body pt-2 pb-2">
-                <p class="card-text text-muted small mb-0"
+                <p class="card-text text-muted mb-0"
                 data-i18n="update.current.subtitle">
                 </p>
 
@@ -64,14 +64,14 @@
                                 <span data-i18n="update.current.version"></span>
                                 V<%= currentVersion %>
                             </div>
-                            <small class="text-muted">
+                            <span class="text-muted">
                                 <% if (currentVersionInfo?.features?.length) { %>
                                     <span data-i18n="update.current.feature"></span>
                                     <%= currentVersionInfo.features[0] %>
                                 <% } else { %>
                                     <span data-i18n="update.current.no_description"></span>
                                 <% } %>
-                            </small>
+                            </span>
                         </div>
                         <span class="badge bg-info text-dark ms-auto"
                             data-i18n="update.current.installed">
@@ -86,12 +86,18 @@
     <!-- UPDATE STATUS -->
     <div class="col-12 mb-4">
         <div class="card shadow-sm border-1">
-            <div class="card-header bg-body-tertiary fw-bold"
-                data-i18n="update.status.title">
-                Update Status
+            <div class="d-flex card-header bg-body-tertiary">
+                <div class=" fw-bold"
+                    data-i18n="update.status.title">
+                    Update Status
+                </div>
+                <div class="text-muted fst-italic ms-3"
+                    data-i18n="update.status.note">
+                    <span>Updates are applied manually. Your data will not be modified automatically.</span>
+                </div>
             </div>
             <div class="card-body pt-2 pb-2">
-                <p class="card-text text-muted small"
+                <p class="card-text text-muted"
                 data-i18n="update.status.subtitle"></p>
 
                 <div class="list-group list-group-flush">
@@ -106,14 +112,14 @@
                                 <span data-i18n="update.status.latest"></span>
                                 V<%= latestVersion %>
                             </div>
-                            <small class="text-muted">
+                            <span class="text-muted">
                                 <% if (latestVersionInfo?.features?.length) { %>
                                     <span data-i18n="update.status.new"></span>
                                     <%= latestVersionInfo.features[0] %>
                                 <% } else { %>
                                     <span data-i18n="update.status.no_details"></span>
                                 <% } %>
-                            </small>
+                            </span>
                         </div>
 
                         <span class="badge ms-auto p-2 rounded-pill
@@ -150,7 +156,7 @@
                 All Version History
             </div>
             <div class="card-body pt-2 pb-2">
-                <p class="card-text text-muted small mb-3"
+                <p class="card-text text-muted mb-3"
                 data-i18n="update.history.subtitle"></p>
 
                 <div style="max-height:350px;overflow-y:auto" class="border rounded">

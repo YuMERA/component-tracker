@@ -18,6 +18,7 @@
     "update.current.installed": "Installed",
   
     "update.status.title": "Update Status",
+    "update.status.note": "Updates are applied manually. Your data will not be modified automatically.",
     "update.status.subtitle": "Compare with the latest version available on the server.",
     "update.status.latest": "Latest Version:",
     "update.status.new": "New:",

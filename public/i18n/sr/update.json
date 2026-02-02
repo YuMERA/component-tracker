@@ -18,6 +18,7 @@
     "update.current.installed": "Instalirano",
   
     "update.status.title": "Status ažuriranja",
+    "update.status.note": "Ažuriranja se primjenjuju ručno. Vaši podaci neće biti automatski menjani.",
     "update.status.subtitle": "Poređenje sa najnovijom dostupnom verzijom.",
     "update.status.latest": "Najnovija verzija:",
     "update.status.new": "Novo:",
