@@ -100,6 +100,10 @@
                 <input type="hidden" name="limit" value="<%= limit %>">
             <% } %>
 
+            <% if (locals.currentView) { %>
+                <input type="hidden" name="view" value="<%= currentView %>">
+            <% } %>
+
             <button class="btn btn-primary" type="submit">
                 <i class="bi bi-search"></i>
                 <span data-i18n="components.search">Search</span>
@@ -163,7 +167,10 @@
             qsList.set('view', 'list');
         %>
         <a href="?<%= qsList.toString() %>"
-        class="btn btn-outline-secondary <%= currentView === 'list' ? 'active' : '' %>">
+            class="btn btn-outline-secondary <%= currentView === 'list' ? 'active' : '' %>"
+            title="Switch to list view"
+            data-i18n="components.view_list"
+            data-i18n-attr="title">
             <i class="bi bi-list"></i>
         </a>
     
@@ -172,7 +179,10 @@
             qsGrid.set('view', 'grid');
         %>
         <a href="?<%= qsGrid.toString() %>"
-        class="btn btn-outline-secondary <%= currentView === 'grid' ? 'active' : '' %>">
+            class="btn btn-outline-secondary <%= currentView === 'grid' ? 'active' : '' %>"
+            title="Switch to grid view"
+            data-i18n="components.view_grid"
+            data-i18n-attr="title">  
             <i class="bi bi-grid"></i>
         </a>
     </div>

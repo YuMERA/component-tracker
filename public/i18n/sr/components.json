@@ -57,6 +57,9 @@
 
     "components.show_big_picture": "Prikaži veću sliku",
     "components.view_details": "Pogledaj detalje komponente",
-    "components.view_category_items": "Prikaži sve stavke iz kategorije {category}"
+    "components.view_category_items": "Prikaži sve stavke iz kategorije {category}",
+
+    "components.view_grid": "Prebaci na prikaz mreže",
+    "components.view_list": "Prebaci na prikaz liste"
   }
   

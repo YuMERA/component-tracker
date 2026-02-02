@@ -57,6 +57,9 @@
 
     "components.show_big_picture": "Show large image",
     "components.view_details": "View component details",
-    "components.view_category_items": "View all items in {category} category"
+    "components.view_category_items": "View all items in {category} category",
+
+    "components.view_grid": "Switch to grid view",
+    "components.view_list": "Switch to list view"
   }
   
