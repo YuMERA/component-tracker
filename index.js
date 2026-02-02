@@ -524,17 +524,17 @@ app.get('/api/categories', async (req, res) => {
 app.get('/components/delete/:id', async (req, res) => {
     const componentId = req.params.id;
 
-    // 👇 postojeći query string (page, limit, filters, search...)
+    // postojeći query string (page, limit, filters, search...)
     const qs = new URLSearchParams(req.query);
 
-    // ⛔ poruke ne vraćamo kao deo konteksta liste
+    // poruke ne vraćamo kao deo konteksta liste
     qs.delete('message');
     qs.delete('error');
 
     try {
         await db.run('DELETE FROM components WHERE id = ?', [componentId]);
 
-        // ✅ dodaj success poruku
+        // dodaj success poruku
         qs.set('message', 'components.delete_success');
 
         const redirectUrl = qs.toString()
@@ -546,7 +546,7 @@ app.get('/components/delete/:id', async (req, res) => {
     } catch (error) {
         console.error('Error deleting component:', error);
 
-        // ❌ success → error
+        // success → error
         qs.set('error', 'components.delete_failed');
 
         const redirectUrl = qs.toString()
@@ -987,7 +987,7 @@ app.post('/components/new', async (req, res) => {
             categories: categories,
             activeService,
             justAdded: req.query.added === '1',
-            // ✅ NOVO – vraćamo unete podatke
+            // vraćamo unete podatke
             formData: req.body
         });
     }
