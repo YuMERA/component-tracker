@@ -124,6 +124,33 @@
 </form>
 
 <div class="mb-2 d-flex flex-wrap gap-2 justify-content-between align-items-center">
+    
+    <div class="btn-group btn-group-sm" role="group">
+        <%
+            const qsList = new URLSearchParams(queryString || '');
+            qsList.set('view', 'list');
+        %>
+        <a href="?<%= qsList.toString() %>"
+            class="btn btn-outline-primary <%= currentView === 'list' ? 'active' : '' %>"
+            title="Switch to list view"
+            data-i18n="components.view_list"
+            data-i18n-attr="title">
+            <i class="bi bi-list"></i>
+        </a>
+    
+        <%
+            const qsGrid = new URLSearchParams(queryString || '');
+            qsGrid.set('view', 'grid');
+        %>
+        <a href="?<%= qsGrid.toString() %>"
+            class="btn btn-outline-primary <%= currentView === 'grid' ? 'active' : '' %>"
+            title="Switch to grid view"
+            data-i18n="components.view_grid"
+            data-i18n-attr="title">  
+            <i class="bi bi-grid"></i>
+        </a>
+    </div>
+
     <div class="dropdown">
         <button 
             class="btn btn-primary dropdown-toggle shadow-sm" 
@@ -161,31 +188,7 @@
             </li>
         </ul>
     </div>
-    <div class="btn-group btn-group-sm" role="group">
-        <%
-            const qsList = new URLSearchParams(queryString || '');
-            qsList.set('view', 'list');
-        %>
-        <a href="?<%= qsList.toString() %>"
-            class="btn btn-outline-secondary <%= currentView === 'list' ? 'active' : '' %>"
-            title="Switch to list view"
-            data-i18n="components.view_list"
-            data-i18n-attr="title">
-            <i class="bi bi-list"></i>
-        </a>
     
-        <%
-            const qsGrid = new URLSearchParams(queryString || '');
-            qsGrid.set('view', 'grid');
-        %>
-        <a href="?<%= qsGrid.toString() %>"
-            class="btn btn-outline-secondary <%= currentView === 'grid' ? 'active' : '' %>"
-            title="Switch to grid view"
-            data-i18n="components.view_grid"
-            data-i18n-attr="title">  
-            <i class="bi bi-grid"></i>
-        </a>
-    </div>
 </div>
 <% if (currentView === 'grid') { %>
     <div class="card shadow-sm border-0">
