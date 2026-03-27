@@ -1,7 +1,6 @@
 // index.js
 require("dotenv").config();
 
-
 const express = require('express');
 const app = express();
 const port = 3000;
@@ -19,7 +18,7 @@ const path = require('path');
 // Trenutna verzija instalirane aplikacije.
 const CURRENT_APP_VERSION = "2.1.0"; 
 // URL putanja do eksternog JSON fajla sa informacijama o najnovijoj verziji.
-const EXTERNAL_VERSION_URL = process.env.VERSION_URL //'https://api.github.com/repos/YuMERA/component-tracker/contents/version_info.json';
+const EXTERNAL_VERSION_URL = process.env.VERSION_URL 
 // 2. Tvoj stalni token 
 const MY_TOKEN = process.env.GITHUB_TOKEN;
 
