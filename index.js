@@ -1,8 +1,11 @@
 // index.js
+require("dotenv").config();
+const MY_TOKEN = process.env.GITHUB_TOKEN;
 
 const express = require('express');
 const app = express();
 const port = 3000;
+const host = '0.0.0.0'
 const expressLayouts = require('express-ejs-layouts');
 // Vraćeno na originalni paket 'sqlite'
 const sqlite = require('sqlite'); 
@@ -18,7 +21,7 @@ const CURRENT_APP_VERSION = "2.1.0";
 // URL putanja do eksternog JSON fajla sa informacijama o najnovijoj verziji.
 const EXTERNAL_VERSION_URL = 'https://api.github.com/repos/YuMERA/component-tracker/contents/version_info.json';
 // 2. Tvoj stalni token 
-const MY_TOKEN = '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';
+//const MY_TOKEN = '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';
 // ==============================
 // UPDATE STATE (MORA BITI OVDE)
 // ==============================
@@ -1614,7 +1617,7 @@ app.get('/about', (req, res) => {
 initializeDb()
     .then(() => {
         // Ako je inicijalizacija uspešna, startuj server
-        server = app.listen(port, () => {
+        server = app.listen(port, host, () => {
             console.log(`Server pokrenut na http://localhost:${port}`);
             console.log('Aplikacija spremna za rad.');
         });

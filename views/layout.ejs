@@ -320,26 +320,16 @@
                 <!-- LOGO I NASLOV ZA OFFCANVAS (MOBILNI) -->
                 <div class="p-3 border-bottom mb-3 d-flex align-items-center sidebar-logo-details">
                     <!-- Ikona (Plavi kvadrat sa zaobljenim uglovima i SVG-om) -->
-                    <div class="flex-shrink-0 w-12 h-12 bg-primary rounded-xl p-2 d-flex align-items-center justify-content-center me-3 shadow-sm logo-icon-wrapper">
+                    <div class="flex-shrink-0 w-12 h-12 bg-primary rounded p-2 d-flex align-items-center justify-content-center me-3 shadow-sm logo-icon-wrapper text-white">
                         <!-- Inline SVG: Komponenta/Chip + Lupa -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
-                            <g fill="white">
-                                <rect x="6" y="8" width="10" height="10" rx="1" ry="1" fill="none" stroke="white" stroke-width="2"/>
-                                <line x1="8" y1="12" x2="14" y2="12" stroke="white" stroke-width="1.5"/>
-                                <circle cx="11" cy="15" r="1.5" fill="white" stroke="none"/>
-                            </g>
-                            <g transform="translate(4, 4)">
-                                <circle cx="17" cy="17" r="5" fill="none" stroke="white" stroke-width="2"/>
-                                <line x1="20.5" y1="20.5" x2="24" y2="24" stroke="white" stroke-width="2"/>
-                                <path d="M17 13.5l-1.3.7-1.3-.7M17 20.5l-1.3-.7-1.3.7M13.5 17l.7 1.3-.7 1.3M20.5 17l-.7 1.3.7 1.3" stroke="white" stroke-width="0.5"/>
-                                <circle cx="17" cy="17" r="1.5" fill="white"/>
-                            </g>
+                        <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                         </svg>
                     </div>
                     <!-- Tekst -->
                     <div>
                         <h1 class="h6 fw-bold mb-0 text-body" style="line-height: 1.2;">Component Tracker</h1>
-                        <p class="text-muted small mb-0" style="font-size: 0.75rem;">Inventory System</p>
+                        <p class="text-muted small mb-0" style="font-size: 0.75rem;">Developed by <span class="fst-italic fw-semibold" style="color: #0d6efd;">mera-system</span></p>
                     </div>
 
                      <!-- LANGUAGE SWITCHER -->
@@ -488,10 +478,10 @@
                         </a>
                     </li>
                 </ul>
-                <small class="text-muted text-center"> V<%= appVersion %></small>
+                <small class="mt-auto text-muted text-center fst-italic">Inventory system V<%= appVersion %></small>
                 <!-- NOVO: Copyright na dnu (za mobilni) -->
-                <div class="mt-auto pt-1 border-top text-center">
-                    <small class="text-muted">© Copyright 2025 by mera-system</small>
+                <div class=" pt-0 border-top text-center fst-italic">
+                    <small class="text-muted">&copy; <%= new Date().getFullYear() %> mera-system. All rights reserved.</small>
                 </div>
             </div>
         </div>
@@ -505,33 +495,26 @@
                 <div class="px-3 pt-3 pb-1 border-bottom sidebar-header">
                     
                     <!-- 1. GORNJI RED: LOGO I NAZIV APLIKACIJE -->
-                    <!-- mb-2 dodaje razmak između teksta i dugmadi ispod -->
                     <div class="d-flex align-items-center mb-0 sidebar-logo-details">
                         
                         <!-- Ikona (Plavi kvadrat sa zaobljenim uglovima i SVG-om) -->
-                        <div class="flex-shrink-0 w-12 h-12 bg-primary rounded-xl p-2 d-flex align-items-center justify-content-center me-3 shadow-sm logo-icon-wrapper">
-                            <!-- Inline SVG: Komponenta/Chip + Lupa -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
-                                <g fill="white">
-                                    <rect x="6" y="8" width="10" height="10" rx="1" ry="1" fill="none" stroke="white" stroke-width="2"/>
-                                    <line x1="8" y1="12" x2="14" y2="12" stroke="white" stroke-width="1.5"/>
-                                    <circle cx="11" cy="15" r="1.5" fill="white" stroke="none"/>
-                                </g>
-                                <g transform="translate(4, 4)">
-                                    <circle cx="17" cy="17" r="5" fill="none" stroke="white" stroke-width="2"/>
-                                    <line x1="20.5" y1="20.5" x2="24" y2="24" stroke="white" stroke-width="2"/>
-                                    <path d="M17 13.5l-1.3.7-1.3-.7M17 20.5l-1.3-.7-1.3.7M13.5 17l.7 1.3-.7 1.3M20.5 17l-.7 1.3.7 1.3" stroke="white" stroke-width="0.5"/>
-                                    <circle cx="17" cy="17" r="1.5" fill="white"/>
-                                </g>
+                        <div class="bg-primary rounded d-flex align-items-center justify-content-center text-white me-2" 
+                            style="width: 36px; height: 36px;">
+                            <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
                             </svg>
                         </div>
                         <!-- Tekst -->
-                        <div class="flex-grow-1 sidebar-text">
-                            <h1 class="h5 fw-bold mb-0 text-body" style="line-height: 1.2;">Component Tracker</h1>
-                            <p class="text-muted small mb-0" style="font-size: 0.85rem;">Inventory System</p>
+                        <div class="flex-grow-1 sidebar-text" style="letter-spacing: -0.5px;">
+                            <!-- <h1 class="h5 fw-bold mb-0 text-body">Component Tracker</h1> -->
+                            <!-- <p class="text-muted small mb-0" style="font-size: 0.85rem;">Inventory System</p> -->
+                            <span class="fs-5 fw-bold">Component Tracker</span>
+                            <p class="small mb-0 text-muted" style="font-size: 0.85rem;">
+                                Developed by <span class="fst-italic fw-semibold" style="color: #0d6efd;">mera-system</span>
+                            </p>
                         </div>
                     </div>
-                    
+                                    
                     <!-- 2. DONJI RED: KONTROLNA DUGMAD (Poravnana desno) -->
                     <!-- UKLONJENA JE KLASA 'sidebar-text' IZ OVOG DIVE-a -->
                 
@@ -658,10 +641,10 @@
                         
                     </ul>
                 </nav>
-                <small class="text-muted text-small text-center"> V<%= appVersion %></small>
+                <small class="mt-auto text-muted text-small text-center fst-italic">Inventory system V<%= appVersion %></small>
                 <!-- Footer sa Copyrightom (za desktop) -->
-                <div class="sidebar-footer p-1 border-top d-flex justify-content-center align-items-center">
-                    <small class="text-muted small sidebar-text">© Copyright 2026 by mera-system</small>
+                <div class="sidebar-footer pb-1 border-top d-flex justify-content-center align-items-center">
+                    <small class="text-muted small sidebar-text fst-italic">&copy; <%= new Date().getFullYear() %> mera-system. All rights reserved.</small>
                 </div>
             </aside>
             <!-- 4. GLAVNI SADRŽAJ -->
