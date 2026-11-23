@@ -61,9 +61,9 @@ from any browser on your local network (including a phone).
 
 ### Quick start
 
-1. Download the repository – select the **v3** branch on GitHub, then **Code → Download ZIP** and unzip (or download directly: https://github.com/YuMERA/component-tracker/archive/refs/heads/v3.zip) – or clone it:
+1. Download the repository (green **Code → Download ZIP** button on GitHub, then unzip) or clone it:
    ```bash
-   git clone -b v3 https://github.com/YuMERA/component-tracker.git
+   git clone https://github.com/YuMERA/component-tracker.git
    ```
 2. Start the app:
    - **Windows:** double-click `start_app.bat`
@@ -92,6 +92,10 @@ npm start
 On first start, v3 copies the old `inventory.db` from the project root into `data/inventory.db` and
 migrates it to the new schema (categories, locations and stock per location are created from the old
 text fields). The original `inventory.db` is left untouched as a safety copy.
+
+The previous version (2.1.0) is kept under the git tag
+[`v2.1.0`](https://github.com/YuMERA/component-tracker/tree/v2.1.0)
+([download ZIP](https://github.com/YuMERA/component-tracker/archive/refs/tags/v2.1.0.zip)).
 
 ### Configuration (optional `.env`)
 
