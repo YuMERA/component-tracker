@@ -63,9 +63,16 @@ const updateState = { checked_at: null, latest: null, download_url: null, versio
 
 export async function checkForUpdates() {
     try {
-        const headers = { Accept: 'application/vnd.github.v3.raw' };
-        if (config.githubToken) headers.Authorization = `Bearer ${config.githubToken}`;
-        const res = await fetch(config.versionUrl, { headers, signal: AbortSignal.timeout(10000) });
+        const get = withToken => fetch(config.versionUrl, {
+            headers: {
+                Accept: 'application/vnd.github.v3.raw',
+                ...(withToken ? { Authorization: `Bearer ${config.githubToken}` } : {})
+            },
+            signal: AbortSignal.timeout(10000)
+        });
+        let res = await get(Boolean(config.githubToken));
+        // istekao/pogrešan token: repo je javan, pa probaj bez tokena
+        if (config.githubToken && (res.status === 401 || res.status === 403)) res = await get(false);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         Object.assign(updateState, {
