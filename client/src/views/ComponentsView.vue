@@ -177,9 +177,9 @@ const hideImage = e => (e.target.style.display = 'none');
                                 <img v-if="imageSrc(data)" :src="imageSrc(data)" alt="" loading="lazy" @error="hideImage" />
                                 <i v-else class="pi pi-microchip" />
                             </div>
-                            <div class="grow">
-                                <div class="ellipsis"><strong>{{ data.name }}</strong></div>
-                                <div class="muted mono ellipsis">
+                            <div class="grow cell-main">
+                                <div class="ellipsis" :title="data.name"><strong>{{ data.name }}</strong></div>
+                                <div class="muted mono ellipsis" :title="[data.mpn, data.manufacturer].filter(Boolean).join(' · ')">
                                     {{ data.mpn || '—' }}<template v-if="data.manufacturer"> · {{ data.manufacturer }}</template>
                                 </div>
                             </div>
@@ -207,7 +207,9 @@ const hideImage = e => (e.target.style.display = 'none');
 
 <style scoped>
 .loc { display: inline-block; line-height: 1.3; }
-.layout { display: grid; grid-template-columns: 16rem minmax(0, 1fr); height: 100%; flex-direction: unset; }
+/* bez gornje granice tabela se širi po najdužem nazivu/proizvođaču i "…" ne radi */
+.cell-main { max-width: 22rem; }
+.layout { display: grid; grid-template-columns: 20rem minmax(0, 1fr); height: 100%; flex-direction: unset; }
 .sidebar { overflow: auto; }
 .content { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
 .toolbar { display: flex; align-items: center; gap: .75rem; padding: .6rem .75rem; border-bottom: 1px solid var(--p-content-border-color); }
@@ -223,6 +225,11 @@ const hideImage = e => (e.target.style.display = 'none');
 .empty { padding: 2rem; text-align: center; }
 :deep(.p-datatable-tbody > tr) { cursor: pointer; }
 
+/* manji laptop (npr. 1366px): uži filteri da tabela stane bez skrolovanja */
+@media (max-width: 1440px) {
+    .layout { grid-template-columns: 16rem minmax(0, 1fr); }
+    .cell-main { max-width: 13rem; }
+}
 @media (max-width: 1000px) {
     .layout { grid-template-columns: minmax(0, 1fr); height: auto; }
     .sidebar { max-height: 14rem; }

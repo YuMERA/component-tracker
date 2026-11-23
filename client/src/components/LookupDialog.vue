@@ -144,7 +144,8 @@ const fmt = n => (n == null ? '?' : Number(n).toLocaleString(locale.value));
 
             <DataTable v-if="result && !noServices" :value="candidates" :loading="loading" dataKey="key" size="small" rowHover
                        rowGroupMode="subheader" groupRowsBy="family" scrollable scrollHeight="55vh"
-                       @row-click="e => pick(e.data)" class="candidates">
+                       @row-click="e => pick(e.data)" class="candidates"
+                       :pt="{ rowGroupHeaderCell: { colspan: 6 } }"><!-- PrimeVue daje kolona−1 (očekuje skrivenu kolonu grupe); 6 = sve kolone -->
                 <template #empty><div class="muted empty">{{ t('lookup.empty') }}</div></template>
 
                 <template #groupheader="{ data }">
@@ -250,6 +251,13 @@ const fmt = n => (n == null ? '?' : Number(n).toLocaleString(locale.value));
 .inv { margin-top: .3rem; cursor: pointer; }
 .empty { padding: 1.5rem; text-align: center; }
 .candidates :deep(tbody tr:not(.p-datatable-row-group-header)) { cursor: pointer; }
+/* zaglavlje porodice (TL072CPS, TL072CPW…) – obojeno da se odvoji od varijanti ispod */
+.candidates :deep(tr.p-datatable-row-group-header),
+.candidates :deep(tr.p-datatable-row-group-header > td) {
+    background: color-mix(in srgb, var(--p-primary-color) 12%, var(--p-content-background));
+}
+.candidates :deep(tr.p-datatable-row-group-header > td) { border-top: 2px solid color-mix(in srgb, var(--p-primary-color) 35%, transparent); }
+.group .pi-sitemap { color: var(--p-primary-color); }
 .picked { display: flex; gap: .75rem; align-items: center; margin-bottom: .5rem; }
 .thumb.big { width: 64px; height: 64px; }
 .diff { width: 100%; border-collapse: collapse; }
