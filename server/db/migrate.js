@@ -59,7 +59,7 @@ const SCHEMA_V1 = `
         location_id INTEGER REFERENCES locations(id) ON DELETE SET NULL,
         delta INTEGER NOT NULL,
         quantity_after INTEGER NOT NULL,
-        kind TEXT NOT NULL DEFAULT 'manual',   -- initial | manual | adjust | move | migrated
+        kind TEXT NOT NULL DEFAULT 'manual',   -- initial | manual | adjust | move | migrated (stari zapisi)
         note TEXT,                             -- slobodan tekst korisnika
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
@@ -73,7 +73,7 @@ const SCHEMA_V1 = `
 `;
 
 const API_SERVICES = `
-    CREATE TABLE IF NOT EXISTS api_services (
+    CREATE TABLE api_services (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         endpoint TEXT NOT NULL,
@@ -85,76 +85,16 @@ const API_SERVICES = `
     );
 `;
 
-const tableExists = (db, name) =>
-    !!db.prepare("SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?").get(name);
-
 const MIGRATIONS = [
-    // 1: nova šema + prenos podataka iz v2 (ravna tabela components)
+    // 1: početna šema
     db => {
-        const legacy = tableExists(db, 'components');
-        if (legacy) {
-            db.exec('ALTER TABLE components RENAME TO legacy_components');
-            if (tableExists(db, 'categories')) db.exec('ALTER TABLE categories RENAME TO legacy_categories');
-        }
-
         db.exec(SCHEMA_V1);
         db.exec(API_SERVICES);
 
         // Podrazumevani servisi (bez ključa) da se odmah vide u Podešavanjima
-        const hasService = db.prepare('SELECT 1 FROM api_services WHERE name = ?');
         const addService = db.prepare('INSERT INTO api_services (name, endpoint, api_key, is_active) VALUES (?, ?, ?, 0)');
-        if (!hasService.get('element14')) addService.run('element14', 'api.element14.com', '');
-        if (!hasService.get('mouser')) addService.run('mouser', 'api.mouser.com', '');
-        // v3: is_active znači "uključen" i više servisa može raditi istovremeno
-        db.exec("UPDATE api_services SET is_active = 1 WHERE api_key <> ''");
-
-        if (!legacy) return;
-
-        // --- Kategorije ---
-        const insertCategory = db.prepare('INSERT OR IGNORE INTO categories (name) VALUES (?)');
-        const names = new Set();
-        if (tableExists(db, 'legacy_categories')) {
-            for (const r of db.prepare('SELECT name FROM legacy_categories').all()) names.add(r.name.trim());
-        }
-        for (const r of db.prepare('SELECT DISTINCT category FROM legacy_components WHERE category IS NOT NULL').all()) {
-            if (r.category.trim()) names.add(r.category.trim());
-        }
-        for (const n of names) insertCategory.run(n);
-        const categoryId = new Map(db.prepare('SELECT id, name FROM categories').all().map(r => [r.name.toLowerCase(), r.id]));
-
-        // --- Lokacije (iz slobodnog teksta) ---
-        const insertLocation = db.prepare('INSERT OR IGNORE INTO locations (name) VALUES (?)');
-        for (const r of db.prepare('SELECT DISTINCT TRIM(location) AS location FROM legacy_components WHERE TRIM(IFNULL(location, \'\')) <> \'\'').all()) {
-            insertLocation.run(r.location);
-        }
-        const locationId = new Map(db.prepare('SELECT id, name FROM locations').all().map(r => [r.name.toLowerCase(), r.id]));
-
-        // --- Komponente + stanje ---
-        const insertComponent = db.prepare(`
-            INSERT INTO components (id, name, mpn, manufacturer, package, category_id, description, params,
-                                    min_stock, image_url, datasheet_url, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-        const insertStock = db.prepare('INSERT INTO stock (component_id, location_id, quantity) VALUES (?, ?, ?)');
-        const insertMove = db.prepare('INSERT INTO stock_movements (component_id, location_id, delta, quantity_after, kind, created_at) VALUES (?, ?, ?, ?, ?, ?)');
-
-        const clean = s => (typeof s === 'string' ? s.replace(/\r\n/g, '\n').trim() || null : s ?? null);
-
-        for (const c of db.prepare('SELECT * FROM legacy_components').all()) {
-            const locId = c.location?.trim() ? locationId.get(c.location.trim().toLowerCase()) : null;
-            insertComponent.run(
-                c.id, c.name.trim(), clean(c.part_number),
-                null, null,   // manufacturer, package – v2 ih nije imala
-                c.category ? categoryId.get(c.category.trim().toLowerCase()) ?? null : null,
-                clean(c.description),
-                null,   // params
-                c.min_stock || 0, clean(c.image_url), clean(c.datasheet_url),
-                c.created_at, c.created_at
-            );
-            insertStock.run(c.id, locId ?? null, Math.max(0, c.quantity || 0));
-            insertMove.run(c.id, locId ?? null, c.quantity || 0, Math.max(0, c.quantity || 0), 'migrated', c.created_at);
-        }
-
-        db.exec('DROP TABLE legacy_components; DROP TABLE IF EXISTS legacy_categories;');
+        addService.run('element14', 'api.element14.com', '');
+        addService.run('mouser', 'api.mouser.com', '');
     }
 ];
 

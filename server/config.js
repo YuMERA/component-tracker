@@ -18,7 +18,6 @@ export const config = {
     port: Number(process.env.APP_PORT) || 3000,
     dataDir: path.join(ROOT, 'data'),
     dbFile: path.join(ROOT, 'data', 'inventory.db'),
-    legacyDbFile: path.join(ROOT, 'inventory.db'),       // baza iz v2 (EJS) verzije
     imagesDir: path.join(ROOT, 'data', 'images'),
     datasheetsDir: path.join(ROOT, 'data', 'datasheets'),
     backupsDir: path.join(ROOT, 'data', 'backups'),

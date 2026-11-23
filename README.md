@@ -87,16 +87,6 @@ npm run build
 npm start
 ```
 
-### Upgrading from v2
-
-On first start, v3 copies the old `inventory.db` from the project root into `data/inventory.db` and
-migrates it to the new schema (categories, locations and stock per location are created from the old
-text fields). The original `inventory.db` is left untouched as a safety copy.
-
-The previous version (2.1.0) is kept under the git tag
-[`v2.1.0`](https://github.com/YuMERA/component-tracker/tree/v2.1.0)
-([download ZIP](https://github.com/YuMERA/component-tracker/archive/refs/tags/v2.1.0.zip)).
-
 ### Configuration (optional `.env`)
 
 | Variable | Default | Purpose |
@@ -150,7 +140,7 @@ component-tracker/
 ├── server/
 │   ├── index.js              Express app: API, local files, built frontend
 │   ├── config.js             Paths, port, .env
-│   ├── db/                   Connection + versioned migrations (incl. v2 → v3)
+│   ├── db/                   Connection + versioned migrations
 │   ├── routes/               components, catalog (categories/locations), system
 │   ├── services/             Business logic: stock, locations, files, backup, updates
 │   └── providers/            Element14 / Mouser + merging, variant families, cache
@@ -179,45 +169,6 @@ the same network can open QR-label links; Windows may ask to allow Node.js throu
 
 For remote access use a VPN (for example WireGuard) and do not expose the app directly to the
 internet. Authentication is not enforced.
-
----
-
-## Screenshots
-
-_Screenshots below are from v2 and will be updated._
-
-### Dashboard 
-[![Components](screenshots/dashboard_thumb.png)](screenshots/dashboard.png)
-
-### Components List
-[![Components](screenshots/components_thumb.png)](screenshots/components.png)
-
-### Categories Management
-[![Categories](screenshots/categories_thumb.png)](screenshots/categories.png)
-
-### Component Details
-[![Details](screenshots/details_thumb.png)](screenshots/details.png)
-
-### AddNew Component
-[![AddNew](screenshots/addnew_thumb.png)](screenshots/addnew.png)
-
-### LowStock Component
-[![LowStock](screenshots/lowstock_thumb.png)](screenshots/lowstock.png)
-
-### Out Of Stock Component
-[![OutOfStock](screenshots/outstock_thumb.png)](screenshots/outstock.png)
-
-### Api Services
-[![API](screenshots/api_thumb.png)](screenshots/api.png)
-
-### Settings
-[![Settings](screenshots/settings_thumb.png)](screenshots/settings.png)
-
-### Application Update Center
-[![Update](screenshots/update_thumb.png)](screenshots/update.png)
-
-### Backup Database
-[![Backup](screenshots/backup_thumb.png)](screenshots/backup.png)
 
 ---
 

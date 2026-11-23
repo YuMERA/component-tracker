@@ -14,9 +14,6 @@ data/
 *.sqlite
 *.sqlite3
 
-# Old backups folder (v2)
-backups/
-
 # OS / Editor
 .DS_Store
 Thumbs.db
