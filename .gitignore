@@ -29,6 +29,3 @@ logs/
 
 # Claude Code local config
 .claude/
-
-# Prototype (temporary)
-v2-prototype/

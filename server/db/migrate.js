@@ -95,8 +95,6 @@ const MIGRATIONS = [
         if (legacy) {
             db.exec('ALTER TABLE components RENAME TO legacy_components');
             if (tableExists(db, 'categories')) db.exec('ALTER TABLE categories RENAME TO legacy_categories');
-            // prototip je možda napravio ove tabele – nisu deo v2 podataka
-            db.exec('DROP TABLE IF EXISTS stock_movements; DROP TABLE IF EXISTS lookup_cache;');
         }
 
         db.exec(SCHEMA_V1);
@@ -132,8 +130,6 @@ const MIGRATIONS = [
         const locationId = new Map(db.prepare('SELECT id, name FROM locations').all().map(r => [r.name.toLowerCase(), r.id]));
 
         // --- Komponente + stanje ---
-        const hasCol = col => db.prepare('PRAGMA table_info(legacy_components)').all().some(c => c.name === col);
-        const extra = ['manufacturer', 'package', 'params'].filter(hasCol);   // ako je prototip dodao kolone
         const insertComponent = db.prepare(`
             INSERT INTO components (id, name, mpn, manufacturer, package, category_id, description, params,
                                     min_stock, image_url, datasheet_url, created_at, updated_at)
@@ -147,11 +143,10 @@ const MIGRATIONS = [
             const locId = c.location?.trim() ? locationId.get(c.location.trim().toLowerCase()) : null;
             insertComponent.run(
                 c.id, c.name.trim(), clean(c.part_number),
-                extra.includes('manufacturer') ? clean(c.manufacturer) : null,
-                extra.includes('package') ? clean(c.package) : null,
+                null, null,   // manufacturer, package – v2 ih nije imala
                 c.category ? categoryId.get(c.category.trim().toLowerCase()) ?? null : null,
                 clean(c.description),
-                extra.includes('params') ? c.params : null,
+                null,   // params
                 c.min_stock || 0, clean(c.image_url), clean(c.datasheet_url),
                 c.created_at, c.created_at
             );
