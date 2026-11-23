@@ -68,7 +68,6 @@ export async function lookup(q, mode, { only = null, noCache = false } = {}) {
             for (const f of ['manufacturer', 'description', 'package', 'image_url', 'datasheet_url', 'lifecycle', 'category']) {
                 if (!prev[f] && c[f]) prev[f] = c[f];
             }
-            if (c.params.length > prev.params.length) prev.params = c.params;
         }
     }
 

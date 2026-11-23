@@ -20,23 +20,21 @@ export async function searchMouser(apiKey, q, mode, limit = 25) {
     if (data.Errors?.length) throw new Error(`Mouser: ${data.Errors[0].Message}`);
 
     return (data.SearchResults?.Parts || []).slice(0, limit).map(p => {
-        const params = (p.ProductAttributes || [])
-            .filter(a => !/Packaging|Standard Pack Qty/i.test(a.AttributeName))
-            .map(a => ({ name: a.AttributeName, value: a.AttributeValue }));
+        // atributi samo za prepoznavanje kućišta – parametri se ne preuzimaju
+        const attrs = (p.ProductAttributes || []).map(a => ({ name: a.AttributeName, value: a.AttributeValue }));
 
         return {
             source: 'mouser',
             mpn: p.ManufacturerPartNumber || p.MouserPartNumber,
             manufacturer: p.Manufacturer || null,
             description: descriptionLines(p.Description),
-            package: detectPackage(params, p.Description),
+            package: detectPackage(attrs, p.Description),
             lifecycle: p.LifecycleStatus || (p.IsDiscontinued === 'true' ? 'Obsolete' : 'Active'),
             stock: parseInt(String(p.AvailabilityInStock ?? p.Availability ?? '').replace(/\D/g, ''), 10) || 0,
             image_url: p.ImagePath || null,
             datasheet_url: p.DataSheetUrl || null,
             product_url: p.ProductDetailUrl || null,
-            category: p.Category || null,
-            params
+            category: p.Category || null
         };
     });
 }

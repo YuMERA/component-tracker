@@ -1,5 +1,5 @@
 // *********************************************************************
-// Element14 (Farnell) – vraća VIŠE kandidata, sa parametrima
+// Element14 (Farnell) – vraća VIŠE kandidata
 // *********************************************************************
 import { detectPackage, descriptionLines } from './normalize.js';
 
@@ -29,25 +29,23 @@ export async function searchElement14(apiKey, q, mode, limit = 25) {
         // displayName: "INFINEON - IRFZ44NPBF - Power MOSFET, N Channel, 55 V, ..."
         const parts = String(p.displayName || '').split(' - ');
         const description = parts.length >= 3 ? parts.slice(2).join(' - ') : p.displayName;
-        const params = (p.attributes || []).map(a => ({
-            name: a.attributeLabel,
-            value: [a.attributeValue, a.attributeUnit].filter(Boolean).join(' ')
-        }));
+        // Atributi služe samo za prepoznavanje kućišta. Parametri se NE preuzimaju:
+        // Element14 šalje brojeve bez jedinica, duplikate i carinske/RoHS podatke.
+        const attrs = (p.attributes || []).map(a => ({ name: a.attributeLabel, value: a.attributeValue }));
 
         return {
             source: 'element14',
             mpn: p.translatedManufacturerPartNumber,
             manufacturer: p.brandName || p.vendorName || parts[0] || null,
             description: descriptionLines(description),
-            package: detectPackage(params, description),
+            package: detectPackage(attrs, description),
             lifecycle: p.productStatus === 'STOCKED' || p.productStatus === 'DIRECT_SHIP' ? 'Active'
                 : p.productStatus === 'NO_LONGER_MANUFACTURED' ? 'Obsolete' : (p.productStatus || null),
             stock: p.stock?.level ?? null,
             image_url: p.image?.baseName ? `https://export.farnell.com/productimages/standard/en_GB${p.image.baseName}` : null,
             datasheet_url: p.datasheets?.[0]?.url || null,
             // pretraga po Farnell kataloškom broju vodi direktno na stranicu proizvoda
-            product_url: p.sku ? `https://export.farnell.com/search?st=${encodeURIComponent(p.sku)}` : null,
-            params
+            product_url: p.sku ? `https://export.farnell.com/search?st=${encodeURIComponent(p.sku)}` : null
         };
     });
 }

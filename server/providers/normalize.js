@@ -2,7 +2,9 @@
 // Zajednički pomoćni kod za sve dobavljače
 // Svaki provider vraća kandidate u ISTOM obliku:
 // { source, mpn, manufacturer, description, package, lifecycle,
-//   stock, image_url, datasheet_url, product_url, params: [{name, value}] }
+//   stock, image_url, datasheet_url, product_url }
+// Tehnički parametri se NE preuzimaju iz kataloga (nepouzdani: bez jedinica, duplikati,
+// carinski/RoHS podaci) – bitno je u opisu, a detalji u datasheet-u.
 // *********************************************************************
 
 export const normMpn = s => String(s || '').toUpperCase().replace(/[\s]/g, '');
@@ -38,5 +40,29 @@ export function detectPackage(params, ...texts) {
     return null;
 }
 
-// Pretvara opis u čitljiv tekst (jedan parametar po redu) – kao u postojećoj aplikaciji
-export const descriptionLines = s => String(s || '').split(',').map(x => x.trim()).filter(Boolean).join('\n');
+// Pretvara opis u čitljiv tekst (jedan parametar po redu) – kao u postojećoj aplikaciji.
+// Veličine sa jedinicom se usput sređuju: "9500 µohm" → "9.5 mΩ"
+export const descriptionLines = s => String(s || '').split(',').map(x => tidyQuantity(x.trim())).filter(Boolean).join('\n');
+
+// *********************************************************************
+// Veličine u opisu: SI zapis ("9500 µohm" → "9.5 mΩ")
+// *********************************************************************
+
+const PREFIX = { p: 1e-12, n: 1e-9, u: 1e-6, µ: 1e-6, μ: 1e-6, m: 1e-3, '': 1, k: 1e3, K: 1e3, M: 1e6, G: 1e9 };
+const BASE = { V: 'V', A: 'A', W: 'W', F: 'F', H: 'H', Hz: 'Hz', 'Ω': 'Ω' };
+const SCALE = [[1e9, 'G'], [1e6, 'M'], [1e3, 'k'], [1, ''], [1e-3, 'm'], [1e-6, 'µ'], [1e-9, 'n'], [1e-12, 'p']];
+
+// "9500", "µohm" → "9.5 mΩ";  "100", "V" → "100 V";  nepoznata jedinica ostaje kakva jeste
+function formatSI(num, unit) {
+    const m = String(unit).match(/^(p|n|u|µ|μ|m|k|K|M|G)?(V|A|W|F|H|Hz|[oO][hH][mM][sS]?|Ω)$/);
+    if (!m) return `${num} ${unit}`;
+    const base = /ohm/i.test(m[2]) ? 'Ω' : BASE[m[2]];
+    let v = num * PREFIX[m[1] || ''];
+    if (v === 0) return `0 ${base}`;
+    const [factor, prefix] = SCALE.find(([f]) => Math.abs(v) >= f * 0.9999) || SCALE[SCALE.length - 1];
+    v = Number((v / factor).toPrecision(4));
+    return `${v} ${prefix}${base}`;
+}
+
+const QUANTITY_RE = /^(-?\d+(?:\.\d+)?)\s*((?:p|n|u|µ|μ|m|k|K|M|G)?(?:V|A|W|F|H|Hz|[oO][hH][mM][sS]?|Ω))$/;
+const tidyQuantity = s => { const m = s.match(QUANTITY_RE); return m ? formatSI(Number(m[1]), m[2]) : s; };

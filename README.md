@@ -42,7 +42,7 @@ from any browser on your local network (including a phone).
 - Variants are grouped into families (e.g. `NE555D` / `NE555DR` / `NE555DRG4`) with package, lifecycle status and supplier stock
 - Shows when a candidate is already in your inventory
 - Field-by-field preview: choose exactly which values overwrite the form
-- Structured parameters are stored, not only the description text
+- Catalog parameters are intentionally not imported (no units, duplicates, customs/RoHS data) – key values stay in the description, details in the datasheet; the Parameters tab is for your own notes
 - Results are cached for 24 h to save API quota
 
 **Local-first**

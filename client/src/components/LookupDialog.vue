@@ -81,11 +81,11 @@ const FIELDS = [
     { key: 'category', from: c => store.categories.find(x => x.name.toLowerCase() === (c.category || '').toLowerCase())?.name },
     { key: 'description', from: c => c.description },
     { key: 'image_url', from: c => c.image_url },
-    { key: 'datasheet_url', from: c => c.datasheet_url },
-    { key: 'params', from: c => (c.params?.length ? c.params : null) }
+    { key: 'datasheet_url', from: c => c.datasheet_url }
+    // parametri se namerno ne preuzimaju iz kataloga (nepouzdani) – vidi server/providers/normalize.js
 ];
 
-const show = v => (Array.isArray(v) ? (v.length ? t('lookup.n_params', { n: v.length }) : '') : (v ?? ''));
+const show = v => v ?? '';
 
 function pick(c) {
     picked.value = c;
@@ -257,5 +257,4 @@ const fmt = n => (n == null ? '?' : Number(n).toLocaleString(locale.value));
 .diff thead th { font-size: .8rem; color: var(--p-text-muted-color); }
 .diff tbody tr { cursor: pointer; }
 .diff tbody tr.off .val:last-child { opacity: .5; }
-.diff .val { white-space: pre-line; word-break: break-word; max-width: 26rem; }
-</style>
+.diff .val { white-space: pre-line; word-break: break-word; max-width: 26rem; }</style>
