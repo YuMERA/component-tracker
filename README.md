@@ -1,113 +1,55 @@
 # Component Tracker
 
-[![Node.js](https://img.shields.io/badge/Node.js-18+-green)](https://nodejs.org/en)
+[![Node.js](https://img.shields.io/badge/Node.js-22.13+-green)](https://nodejs.org/en)
 ![Architecture](https://img.shields.io/badge/architecture-local--first-blue)
 [![Database](https://img.shields.io/badge/database-SQLite-lightgrey)](https://sqlite.org/)
 ![Status](https://img.shields.io/badge/status-stable-brightgreen)
+![Vue](https://img.shields.io/badge/frontend-Vue%203-42b883)
 [![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-red.svg)](LICENSE)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue)](https://paypal.me/yumera)
 
 ---
 
-Component Tracker is a local-first web application designed for managing
-electronic components inventory in personal workshops and small labs.
+Component Tracker is a local-first web application for managing electronic
+components in personal workshops and small labs.
 
-The application focuses on simplicity, reliability, and full control over data.
-All data is stored locally using SQLite, with no external cloud dependencies.
-
-A simple file-based backup strategy can be applied by copying the database file,
-making the system easy to maintain and restore without special tools.
+All data is stored locally in a single SQLite file. No cloud services, no
+external database server – the app runs on your own computer and is usable
+from any browser on your local network (including a phone).
 
 ---
 
 ## Features
 
-- Full CRUD operations for components (Add / Edit / View / Delete)
-- Category management with live updates
-- Pagination with configurable limits
-- Search and filtering
-- Low-stock monitoring
-- API-assisted component lookup
-- Image preview support
-- Datasheet links
-- Internationalization (EN / SR) with live language switching
-- **Dark / Light mode with live toggle**
-- SQLite local database (file-based)
-- No cloud services, no external database server
+**Components**
+- Fast list with filters (stock status, categories, nested locations), multi-token search and sorting
+- Quick `+ / −` stock changes directly in the list (Shift = ±10)
+- Side panel for viewing and editing without leaving the list – everything on one screen
+- Separate tabs for a large photo (full-screen zoom), parameters and stock history
+- Bulk actions: move to location, change category, delete
+- CSV and text export of the filtered or selected list
+- Duplicate detection by MPN with "add to existing stock"
 
----
+**Stock and locations**
+- The same component can be stored in several locations, each with its own quantity
+- Nested locations (Cabinet › Drawer › Box), created on the fly by typing a path
+- Every stock change is logged (initial, quick change, manual edit, move)
+- Printable QR labels per location – scanning one opens that location's component list
 
-## Dark / Light Mode
+**Online lookup (Element14 / Mouser)**
+- All enabled services are queried in parallel and results are merged by MPN
+- Up to 25 candidates per service instead of only the first hit
+- Variants are grouped into families (e.g. `NE555D` / `NE555DR` / `NE555DRG4`) with package, lifecycle status and supplier stock
+- Shows when a candidate is already in your inventory
+- Field-by-field preview: choose exactly which values overwrite the form
+- Structured parameters are stored, not only the description text
+- Results are cached for 24 h to save API quota
 
-The application supports both Light and Dark themes.
-
-- Theme can be switched at any time
-- Change is applied instantly (no page reload)
-- User preference is preserved across sessions
-
-This improves usability in different working environments
-and during extended use.
-
----
-
-## Database and Backup Strategy
-
-Component Tracker uses a local SQLite database stored as a single file.
-
-- No database server is required
-- All data is stored locally
-- The database file is excluded from version control
-
-### Backup
-
-Backup is intentionally simple:
-
-- Stop the application
-- Copy the database file (`inventory.db`) to a safe location
-
-Restore is done by placing the file back in the application directory.
-
-This approach keeps full control in the hands of the user
-and avoids hidden or automated processes.
-
----
-
-## API Services
-
-The application includes a dedicated API services layer.
-
-### Purpose
-
-The API services layer exists to:
-
-- Separate external vendor APIs from application logic
-- Normalize different vendor responses into a common format
-- Allow easy extension with additional vendors in the future
-
-### Design
-
-Each vendor API is implemented as an isolated service module.
-Routes and views never communicate directly with external APIs.
-
-This design:
-- improves maintainability
-- avoids vendor lock-in
-- keeps the core application clean and predictable
-
-Currently supported vendors include:
-- Element14
-- Mouser
-
----
-
-## Tech Stack
-
-- Node.js
-- Express.js
-- EJS (server-side rendering)
-- SQLite
-- Bootstrap 5
-- Custom i18n system
+**Local-first**
+- Images are downloaded and stored locally when a component is saved; datasheets on demand
+- One-click consistent backup (`VACUUM INTO`) with download from the browser
+- English and Serbian UI, light / dark / system theme
+- Update check against `version_info.json`
 
 ---
 
@@ -115,164 +57,130 @@ Currently supported vendors include:
 
 ### Prerequisites
 
-Before running the application, make sure the following are installed on your system:
+- **Node.js 22.13 or newer** (https://nodejs.org/) – the app uses Node's built-in SQLite module, so no native build tools are needed.
 
-- **Node.js** (v18 or newer recommended)  
-  https://nodejs.org/
+### Quick start
 
-- **npm** (included with Node.js)
+1. Download the repository – select the **v3** branch on GitHub, then **Code → Download ZIP** and unzip (or download directly: https://github.com/YuMERA/component-tracker/archive/refs/heads/v3.zip) – or clone it:
+   ```bash
+   git clone -b v3 https://github.com/YuMERA/component-tracker.git
+   ```
+2. Start the app:
+   - **Windows:** double-click `start_app.bat`
+   - **macOS / Linux:** run `./start.sh` in a terminal
 
+The first start installs dependencies and builds the frontend (about a minute, internet required).
+Later starts take a few seconds. The browser opens automatically at http://localhost:3000.
+To stop the app, close the window (or press Ctrl+C).
 
-### Setup
+### Updating
 
-Clone the repository and install dependencies:
+Download the new version and either unzip it over the existing folder or replace the folder and copy
+your `data/` folder into it. The start script detects the change and reinstalls / rebuilds only what is needed.
+Your data in `data/` is never touched by an update.
 
-```bash
-    git clone https://github.com/YuMERA/component-tracker.git
-    cd component-tracker
-    npm install
-```
-This will automatically install all required dependencies defined in package.json, including:
-
-- Express (web framework)
-- EJS (template engine)
-- SQLite / sqlite3 (database engine)
-
-
-### Running the Application
-
-Start the local server using npm:
+### Manual start
 
 ```bash
-    npm start
-```
-The application will be available at: http://localhost:3000
-
-
-### Windows Quick Start (.bat)
-
-On Windows, you can optionally create a batch file to start the server and open the browser automatically.
-
-Create a file named start_app.bat in the project root with the following content:
-
-```bat
-@echo off
-echo Starting Component Tracker...
+npm install
+npm run build
 npm start
-start http://localhost:3000
 ```
-Double-click start_app.bat to launch the application and open it in your default browser.
 
+### Upgrading from v2
 
-### First Run Notes
+On first start, v3 copies the old `inventory.db` from the project root into `data/inventory.db` and
+migrates it to the new schema (categories, locations and stock per location are created from the old
+text fields). The original `inventory.db` is left untouched as a safety copy.
 
-- The application uses a local SQLite database (inventory.db).
-- If the database file does not exist, it will be created automatically on first run.
-- A backups/ directory is used to store database backup files.
-- The application is designed for local-first usage.
+### Configuration (optional `.env`)
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `APP_PORT` | `3000` | HTTP port |
+| `VERSION_URL` | GitHub raw `version_info.json` | Update check source |
+| `GITHUB_TOKEN` | – | Only needed while the repository is private |
+
+API keys for Element14 and Mouser are entered in **Settings → API services** and stored in the local database.
+
+### Development
+
+```bash
+npm run dev
+```
+
+Starts the API server on :3000 (auto-restart on changes) and the Vite dev server with hot reload on http://localhost:5173.
 
 ---
 
-## Application Dependencies
+## Data and Backup
 
-All application dependencies are defined in the `package.json` file.
+Everything the app stores lives in `data/` (ignored by git):
 
-There are no setup or installation scripts.
-Dependencies are installed using npm.
+```
+data/
+├── inventory.db      SQLite database
+├── images/           local copies of component images
+├── datasheets/       local copies of datasheets
+└── backups/          backups created from Settings
+```
+
+Backups are created from **Settings → Backup** and can be downloaded from the browser.
+To restore, stop the app and replace `data/inventory.db` with a backup file.
+Copying the whole `data/` folder is a complete backup including images and datasheets.
+
+---
+
+## Tech Stack
+
+- **Backend:** Node.js, Express 5, SQLite (`node:sqlite`), versioned migrations
+- **Frontend:** Vue 3, PrimeVue 4, Vue Router, vue-i18n, Vite
+- **Lookup providers:** Element14 (Farnell) and Mouser search APIs
 
 ---
 
 ## Project Structure
+
 ```
 component-tracker/
-├── index.js                     Main application entry point
-├── package.json
-├── README.md
-├── .gitignore
-├── inventory.db                 SQLite database (local, ignored by git)
-├── version_info_mock.json
-├── start_app.bat                Windows quick start
-│
-├── apiServices/
-│   ├── serviceResolver.js       API service dispatcher
-│   └── vendors/
-│       ├── element14.js         Element14 (Farnell) API integration
-│       └── mouser.js            Mouser API integration
-│
-├── backups/                     Database backup storage
-│
-├── public/
-│   ├── css/
-│   │   └── custom-styles.css
-│   ├── i18n/
-│   │   ├── en/                  English translations
-│   │   └── sr/                  Serbian translations
-│   ├── images/
-│   │   └── favicon.ico
-│   └── js/
-│       ├── confirm-modal.js
-│       ├── i18n.js
-│       └── table-sort.js
-│
-├── screenshots/                 Application screenshots
-│   ├── dashboard.png
-│   ├── components.png
-│   ├── categories.png
-│   ├── details.png
-│   ├── addnew.png
-│   ├── lowstock.png
-│   ├── api.png
-│   ├── backup.png
-│   ├── settings.png
-│   └── update.png
-│
-└── views/
-    ├── layout.ejs               Global layout
-    ├── dashboard.ejs
-    ├── all-components.ejs
-    ├── details.ejs
-    ├── add-new.ejs
-    ├── categories.ejs
-    ├── categories-admin.ejs
-    ├── backup.ejs
-    ├── settings.ejs
-    ├── tools-api.ejs
-    └── update-check.ejs
-
+├── server/
+│   ├── index.js              Express app: API, local files, built frontend
+│   ├── config.js             Paths, port, .env
+│   ├── db/                   Connection + versioned migrations (incl. v2 → v3)
+│   ├── routes/               components, catalog (categories/locations), system
+│   ├── services/             Business logic: stock, locations, files, backup, updates
+│   └── providers/            Element14 / Mouser + merging, variant families, cache
+├── client/
+│   ├── index.html
+│   └── src/
+│       ├── App.vue           Shell: navigation, global component panel
+│       ├── views/            Dashboard, Components, Locations, Categories, Settings
+│       ├── components/       Component panel, lookup dialog, filters, stock editor…
+│       ├── i18n/             sr.json, en.json
+│       ├── store.js          Shared state
+│       └── api.js            All API calls
+├── data/                     Local data (git-ignored)
+├── version_info.json         Release notes / update feed
+├── start_app.bat / start.sh  Quick start (Windows / macOS, Linux)
+├── scripts/prepare.mjs       Installs / builds only when needed
+└── vite.config.js
 ```
----
-
-## Internationalization (i18n)
-
-- Custom-built i18n system
-- Translation files located in public/i18n/
-- Live language switching without page reload
-- Easily extendable with additional languages
 
 ---
 
 ## Security and Deployment Notes
 
-This application is intended for local use.
+This application is intended for local use. It listens on all network interfaces so that phones on
+the same network can open QR-label links; Windows may ask to allow Node.js through the firewall.
 
-For remote access, it is recommended to:
-- use a VPN (for example WireGuard)
-- avoid exposing the application directly to the public internet
-
-Authentication is not enforced by default.
-
----
-
-## Project Status
-
-- Stable
-- Actively used
-- Designed for local environments
-- Not intended as a SaaS product
+For remote access use a VPN (for example WireGuard) and do not expose the app directly to the
+internet. Authentication is not enforced.
 
 ---
 
 ## Screenshots
+
+_Screenshots below are from v2 and will be updated._
 
 ### Dashboard 
 [![Components](screenshots/dashboard_thumb.png)](screenshots/dashboard.png)

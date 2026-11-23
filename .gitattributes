@@ -1,0 +1,3 @@
+# Skripte moraju imati ispravne krajeve redova na svakom sistemu
+*.sh text eol=lf
+*.bat text eol=crlf

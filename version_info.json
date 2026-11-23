@@ -1,6 +1,6 @@
 {
-  "latest_version": "2.1.0",
-  "download_url": "https://github.com/YuMERA/component-tracker/archive/refs/heads/main.zip",
+  "latest_version": "3.0.0",
+  "download_url": "https://github.com/YuMERA/component-tracker/archive/refs/heads/v3.zip",
   "versions": [
     {
       "version": "1.0.0",
@@ -42,6 +42,23 @@
         "Improved pagination logic to update only page and limit parameters.",
         "Introduced different default limits for list and grid views.",
         "Visual refinements for component cards to improve browsing experience."
+      ]
+    },
+    {
+      "version": "3.0.0",
+      "released_at": "2026-11-23",
+      "title": "Major Update: New Interface, Stock per Location and Smarter Lookup",
+      "features": [
+        "New Vue 3 interface: component list with side panel for viewing and editing without page reloads.",
+        "Quick +/- stock changes directly in the list and bulk actions (move, change category, delete).",
+        "Stock per location: one component can be stored in several nested locations (Cabinet > Drawer > Box).",
+        "Stock history log for every change.",
+        "Printable QR labels for locations that open the component list on a phone.",
+        "Online lookup queries Element14 and Mouser in parallel, shows all candidates grouped by variant family and lets you choose which fields to apply.",
+        "Component parameters, manufacturer and package are stored as separate fields.",
+        "Images and datasheets can be stored locally for offline use.",
+        "Consistent one-click backups with download from the browser.",
+        "Automatic migration of existing v2 data."
       ]
     }
   ]
