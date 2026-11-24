@@ -237,7 +237,7 @@
     "backup_now": "Napravi backup",
     "backup_created": "Backup napravljen",
     "backup_delete_confirm": "Obrisati backup „{name}”?",
-    "restore_hint": "Vraćanje: zaustavi aplikaciju i zameni data/inventory.db izabranim backup fajlom.",
+    "restore_hint": "Vraćanje: zaustavi aplikaciju i zameni inventory.db u folderu sa podacima (vidi „O aplikaciji”) izabranim backup fajlom.",
     "download": "Preuzmi",
     "about": "O aplikaciji",
     "license": "Licenca",
@@ -250,6 +250,9 @@
     "text_size": "Veličina teksta",
     "text_small": "Manji",
     "text_normal": "Normalan",
-    "text_large": "Veći"
+    "text_large": "Veći",
+    "primary_source": "Glavni izvor podataka",
+    "primary_source_hint": "Kad isti deo postoji kod više servisa, podaci se uzimaju odavde, a ostali popunjavaju samo ono što nedostaje. U pretrazi se za svako polje može izabrati i drugi izvor.",
+    "primary": "Glavni"
   }
 }

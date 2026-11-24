@@ -95,6 +95,13 @@ const MIGRATIONS = [
         const addService = db.prepare('INSERT INTO api_services (name, endpoint, api_key, is_active) VALUES (?, ?, ?, 0)');
         addService.run('element14', 'api.element14.com', '');
         addService.run('mouser', 'api.mouser.com', '');
+    },
+
+    // 2: prioritet izvora pri spajanju rezultata pretrage (manji broj = glavni izvor).
+    //    Podrazumevano Mouser: tehnički podaci su mu potpuniji i pouzdaniji.
+    db => {
+        db.exec('ALTER TABLE api_services ADD COLUMN priority INTEGER NOT NULL DEFAULT 9');
+        db.exec("UPDATE api_services SET priority = CASE name WHEN 'mouser' THEN 1 WHEN 'element14' THEN 2 ELSE 9 END");
     }
 ];
 

@@ -1,6 +1,6 @@
 <script setup>
 // Podešavanja: izgled i jezik, API servisi, lokalni fajlovi, backup, o aplikaciji
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -42,6 +42,15 @@ async function updateService(s, data) {
         Object.assign(s, await api.updateService(s.id, data));
         keyDraft.value[s.id] = '';
         testResult.value[s.id] = null;
+        ok(t('common.saved'));
+    } catch (e) { error(e); }
+}
+
+// Glavni izvor = servis sa najmanjim prioritetom (lista dolazi sortirana)
+const primaryId = computed(() => services.value.find(s => s.supported)?.id);
+async function setPrimary(id) {
+    try {
+        services.value = await api.setPrimaryService(id);
         ok(t('common.saved'));
     } catch (e) { error(e); }
 }
@@ -119,9 +128,17 @@ const latestInfo = () => system.value?.update.versions.find(v => v.version === s
         <section class="card card-pad">
             <h3>{{ t('settings.api_services') }}</h3>
             <p class="muted">{{ t('settings.api_intro') }}</p>
+            <!-- čiji se podaci uzimaju kad isti deo postoji kod više servisa -->
+            <div class="setting primary">
+                <span>{{ t('settings.primary_source') }}
+                    <span class="muted small block">{{ t('settings.primary_source_hint') }}</span></span>
+                <SelectButton :modelValue="primaryId" :options="services.filter(s => s.supported)" optionLabel="name" optionValue="id"
+                              :allowEmpty="false" @update:modelValue="v => v && setPrimary(v)" />
+            </div>
             <div v-for="s in services" :key="s.id" class="service">
                 <div class="row">
                     <strong class="grow">{{ s.name }} <span class="muted small">{{ s.endpoint }}</span></strong>
+                    <Tag v-if="s.id === primaryId" :value="t('settings.primary')" severity="success" />
                     <Tag v-if="!s.supported" :value="t('settings.not_supported')" severity="secondary" />
                     <ToggleSwitch :modelValue="s.is_active" :disabled="!s.has_key"
                                   @update:modelValue="v => updateService(s, { is_active: v })" v-tooltip="t('settings.enabled')" />
@@ -203,6 +220,8 @@ const latestInfo = () => system.value?.update.versions.find(v => v.version === s
 <style scoped>
 .narrow { max-width: 52rem; }
 .setting { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: .4rem 0; flex-wrap: wrap; }
+.setting.primary { margin-bottom: .25rem; }
+.block { display: block; font-weight: normal; max-width: 34rem; }
 .service { padding: .75rem 0; border-top: 1px solid var(--p-content-border-color); }
 .key { margin-top: .5rem; flex-wrap: wrap; }
 .small { font-size: .82rem; }

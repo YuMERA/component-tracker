@@ -9,10 +9,12 @@
 import { db } from '../db/index.js';
 import { searchElement14 } from './element14.js';
 import { searchMouser } from './mouser.js';
-import { normMpn, familyOf } from './normalize.js';
+import { normMpn, familyOf, isBlank } from './normalize.js';
 
 const PROVIDERS = { element14: searchElement14, mouser: searchMouser };
 const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+// Polja koja se preuzimaju iz kataloga (i porede po izvorima u dijalogu)
+const DATA_FIELDS = ['manufacturer', 'description', 'package', 'image_url', 'datasheet_url', 'lifecycle', 'category'];
 
 function cached(key, fn) {
     const row = db.prepare('SELECT payload, created_at FROM lookup_cache WHERE cache_key = ?').get(key);
@@ -28,7 +30,9 @@ export const SUPPORTED = Object.keys(PROVIDERS);
 
 // only: ograniči na jedan servis (dugme "Testiraj" u Podešavanjima), noCache: zaobiđi keš
 export async function lookup(q, mode, { only = null, noCache = false } = {}) {
-    const services = db.prepare("SELECT name, api_key FROM api_services WHERE is_active = 1 AND api_key <> ''").all()
+    // Redosled = prioritet (Podešavanja → API servisi → glavni izvor). Prvi izvor daje podatke,
+    // ostali popunjavaju samo ono što kod njega nedostaje.
+    const services = db.prepare("SELECT name, api_key FROM api_services WHERE is_active = 1 AND api_key <> '' ORDER BY priority, id").all()
         .filter(s => PROVIDERS[s.name] && (!only || s.name === only));
     if (!services.length) {
         return { query: q, mode, sources: [], candidates: [], message: 'No API service is enabled. Add an API key in Settings.' };
@@ -48,26 +52,33 @@ export async function lookup(q, mode, { only = null, noCache = false } = {}) {
         error: settled[i].reason?.message
     }));
 
-    // Spajanje po MPN-u: isti deo kod Element14 i Mouser-a postaje jedan red
+    // Spajanje po MPN-u: isti deo kod Element14 i Mouser-a postaje jedan red.
+    // by_source čuva vrednosti SVAKOG izvora, da korisnik u dijalogu može da izabere drugi.
     const merged = new Map();
     for (const r of settled) {
         if (r.status !== 'fulfilled') continue;
         for (const c of r.value) {
             if (!c.mpn) continue;
             const key = normMpn(c.mpn);
+            const own = Object.fromEntries(DATA_FIELDS.map(f => [f, isBlank(c[f]) ? null : c[f]]));
             const prev = merged.get(key);
             if (!prev) {
-                merged.set(key, { ...c, sources: [{ name: c.source, stock: c.stock, url: c.product_url }] });
+                merged.set(key, { ...c, ...own, by_source: { [c.source]: own },
+                    sources: [{ name: c.source, stock: c.stock, url: c.product_url }] });
                 continue;
             }
-            // isti izvor može imati više SKU-ova za isti deo (cut tape / reel) – sabiramo stanje
             const same = prev.sources.find(s => s.name === c.source);
-            if (same) same.stock = (same.stock || 0) + (c.stock || 0);
-            else prev.sources.push({ name: c.source, stock: c.stock, url: c.product_url });
-            // popuni rupe podacima iz drugog izvora
-            for (const f of ['manufacturer', 'description', 'package', 'image_url', 'datasheet_url', 'lifecycle', 'category']) {
-                if (!prev[f] && c[f]) prev[f] = c[f];
+            if (same) {
+                // isti izvor može imati više SKU-ova za isti deo (cut tape / reel) – sabiramo stanje
+                same.stock = (same.stock || 0) + (c.stock || 0);
+                const mine = prev.by_source[c.source];
+                for (const f of DATA_FIELDS) if (mine[f] == null && own[f] != null) mine[f] = own[f];
+            } else {
+                prev.sources.push({ name: c.source, stock: c.stock, url: c.product_url });
+                prev.by_source[c.source] = own;
             }
+            // izvor nižeg prioriteta popunjava samo rupe
+            for (const f of DATA_FIELDS) if (prev[f] == null && own[f] != null) prev[f] = own[f];
         }
     }
 

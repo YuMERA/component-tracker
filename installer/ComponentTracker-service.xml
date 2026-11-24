@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  WINDOWS SERVIS (po uzoru na Šank: SankApp-servis.xml)
+
+  WinSW (ComponentTracker-service.exe) pretvara ComponentTracker.exe u Windows servis:
+    - pali se sam pri paljenju računara, pre nego što se iko prijavi;
+    - ako program padne, posle 10 sekundi ga podigne ponovo;
+    - u spisku servisa (services.msc) vidi se kao "Component Tracker".
+
+  Ovaj fajl mora da se zove isto kao WinSW exe (ComponentTracker-service.xml).
+-->
+<service>
+  <id>ComponentTracker</id>
+  <name>Component Tracker</name>
+  <description>Component Tracker (mera-system) – evidencija elektronskih komponenti, http://localhost:3000</description>
+
+  <executable>%BASE%\ComponentTracker.exe</executable>
+  <workingdirectory>%BASE%</workingdirectory>
+  <env name="CT_DATA_DIR" value="%ProgramData%\ComponentTracker"/>
+
+  <startmode>Automatic</startmode>
+  <onfailure action="restart" delay="10 sec"/>
+  <onfailure action="restart" delay="30 sec"/>
+  <resetfailure>1 hour</resetfailure>
+
+  <!-- Gašenje: program dobije Ctrl+C i uredno zatvori bazu -->
+  <stoptimeout>15 sec</stoptimeout>
+
+  <!-- Šta je program ispisao – tu se gleda kad nešto ne radi -->
+  <logpath>%ProgramData%\ComponentTracker\logs</logpath>
+  <log mode="roll-by-size">
+    <sizeThreshold>5120</sizeThreshold>
+    <keepFiles>5</keepFiles>
+  </log>
+</service>

@@ -51,6 +51,7 @@ export const api = {
     services: () => get('/api/services'),
     updateService: (id, data) => patch(`/api/services/${id}`, data),
     testService: id => post(`/api/services/${id}/test`),
+    setPrimaryService: id => post(`/api/services/${id}/primary`),
     clearLookupCache: () => del('/api/lookup-cache'),
     cacheAllImages: () => post('/api/files/cache-images'),
 

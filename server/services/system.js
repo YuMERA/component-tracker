@@ -105,6 +105,7 @@ export function systemInfo() {
         version: config.version,
         node: process.version,
         data_dir: config.dataDir,
+        installed: config.installed,
         port: config.port,
         lan_urls: lanUrls(),
         update: {

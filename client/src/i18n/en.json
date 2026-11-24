@@ -237,7 +237,7 @@
     "backup_now": "Create backup",
     "backup_created": "Backup created",
     "backup_delete_confirm": "Delete backup \"{name}\"?",
-    "restore_hint": "Restore: stop the app and replace data/inventory.db with the chosen backup file.",
+    "restore_hint": "Restore: stop the app and replace inventory.db in the data folder (see \"About\") with the chosen backup file.",
     "download": "Download",
     "about": "About",
     "license": "License",
@@ -250,6 +250,9 @@
     "text_size": "Text size",
     "text_small": "Smaller",
     "text_normal": "Normal",
-    "text_large": "Larger"
+    "text_large": "Larger",
+    "primary_source": "Primary data source",
+    "primary_source_hint": "When the same part exists at several services, data is taken from this one; the others only fill in what is missing. In the lookup you can still pick another source per field.",
+    "primary": "Primary"
   }
 }

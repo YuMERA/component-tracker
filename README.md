@@ -87,11 +87,44 @@ npm run build
 npm start
 ```
 
+### Windows installer (`setup.exe`) – experimental
+
+A single `ComponentTracker-setup-<version>.exe` that needs **nothing else** on the computer (no Node.js, no npm):
+
+| What | Where |
+|---|---|
+| Program | `C:\Program Files\ComponentTracker\` |
+| Data (database, images, datasheets, backups, logs) | `C:\ProgramData\ComponentTracker\` |
+| Windows service | "Component Tracker" – starts with Windows, restarts itself if it stops |
+| Shortcut | "Component Tracker" on the desktop and in the Start menu |
+| Firewall rule | "Component Tracker" (private networks) – so a phone on the LAN can open it |
+
+The shortcut opens the browser; if the service is not running, it starts the app first.
+Installing a new setup over the old one stops the service, copies the database to
+`backups\inventory-before-upgrade-<date>.db`, replaces the program and starts it again.
+Uninstalling removes the program, service, shortcut and firewall rule – **the data folder is kept**.
+
+Windows shows "Windows protected your PC" because the program is not code-signed:
+**More info → Run anyway**.
+
+Building the installer (Windows, Node 22.13+, [Inno Setup 6](https://jrsoftware.org/isinfo.php)):
+
+```bash
+npm run build:setup        # → release/ComponentTracker-setup-<version>.exe
+npm run build:exe          # only release/ComponentTracker/ComponentTracker.exe, without the installer
+```
+
+The service wrapper is [WinSW](https://github.com/winsw/winsw) 2.12 (MIT license, `installer/winsw/`).
+
 ### Configuration (optional `.env`)
+
+From the source folder the `.env` file sits in the project root; the installed program reads it from
+`C:\ProgramData\ComponentTracker\.env`.
 
 | Variable | Default | Purpose |
 |---|---|---|
 | `APP_PORT` | `3000` | HTTP port |
+| `CT_DATA_DIR` | `data/` (installed: `C:\ProgramData\ComponentTracker`) | Data folder (environment variable, not `.env`) |
 | `VERSION_URL` | GitHub raw `version_info.json` | Update check source |
 | `GITHUB_TOKEN` | – | Only needed while the repository is private |
 
@@ -156,7 +189,8 @@ component-tracker/
 ├── data/                     Local data (git-ignored)
 ├── version_info.json         Release notes / update feed
 ├── start_app.bat / start.sh  Quick start (Windows / macOS, Linux)
-├── scripts/prepare.mjs       Installs / builds only when needed
+├── scripts/                  prepare.mjs (start scripts), build-exe / build-setup (Windows installer), make-icon
+├── installer/                Inno Setup script, Windows service (WinSW) config, app icon
 └── vite.config.js
 ```
 

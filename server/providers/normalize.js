@@ -30,8 +30,11 @@ export function familyOf(mpn, minLen = 4) {
 // Prepoznavanje kućišta iz parametara ili opisa
 const PACKAGE_RE = /\b(TO-?\d{2,3}[A-Z]{0,3}(-\d)?|SOT-?\d{2,3}(-\d)?|SOD-?\d{2,3}[A-Z]?|SOIC-?\d*|SO-?\d+|TSSOP-?\d*|MSOP-?\d*|[DV]?QFN-?\d*|QFP-?\d*|LQFP-?\d*|BGA-?\d*|DIP-?\d*|PDIP-?\d*|D2PAK|DPAK|PowerPAK[\w-]*|SMA|SMB|SMC|DO-?\d{2,3}[A-Z]{0,2}|0201|0402|0603|0805|1206|1210|2512|Radial|Axial)\b/i;
 
-export function detectPackage(params, ...texts) {
-    const p = params.find(x => /package|case|kućište/i.test(x.name) && !/packaging/i.test(x.name));
+/** Prazna vrednost iz kataloga: null, "" ili "-" (Element14 tako piše "nepoznato") */
+export const isBlank = v => v == null || ['', '-', '—'].includes(String(v).trim());
+
+export function detectPackage(attrs, ...texts) {
+    const p = attrs.find(x => /package|case|kućište/i.test(x.name) && !/packaging/i.test(x.name) && !isBlank(x.value));
     if (p?.value) return p.value;
     for (const t of texts) {
         const m = String(t || '').match(PACKAGE_RE);

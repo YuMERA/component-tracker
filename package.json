@@ -12,7 +12,9 @@
     "dev:api": "node --disable-warning=ExperimentalWarning --watch-path=server server/index.js",
     "dev:web": "vite",
     "build": "vite build",
-    "start": "node --disable-warning=ExperimentalWarning server/index.js"
+    "start": "node --disable-warning=ExperimentalWarning server/index.js",
+    "build:exe": "node scripts/build-exe.mjs",
+    "build:setup": "node scripts/build-setup.mjs"
   },
   "keywords": [
     "inventory",
@@ -32,6 +34,8 @@
     "@primeuix/themes": "^1.2.1",
     "@vitejs/plugin-vue": "^5.2.4",
     "concurrently": "^9.2.0",
+    "esbuild": "^0.28.2",
+    "postject": "^1.0.0-alpha.6",
     "primeicons": "^7.0.0",
     "primevue": "^4.3.6",
     "qrcode": "^1.5.4",

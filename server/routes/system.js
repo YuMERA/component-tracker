@@ -25,11 +25,11 @@ const mask = k => (k ? `${k.slice(0, 4)}…${k.slice(-3)}` : '');
 const publicService = s => ({
     id: s.id, name: s.name, endpoint: s.endpoint, is_active: !!s.is_active,
     has_key: !!s.api_key, key_hint: mask(s.api_key), supported: SUPPORTED.includes(s.name),
-    updated_at: s.updated_at
+    priority: s.priority, updated_at: s.updated_at
 });
 
 r.get('/services', (req, res) => {
-    res.json(db.prepare('SELECT * FROM api_services ORDER BY name').all().map(publicService));
+    res.json(db.prepare('SELECT * FROM api_services ORDER BY priority, id').all().map(publicService));
 });
 
 r.patch('/services/:id', (req, res) => {
@@ -41,6 +41,18 @@ r.patch('/services/:id', (req, res) => {
         .run(key, key ? active : 0, s.id);
     if (key !== s.api_key) db.exec('DELETE FROM lookup_cache');
     res.json(publicService(db.prepare('SELECT * FROM api_services WHERE id = ?').get(s.id)));
+});
+
+// Glavni izvor: njegovi podaci imaju prednost pri spajanju rezultata pretrage,
+// ostali servisi popunjavaju samo ono što kod njega nedostaje
+r.post('/services/:id/primary', (req, res) => {
+    const s = db.prepare('SELECT * FROM api_services WHERE id = ?').get(req.params.id);
+    if (!s) throw new HttpError(404, 'Service not found');
+    const others = db.prepare('SELECT id FROM api_services WHERE id <> ? ORDER BY priority, id').all(s.id);
+    const setPriority = db.prepare('UPDATE api_services SET priority = ? WHERE id = ?');
+    setPriority.run(1, s.id);
+    others.forEach((o, i) => setPriority.run(i + 2, o.id));
+    res.json(db.prepare('SELECT * FROM api_services ORDER BY priority, id').all().map(publicService));
 });
 
 // Test: probna pretraga samo preko jednog servisa, bez keša

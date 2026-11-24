@@ -86,17 +86,51 @@ const FIELDS = [
 ];
 
 const show = v => v ?? '';
+const sameValue = (a, b) => JSON.stringify(a ?? '') === JSON.stringify(b ?? '');
+
+// Polja koja dolaze od konkretnog servisa (naziv i MPN su isti kod svih)
+const SOURCE_FIELDS = new Set(['manufacturer', 'package', 'category', 'description', 'image_url', 'datasheet_url']);
+
+// Vrednost polja kod svakog izvora koji je ima, redom po prioritetu (c.sources je već tako sortiran)
+function sourceOptions(c, f) {
+    if (!SOURCE_FIELDS.has(f.key) || !c.by_source) return [];
+    return c.sources.map(s => s.name)
+        .filter(name => c.by_source[name])
+        .map(name => ({ name, value: f.from({ ...c, [f.key]: c.by_source[name][f.key] }) }))
+        .filter(o => o.value != null && o.value !== '');
+}
+
+// podrazumevano: popuni prazna polja; postojeće vrednosti ne diramo dok ih ne štikliraš
+function refreshRow(row) {
+    row.same = sameValue(row.old, row.value);
+    row.use = !row.same && (props.isNew || !show(row.old));
+}
 
 function pick(c) {
     picked.value = c;
     fieldRows.value = FIELDS
-        .map(f => ({ ...f, old: props.current?.[f.key], value: f.from(c) }))
-        .filter(f => f.value != null && f.value !== '')
         .map(f => {
-            const same = JSON.stringify(f.old ?? '') === JSON.stringify(f.value);
-            // podrazumevano: popuni prazna polja; postojeće vrednosti ne diramo dok ih ne štikliraš
-            return { ...f, same, use: !same && (props.isNew || !show(f.old)) };
-        });
+            const value = f.from(c);
+            const options = sourceOptions(c, f);
+            return {
+                ...f, old: props.current?.[f.key], value, options,
+                source: options.find(o => sameValue(o.value, value))?.name || null,
+                // izbor izvora ima smisla samo kad izvori kažu različite stvari
+                choosable: new Set(options.map(o => JSON.stringify(o.value))).size > 1
+            };
+        })
+        .filter(f => f.value != null && f.value !== '')
+        .map(f => { refreshRow(f); return f; });
+}
+
+// Klik na drugi izvor za jedno polje
+function useSource(row, name) {
+    const opt = row.options.find(o => o.name === name);
+    if (!opt) return;
+    row.source = name;
+    row.value = opt.value;
+    refreshRow(row);
+    if (!row.same) row.use = true;      // izričit izbor izvora = želim tu vrednost
 }
 
 function apply() {
@@ -225,6 +259,15 @@ const fmt = n => (n == null ? '?' : Number(n).toLocaleString(locale.value));
                         <td class="val">
                             <Tag v-if="f.same" :value="t('lookup.same')" severity="secondary" />
                             <template v-else>{{ show(f.value) }}</template>
+                            <!-- odakle je vrednost; kad se izvori razlikuju – klik bira drugi -->
+                            <div v-if="f.choosable" class="srcpick" @click.stop>
+                                <button v-for="o in f.options" :key="o.name" type="button" class="srcbtn"
+                                        :class="{ on: o.name === f.source }" @click="useSource(f, o.name)"
+                                        v-tooltip.bottom="o.name === f.source ? null : String(show(o.value)).slice(0, 300)">
+                                    {{ o.name }}
+                                </button>
+                            </div>
+                            <div v-else-if="f.source" class="srcpick"><span class="srcbtn static">{{ f.source }}</span></div>
                         </td>
                     </tr>
                 </tbody>
@@ -265,4 +308,14 @@ const fmt = n => (n == null ? '?' : Number(n).toLocaleString(locale.value));
 .diff thead th { font-size: .8rem; color: var(--p-text-muted-color); }
 .diff tbody tr { cursor: pointer; }
 .diff tbody tr.off .val:last-child { opacity: .5; }
-.diff .val { white-space: pre-line; word-break: break-word; max-width: 26rem; }</style>
+.diff .val { white-space: pre-line; word-break: break-word; max-width: 26rem; }
+.srcpick { display: flex; gap: .3rem; margin-top: .35rem; white-space: normal; }
+.srcbtn {
+    font: inherit; font-size: .75rem; line-height: 1.4; padding: .05rem .5rem; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--p-content-border-color); background: transparent; color: var(--p-text-muted-color);
+}
+.srcbtn:hover { border-color: var(--p-primary-color); color: var(--p-primary-color); }
+.srcbtn.on { background: var(--p-primary-color); border-color: var(--p-primary-color); color: var(--p-primary-contrast-color); }
+.srcbtn.static { cursor: default; }
+.srcbtn.static:hover { border-color: var(--p-content-border-color); color: var(--p-text-muted-color); }
+</style>
