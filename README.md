@@ -116,6 +116,20 @@ npm run build:exe          # only release/ComponentTracker/ComponentTracker.exe,
 
 The service wrapper is [WinSW](https://github.com/winsw/winsw) 2.12 (MIT license, `installer/winsw/`).
 
+### Releasing a new version (maintainer checklist)
+
+1. Raise `"version"` in `package.json` (e.g. `3.0.0` → `3.0.1`).
+2. `npm run build:setup` → `release/ComponentTracker-setup-<version>.exe`.
+3. Test it: run the new setup over the installed version. The database is copied to
+   `C:\ProgramData\ComponentTracker\backups\inventory-before-upgrade-<date>.db` first.
+4. Commit and push, then on GitHub: **Releases → Draft a new release**, tag `v<version>`,
+   write what is new and drag the setup `.exe` into the assets.
+5. In `version_info.json` set `latest_version`, point `download_url` to that release page and add
+   an entry to `versions`. Commit and push it: every running copy checks this file at start and
+   shows "A new version is available" in Settings.
+
+Users update the same way as they installed: download the new setup and run it. Data is kept.
+
 ### Configuration (optional `.env`)
 
 From the source folder the `.env` file sits in the project root; the installed program reads it from
