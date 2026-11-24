@@ -147,7 +147,7 @@
     "search": "Search",
     "summary": "{n} unique parts · click a row to use its data",
     "empty": "No results. Try \"Begins with\" or \"Keyword\".",
-    "no_services": "No API service is enabled. Add an API key in Settings.",
+    "no_services": "Lookup needs a free Mouser or Element14 API key. See Settings for how to get one. You can also add components by hand.",
     "variants": "{n} variants – they differ in package / packaging",
     "col_mpn": "MPN / manufacturer",
     "col_status": "Status",
@@ -253,6 +253,7 @@
     "text_large": "Larger",
     "primary_source": "Primary data source",
     "primary_source_hint": "When the same part exists at several services, data is taken from this one; the others only fill in what is missing. In the lookup you can still pick another source per field.",
-    "primary": "Primary"
+    "primary": "Primary",
+    "key_where": "Online lookup needs an API key from Mouser or Element14. You get one by registering for free on their website:"
   }
 }

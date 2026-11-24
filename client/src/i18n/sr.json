@@ -147,7 +147,7 @@
     "search": "Traži",
     "summary": "{n} jedinstvenih delova · klikni red da preuzmeš podatke",
     "empty": "Nema rezultata. Probaj „Počinje sa” ili „Ključna reč”.",
-    "no_services": "Nijedan API servis nije uključen. Dodaj API ključ u podešavanjima.",
+    "no_services": "Za pretragu je potreban besplatan API ključ Mouser-a ili Element14. Uputstvo je u Podešavanjima. Komponente možeš dodavati i ručno.",
     "variants": "{n} varijante – razlikuju se po kućištu / pakovanju",
     "col_mpn": "MPN / proizvođač",
     "col_status": "Status",
@@ -253,6 +253,7 @@
     "text_large": "Veći",
     "primary_source": "Glavni izvor podataka",
     "primary_source_hint": "Kad isti deo postoji kod više servisa, podaci se uzimaju odavde, a ostali popunjavaju samo ono što nedostaje. U pretrazi se za svako polje može izabrati i drugi izvor.",
-    "primary": "Glavni"
+    "primary": "Glavni",
+    "key_where": "Za pretragu online potreban je API ključ kod Mouser-a ili Element14. Ključ se dobija besplatnom registracijom na njihovom sajtu:"
   }
 }

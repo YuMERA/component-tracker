@@ -142,7 +142,7 @@ function apply() {
 
 function openSettings() {
     visible.value = false;
-    router.push('/settings');
+    router.push('/settings#api');
 }
 
 const selectedCount = computed(() => fieldRows.value.filter(f => f.use).length);

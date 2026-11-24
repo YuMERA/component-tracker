@@ -1,6 +1,7 @@
 <script setup>
 // Podešavanja: izgled i jezik, API servisi, lokalni fajlovi, backup, o aplikaciji
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, nextTick } from 'vue';
+import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -16,6 +17,7 @@ import { useTheme, useTextSize } from '../theme.js';
 import { setLocale } from '../i18n/index.js';
 
 const { t, d, locale } = useI18n();
+const route = useRoute();
 const toast = useToast();
 const confirm = useConfirm();
 const { mode, setTheme } = useTheme();
@@ -31,7 +33,12 @@ const busy = ref({});
 
 onMounted(async () => {
     [services.value, backup.value, system.value] = await Promise.all([api.services(), api.backupInfo(), api.system()]);
+    // /settings#api (sa Pregleda i iz pretrage) – skroluj do API servisa
+    if (route.hash) { await nextTick(); document.querySelector(route.hash)?.scrollIntoView({ behavior: 'smooth' }); }
 });
+
+// Gde se dobija ključ (besplatna registracija kod distributera)
+const KEY_PAGES = [['Mouser', 'https://www.mouser.com/api-hub/'], ['Element14', 'https://partner.element14.com/']];
 
 const error = e => toast.add({ severity: 'error', summary: t('common.error'), detail: e.message, life: 5000 });
 const ok = summary => toast.add({ severity: 'success', summary, life: 2500 });
@@ -125,9 +132,12 @@ const latestInfo = () => system.value?.update.versions.find(v => v.version === s
         </section>
 
         <!-- API SERVISI -->
-        <section class="card card-pad">
+        <section id="api" class="card card-pad">
             <h3>{{ t('settings.api_services') }}</h3>
             <p class="muted">{{ t('settings.api_intro') }}</p>
+            <p class="muted keywhere">{{ t('settings.key_where') }}
+                <template v-for="([name, url], i) in KEY_PAGES" :key="name">{{ i ? ' · ' : ' ' }}<a :href="url" target="_blank" rel="noopener">{{ name }} <i class="pi pi-external-link" /></a></template>
+            </p>
             <!-- čiji se podaci uzimaju kad isti deo postoji kod više servisa -->
             <div class="setting primary">
                 <span>{{ t('settings.primary_source') }}
@@ -224,6 +234,8 @@ const latestInfo = () => system.value?.update.versions.find(v => v.version === s
 .block { display: block; font-weight: normal; max-width: 34rem; }
 .service { padding: .75rem 0; border-top: 1px solid var(--p-content-border-color); }
 .key { margin-top: .5rem; flex-wrap: wrap; }
+.keywhere a { color: var(--p-primary-color); white-space: nowrap; }
+.keywhere i { font-size: .75em; }
 .small { font-size: .82rem; }
 .ts-small { font-size: .8rem; font-weight: 700; }
 .ts-normal { font-size: 1rem; font-weight: 700; }
