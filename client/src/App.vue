@@ -63,6 +63,14 @@ const toggleLocale =() => setLocale(locale.value === 'sr' ? 'en' : 'sr');
                 <span class="brand-text">Component<br />Tracker</span>
             </div>
 
+            <!-- tema i jezik: dugme nudi ono NA ŠTA se prelazi -->
+            <div class="prefs">
+                <Button :icon="isDark ? 'pi pi-sun' : 'pi pi-moon'" :label="t(isDark ? 'settings.theme_light' : 'settings.theme_dark')"
+                        text size="small" severity="secondary" @click="toggleTheme" />
+                <Button icon="pi pi-globe" :label="locale === 'sr' ? 'English' : 'Srpski'"
+                        text size="small" severity="secondary" @click="toggleLocale" />
+            </div>
+
             <Button class="add-btn" icon="pi pi-plus" :label="t('components.new')" @click="openNewComponent" />
 
             <router-link v-for="n in nav" :key="n.to" :to="n.to" class="nav-item" active-class="" exact-active-class="active">
@@ -71,13 +79,6 @@ const toggleLocale =() => setLocale(locale.value === 'sr' ? 'en' : 'sr');
                 <span v-if="n.to === '/settings' && updateAvailable" class="dot" v-tooltip.right="t('settings.update_available')" />
             </router-link>
 
-            <div class="rail-bottom">
-                <Button :icon="isDark ? 'pi pi-sun' : 'pi pi-moon'" text rounded severity="secondary"
-                        @click="toggleTheme" v-tooltip.right="t('settings.theme')" />
-                <!-- dugme nudi jezik NA KOJI se prelazi (kao sunce/mesec za temu) -->
-                <Button :label="locale === 'sr' ? 'EN' : 'SR'" text rounded severity="secondary" class="lang"
-                        @click="toggleLocale" v-tooltip.right="locale === 'sr' ? 'English' : 'Srpski'" />
-            </div>
             <a class="copyright" href="https://mera-system.com" target="_blank" rel="noopener">© {{ year }} mera-system</a>
         </nav>
 
@@ -103,7 +104,7 @@ const toggleLocale =() => setLocale(locale.value === 'sr' ? 'en' : 'sr');
 .brand { display: flex; align-items: center; gap: .6rem; padding: 0 .5rem .9rem; font-weight: 700; line-height: 1.1; }
 .brand .logo { width: 2rem; height: 2rem; flex-shrink: 0; }
 .copyright {
-    display: block; text-align: center; margin-top: .4rem; font-size: .78rem;
+    display: block; text-align: center; margin-top: auto; font-size: .78rem;
     color: var(--p-text-muted-color); text-decoration: none;
 }
 .copyright:hover { color: var(--p-primary-color); }
@@ -116,8 +117,8 @@ const toggleLocale =() => setLocale(locale.value === 'sr' ? 'en' : 'sr');
 .nav-item.active { background: var(--p-highlight-background); color: var(--p-highlight-color); font-weight: 600; }
 .nav-item i { width: 1.1rem; text-align: center; }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--p-orange-500); margin-left: auto; }
-.rail-bottom { margin-top: auto; display: flex; gap: .25rem; justify-content: center; }
-.lang { font-weight: 700; min-width: 2.5rem; }
+.prefs { display: grid; grid-template-columns: 1fr 1fr; gap: .25rem; margin: 0 0 .9rem; }
+.prefs :deep(.p-button) { padding: .45rem .4rem; font-size: .9rem; color: var(--p-text-color); }
 .main { overflow: auto; min-width: 0; }
 .loading { padding: 3rem; text-align: center; }
 
@@ -129,7 +130,7 @@ const toggleLocale =() => setLocale(locale.value === 'sr' ? 'en' : 'sr');
         grid-row: 2; flex-direction: row; justify-content: space-around; align-items: center;
         padding: .3rem; border-right: 0; border-top: 1px solid var(--p-content-border-color);
     }
-    .brand, .rail-bottom, .copyright { display: none; }
+    .brand, .prefs, .copyright { display: none; }
     .add-btn { margin: 0; }
     .add-btn :deep(.p-button-label) { display: none; }
     .nav-item { flex-direction: column; gap: .15rem; padding: .35rem .4rem; font-size: .78rem; }
