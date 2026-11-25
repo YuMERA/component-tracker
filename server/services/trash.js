@@ -44,6 +44,15 @@ function removeTrashFiles(componentId = null) {
     }
 }
 
+// Zapis u istoriju komponente (delta 0 = događaj bez promene količine, npr. kanta)
+function logHistory(componentId, locationId, delta, quantityAfter, kind, note = null, createdAt = null) {
+    db.prepare(`INSERT INTO stock_movements (component_id, location_id, delta, quantity_after, kind, note, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, IFNULL(?, CURRENT_TIMESTAMP))`)
+        .run(componentId, locationId ?? null, delta, quantityAfter, kind, note, createdAt);
+}
+const qtyAt = (componentId, locationId) =>
+    db.prepare('SELECT quantity FROM stock WHERE component_id = ? AND IFNULL(location_id, 0) = ?').get(componentId, locationId ?? 0)?.quantity ?? 0;
+
 const exists = (table, id) => id != null && !!db.prepare(`SELECT 1 FROM ${table} WHERE id = ?`).get(id);
 const insertRow = (table, row) => {
     const cols = Object.keys(row);
@@ -90,6 +99,8 @@ export function trashLocation(id) {
         if (!loc) throw new HttpError(404, 'Location not found');
         const label = allLocations().find(l => l.id === id)?.path || loc.name;
         const children = db.prepare('SELECT id FROM locations WHERE parent_id = ?').all(id).map(r => r.id);
+        // zapisi istorije sa ove lokacije (brisanje im briše lokaciju – vraćanje je vraća)
+        const history = db.prepare('SELECT id FROM stock_movements WHERE location_id = ?').all(id).map(r => r.id);
         db.prepare('UPDATE locations SET parent_id = ? WHERE parent_id = ?').run(loc.parent_id, id);
         const moved = [];
         for (const s of db.prepare('SELECT * FROM stock WHERE location_id = ?').all(id)) {
@@ -101,17 +112,18 @@ export function trashLocation(id) {
             } else {
                 db.prepare('UPDATE stock SET location_id = ? WHERE id = ?').run(loc.parent_id, s.id);
             }
+            logHistory(s.component_id, loc.parent_id, s.quantity, qtyAt(s.component_id, loc.parent_id), 'location_deleted', label);
         }
         db.prepare('DELETE FROM locations WHERE id = ?').run(id);
         const pieces = moved.reduce((s, m) => s + m.quantity, 0);
-        return addToTrash('location', label, { children: children.length, pieces }, { row: loc, children, moved });
+        return addToTrash('location', label, { children: children.length, pieces }, { row: loc, children, moved, history });
     });
 }
 
 // ---------------------------------------------------------------------
 // Vraćanje
 // ---------------------------------------------------------------------
-function restoreComponent({ row, stock, movements }, force) {
+function restoreComponent({ row, stock, movements }, force, deletedAt) {
     if (exists('components', row.id)) throw new HttpError(409, 'Component already exists');
     const dup = findByMpn(row.mpn);
     if (dup && !force) throw new HttpError(409, 'Component with this MPN already exists', { existing: dup });
@@ -129,6 +141,10 @@ function restoreComponent({ row, stock, movements }, force) {
         db.prepare('INSERT INTO stock (component_id, location_id, quantity) VALUES (?, ?, ?)').run(row.id, loc, qty);
     }
     for (const m of movements) insertRow('stock_movements', { ...m, location_id: exists('locations', m.location_id) ? m.location_id : null });
+    // u istoriji: kad je obrisana i kad je vraćena
+    const total = stock.reduce((sum, x) => sum + x.quantity, 0);
+    logHistory(row.id, null, 0, total, 'trashed', null, deletedAt);
+    logHistory(row.id, null, 0, total, 'restored');
     return { id: row.id, notes: [...new Set(notes)] };
 }
 
@@ -145,7 +161,7 @@ function restoreCategory({ row, components, moveTo }) {
     return { id, notes: same ? ['merged'] : [] };
 }
 
-function restoreLocation({ row, children, moved }) {
+function restoreLocation({ row, children, moved, history = [] }) {
     if (exists('locations', row.id)) throw new HttpError(409, 'Location already exists');
     const parent = exists('locations', row.parent_id) ? row.parent_id : null;
     // naziv zauzet na istom mestu → "Kutija 1 (2)"
@@ -154,6 +170,7 @@ function restoreLocation({ row, children, moved }) {
         name = `${row.name} (${n})`;
     }
     insertRow('locations', { ...row, name, parent_id: parent });
+    for (const hid of history) db.prepare('UPDATE stock_movements SET location_id = ? WHERE id = ? AND location_id IS NULL').run(row.id, hid);
     // podlokacije koje su i dalje tamo gde ih je brisanje prebacilo
     for (const cid of children) {
         db.prepare('UPDATE locations SET parent_id = ? WHERE id = ? AND IFNULL(parent_id, 0) = ?').run(row.id, cid, row.parent_id ?? 0);
@@ -166,6 +183,9 @@ function restoreLocation({ row, children, moved }) {
         if (src.quantity === qty) db.prepare('DELETE FROM stock WHERE id = ?').run(src.id);
         else db.prepare('UPDATE stock SET quantity = quantity - ? WHERE id = ?').run(qty, src.id);
         db.prepare('INSERT INTO stock (component_id, location_id, quantity) VALUES (?, ?, ?)').run(m.component_id, row.id, qty);
+        const path = allLocations().find(l => l.id === row.id)?.path || name;
+        logHistory(m.component_id, row.parent_id, -qty, qtyAt(m.component_id, row.parent_id), 'location_restored', path);
+        logHistory(m.component_id, row.id, qty, qty, 'location_restored', path);
     }
     return { id: row.id, notes: name !== row.name ? ['renamed'] : [] };
 }
@@ -176,7 +196,7 @@ export function restore(trashId, { force = false } = {}) {
     const item = db.prepare('SELECT * FROM trash WHERE id = ?').get(trashId);
     if (!item) throw new HttpError(404, 'Not in trash');
     const result = tx(() => {
-        const r = RESTORE[item.kind](JSON.parse(item.payload), force);
+        const r = RESTORE[item.kind](JSON.parse(item.payload), force, item.deleted_at);
         db.prepare('DELETE FROM trash WHERE id = ?').run(item.id);
         return r;
     });

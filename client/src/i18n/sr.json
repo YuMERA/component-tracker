@@ -101,7 +101,11 @@
     "adjust": "Brza promena",
     "move": "Premeštanje",
     "migrated": "Preneto iz prethodne verzije",
-    "import": "Uvoz iz fajla"
+    "import": "Uvoz iz fajla",
+    "trashed": "Premešteno u kantu",
+    "restored": "Vraćeno iz kante",
+    "location_deleted": "Lokacija obrisana – komadi prebačeni ovde",
+    "location_restored": "Lokacija vraćena iz kante – komadi vraćeni"
   },
   "drawer": {
     "tab_data": "Podaci",
@@ -133,7 +137,8 @@
     "copy_as_new": "Kopiraj kao novu",
     "copy_hint": "Nova komponenta sa istim podacima (bez MPN-a i stanja), npr. druga vrednost iste serije",
     "save_first": "Prvo sačuvaj izmene",
-    "copied": "Kopija od „{name}” – promeni šta treba i klikni Dodaj"
+    "copied": "Kopija od „{name}” – promeni šta treba i klikni Dodaj",
+    "total_pcs": "Ukupno {n} kom"
   },
   "files": {
     "local_copy": "lokalno",
@@ -321,6 +326,11 @@
     "note_renamed": "Na tom mestu već postoji lokacija istog naziva, pa je vraćena sa brojem u nazivu.",
     "moved_one": "„{name}” je premešteno u kantu",
     "moved_many": "U kantu premešteno: {n}",
-    "undo": "Poništi"
+    "undo": "Poništi",
+    "restore_title": "Vraćanje iz kante",
+    "restore_confirm_component": "Vratiti komponentu „{name}” sa njenim stanjem i istorijom?",
+    "restore_confirm_location": "Vratiti lokaciju „{name}”? Njene podlokacije i komadi se vraćaju u nju.",
+    "restore_confirm_category": "Vratiti kategoriju „{name}”? Njene komponente se vraćaju u nju.",
+    "restore_all_confirm": "Vratiti svih {n} stavki iz kante?"
   }
 }

@@ -87,10 +87,11 @@ const fmtDate = (s, f = 'short') => d(new Date(s.replace(' ', 'T') + 'Z'), f);
             <section class="card card-pad">
                 <h3>{{ t('dashboard.activity') }}</h3>
                 <div v-for="m in movements" :key="m.id" class="item" @click="openComponent(m.component_id)">
-                    <Tag :value="(m.delta > 0 ? '+' : '') + m.delta" :severity="m.delta > 0 ? 'success' : 'danger'" class="mono delta" />
+                    <Tag v-if="m.delta" :value="(m.delta > 0 ? '+' : '') + m.delta" :severity="m.delta > 0 ? 'success' : 'danger'" class="mono delta" />
+                    <Tag v-else :icon="m.kind === 'restored' ? 'pi pi-replay' : 'pi pi-trash'" severity="secondary" class="delta" />
                     <div class="grow">
                         <div class="ellipsis"><strong>{{ m.component_name }}</strong></div>
-                        <div class="muted small ellipsis">{{ t(`movement.${m.kind}`) }} · {{ m.location || t('filters.no_location') }}</div>
+                        <div class="muted small ellipsis">{{ t(`movement.${m.kind}`) }}<template v-if="m.delta"> · {{ m.location || t('filters.no_location') }}</template></div>
                     </div>
                     <span class="muted small">{{ fmtDate(m.created_at) }}</span>
                 </div>

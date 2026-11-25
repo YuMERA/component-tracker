@@ -51,6 +51,18 @@ async function afterChange() {
     await Promise.all([load(), loadAll()]);
 }
 
+// Vraćanje traži potvrdu – da jedan slučajan klik ne promeni podatke
+function askRestore(item) {
+    confirm.require({
+        header: t('trash.restore_title'),
+        message: t(`trash.restore_confirm_${item.kind}`, { name: item.label }),
+        icon: 'pi pi-replay',
+        acceptProps: { label: t('trash.restore') },
+        rejectProps: { label: t('common.cancel'), severity: 'secondary', outlined: true },
+        accept: () => restore(item)
+    });
+}
+
 async function restore(item, force = false) {
     busy.value = item.id;
     try {
@@ -87,6 +99,17 @@ function purge(item) {
     });
 }
 
+function askRestoreAll() {
+    confirm.require({
+        header: t('trash.restore_all'),
+        message: t('trash.restore_all_confirm', { n: items.value.length }),
+        icon: 'pi pi-replay',
+        acceptProps: { label: t('trash.restore_all') },
+        rejectProps: { label: t('common.cancel'), severity: 'secondary', outlined: true },
+        accept: restoreAll
+    });
+}
+
 async function restoreAll() {
     busy.value = 'all';
     try {
@@ -120,7 +143,7 @@ function emptyAll() {
             <h1>{{ t('nav.trash') }}</h1>
             <span class="grow" />
             <Button v-if="items.length" :label="t('trash.restore_all')" icon="pi pi-replay" severity="secondary" outlined
-                    :loading="busy === 'all'" @click="restoreAll" />
+                    :loading="busy === 'all'" @click="askRestoreAll" />
             <Button v-if="items.length" :label="t('trash.empty')" icon="pi pi-trash" severity="danger" outlined @click="emptyAll" />
         </div>
         <p class="muted intro">{{ t('trash.intro') }}</p>
@@ -149,8 +172,9 @@ function emptyAll() {
                     <template #body="{ data }">
                         <div class="row actions">
                             <Button :label="t('trash.restore')" icon="pi pi-replay" size="small" outlined class="restore-btn"
-                                    :loading="busy === data.id" @click="restore(data)" />
-                            <Button icon="pi pi-times" size="small" text severity="danger" @click="purge(data)" v-tooltip.left="t('trash.purge')" />
+                                    :loading="busy === data.id" @click="askRestore(data)" />
+                            <Button :label="t('trash.purge')" icon="pi pi-trash" size="small" outlined severity="danger" class="restore-btn"
+                                    @click="purge(data)" />
                         </div>
                     </template>
                 </Column>
@@ -165,7 +189,7 @@ function emptyAll() {
 .item { gap: .8rem; }
 .item > i { font-size: 1.1rem; color: var(--p-primary-color); width: 1.4rem; text-align: center; }
 .small { font-size: .85rem; }
-.actions { justify-content: flex-end; gap: .25rem; }
+.actions { justify-content: flex-end; gap: .5rem; }
 .empty { padding: 2.5rem; text-align: center; }
 .empty i { margin-right: .4rem; }
 .mobile-date { display: none; }

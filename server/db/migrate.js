@@ -59,7 +59,7 @@ const SCHEMA_V1 = `
         location_id INTEGER REFERENCES locations(id) ON DELETE SET NULL,
         delta INTEGER NOT NULL,
         quantity_after INTEGER NOT NULL,
-        kind TEXT NOT NULL DEFAULT 'manual',   -- initial | manual | adjust | move | import | migrated (stari zapisi)
+        kind TEXT NOT NULL DEFAULT 'manual',   -- initial | manual | adjust | move | import | trashed | restored | location_deleted | location_restored | migrated
         note TEXT,                             -- slobodan tekst korisnika
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );

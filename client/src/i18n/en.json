@@ -101,7 +101,11 @@
     "adjust": "Quick change",
     "move": "Moved",
     "migrated": "Imported from previous version",
-    "import": "Imported from file"
+    "import": "Imported from file",
+    "trashed": "Moved to trash",
+    "restored": "Restored from trash",
+    "location_deleted": "Location deleted – pieces moved here",
+    "location_restored": "Location restored from trash – pieces moved back"
   },
   "drawer": {
     "tab_data": "Details",
@@ -133,7 +137,8 @@
     "copy_as_new": "Copy as new",
     "copy_hint": "New component with the same data (without MPN and stock), e.g. another value of the same series",
     "save_first": "Save your changes first",
-    "copied": "Copy of \"{name}\" – change what you need and click Add"
+    "copied": "Copy of \"{name}\" – change what you need and click Add",
+    "total_pcs": "Total {n} pcs"
   },
   "files": {
     "local_copy": "local",
@@ -321,6 +326,11 @@
     "note_renamed": "A location with the same name already exists there, so it was restored with a number in its name.",
     "moved_one": "\"{name}\" moved to trash",
     "moved_many": "Moved to trash: {n}",
-    "undo": "Undo"
+    "undo": "Undo",
+    "restore_title": "Restore from trash",
+    "restore_confirm_component": "Restore component \"{name}\" with its stock and history?",
+    "restore_confirm_location": "Restore location \"{name}\"? Its sublocations and pieces move back into it.",
+    "restore_confirm_category": "Restore category \"{name}\"? Its components move back into it.",
+    "restore_all_confirm": "Restore all {n} items from the trash?"
   }
 }

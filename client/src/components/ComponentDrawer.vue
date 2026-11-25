@@ -390,11 +390,13 @@ const lookupQuery = computed(() => form.value.mpn || form.value.name);
                 <TabPanel value="history">
                     <p v-if="!movements.length" class="muted">{{ t('drawer.no_history') }}</p>
                     <div v-for="m in movements" :key="m.id" class="move">
-                        <Tag :value="(m.delta > 0 ? '+' : '') + m.delta" :severity="m.delta > 0 ? 'success' : 'danger'" class="mono delta" />
+                        <Tag v-if="m.delta" :value="(m.delta > 0 ? '+' : '') + m.delta" :severity="m.delta > 0 ? 'success' : 'danger'" class="mono delta" />
+                    <Tag v-else :icon="m.kind === 'restored' ? 'pi pi-replay' : 'pi pi-trash'" severity="secondary" class="delta" />
                         <div class="grow">
                             <div>{{ t(`movement.${m.kind}`) }}<span v-if="m.note" class="muted"> – {{ m.note }}</span></div>
                             <div class="muted small">
-                                <i class="pi pi-map-marker" /> {{ m.location || t('filters.no_location') }} → {{ m.quantity_after }} {{ t('common.pcs') }}
+                                <template v-if="m.delta"><i class="pi pi-map-marker" /> {{ m.location || t('filters.no_location') }} → {{ m.quantity_after }} {{ t('common.pcs') }}</template>
+                                <template v-else>{{ t('drawer.total_pcs', { n: m.quantity_after }) }}</template>
                             </div>
                         </div>
                         <span class="muted small">{{ formatDate(m.created_at) }}</span>
