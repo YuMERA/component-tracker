@@ -72,7 +72,11 @@ async function load() {
     imageFailed.value = false;
     if (isNew.value) {
         saved.value = null;
-        form.value = EMPTY();
+        // "Kopiraj kao novu": forma počinje od kopije, a ostaje "nesačuvana" dok se ne doda
+        form.value = store.drawer.prefill ? { ...EMPTY(), ...store.drawer.prefill } : EMPTY();
+        store.drawer.prefill = null;
+        original.value = JSON.stringify(EMPTY());
+        return;
     } else {
         const c = await api.component(store.drawer.id);
         saved.value = c;
@@ -84,6 +88,16 @@ async function load() {
 
 watch(() => [store.drawer.visible, store.drawer.id], ([open]) => { if (open) load(); });
 watch(() => form.value.image_url, () => (imageFailed.value = false));
+
+// Nova komponenta na osnovu ove (npr. drugi otpornik iste serije): sve osim MPN-a,
+// a na istim lokacijama sa 0 komada
+function copyAsNew() {
+    const c = JSON.parse(JSON.stringify(form.value));
+    c.mpn = '';
+    c.stock = c.stock.map(r => ({ location: r.location, quantity: 0 }));
+    Object.assign(store.drawer, { id: null, prefill: c });
+    toast.add({ severity: 'info', summary: t('drawer.copied', { name: form.value.name }), life: 3000 });
+}
 
 // Zatvaranje sa nesačuvanim izmenama traži potvrdu
 const visible = computed({
@@ -379,6 +393,8 @@ const lookupQuery = computed(() => form.value.mpn || form.value.name);
         <template #footer>
             <div class="row">
                 <Button v-if="!isNew" icon="pi pi-trash" :label="t('common.delete')" severity="danger" text @click="remove" />
+                <Button v-if="!isNew" icon="pi pi-copy" :label="t('drawer.copy_as_new')" severity="secondary" text
+                        :disabled="dirty" @click="copyAsNew" v-tooltip.top="dirty ? t('drawer.save_first') : t('drawer.copy_hint')" />
                 <span class="grow" />
                 <span v-if="dirty && !isNew" class="muted small">{{ t('drawer.unsaved') }}</span>
                 <Button :label="t('common.close')" severity="secondary" text @click="visible = false" />

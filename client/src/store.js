@@ -12,7 +12,7 @@ export const store = reactive({
     loading: false,
     loaded: false,
     // bočni panel komponente – dostupan sa svakog ekrana
-    drawer: { visible: false, id: null }
+    drawer: { visible: false, id: null, prefill: null }
 });
 
 export async function loadAll() {

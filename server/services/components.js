@@ -3,7 +3,7 @@
 // Rute samo pozivaju ove funkcije.
 // *********************************************************************
 import { db, tx, parseJson } from '../db/index.js';
-import { allLocations } from './locations.js';
+import { allLocations, ensureLocationPath } from './locations.js';
 
 export class HttpError extends Error {
     constructor(status, message, extra = {}) {
@@ -246,4 +246,91 @@ export function bulkUpdate(ids, action, value) {
         });
     }
     throw new HttpError(400, 'Unknown action');
+}
+
+// ---------------------------------------------------------------------
+// Uvoz liste (CSV iz Excel-a ili izvoz iz ove aplikacije)
+// rows: [{ name, mpn, manufacturer, package, category, location, quantity, min_stock, description, datasheet_url }]
+//   location može biti i "Kutija 1: 5; Kutija 2: 3" (format izvoza) – tada se quantity ne koristi
+// existing: 'skip' – postojeće komponente se preskaču, 'add' – dodaje im se količina
+// dryRun: samo vrati šta bi se desilo (pregled pre uvoza), ništa ne upisuje
+// Postojeća = isti MPN, a za redove bez MPN-a isti naziv.
+// ---------------------------------------------------------------------
+const STOCK_LIST = /^\s*(?:[^:;]*:\s*\d+\s*(?:;|$)\s*)+$/;
+
+function importStock(r) {
+    const loc = clean(r.location != null ? String(r.location) : null);
+    if (loc && STOCK_LIST.test(loc)) {
+        return loc.split(';').map(s => s.trim()).filter(Boolean).map(s => {
+            const i = s.lastIndexOf(':');
+            const path = s.slice(0, i).trim();
+            return { path: path && path !== '-' ? path : null, quantity: parseInt(s.slice(i + 1), 10) || 0 };
+        });
+    }
+    const qty = Math.max(0, parseInt(String(r.quantity ?? '').replace(/[^\d-]/g, ''), 10) || 0);
+    return [{ path: loc, quantity: qty }];
+}
+
+export function importComponents({ rows, existing = 'skip', dryRun = false }) {
+    if (!Array.isArray(rows)) throw new HttpError(400, 'No rows');
+    const findByName = name => db.prepare('SELECT id, name, mpn FROM components WHERE name = ? COLLATE NOCASE ORDER BY id LIMIT 1').get(name);
+    const seen = new Map();                 // za pregled: isti deo dva puta u istom fajlu
+    const result = [];
+
+    const run = () => {
+        for (const [i, r] of rows.entries()) {
+            const mpn = clean(r.mpn != null ? String(r.mpn) : null);
+            const name = clean(r.name != null ? String(r.name) : null) || mpn;   // bez naziva → MPN (kao Mouser korpa)
+            if (!name) { result.push({ row: i, action: 'error', error: 'name' }); continue; }
+            const key = (mpn || `#${name}`).toUpperCase();
+            const stock = importStock(r);
+            const qty = stock.reduce((s, x) => s + x.quantity, 0);
+            const found = (mpn ? findByMpn(mpn) : findByName(name)) || seen.get(key);
+
+            if (found) {
+                if (existing !== 'add' || !qty) { result.push({ row: i, action: 'skip', name, existing_id: found.id }); continue; }
+                if (!dryRun) {
+                    for (const s of stock) {
+                        if (!s.quantity) continue;
+                        const locId = s.path ? ensureLocationPath(s.path) : null;
+                        const cur = findStock(found.id, locId)?.quantity ?? 0;
+                        setStock(found.id, locId, cur + s.quantity, 'import');
+                    }
+                    touch(found.id);
+                }
+                result.push({ row: i, action: 'add', name, quantity: qty, existing_id: found.id });
+                continue;
+            }
+
+            if (!dryRun) {
+                let category_id = null;
+                const cat = clean(r.category != null ? String(r.category) : null);
+                if (cat) {
+                    category_id = db.prepare('SELECT id FROM categories WHERE name = ? COLLATE NOCASE').get(cat)?.id
+                        ?? Number(db.prepare('INSERT INTO categories (name) VALUES (?)').run(cat).lastInsertRowid);
+                }
+                const data = pickFields({
+                    name, mpn, manufacturer: r.manufacturer, package: r.package, category_id,
+                    min_stock: r.min_stock, description: r.description, datasheet_url: r.datasheet_url
+                });
+                const cols = Object.keys(data);
+                const id = Number(db.prepare(`INSERT INTO components (${cols.join(',')}) VALUES (${cols.map(() => '?').join(',')})`)
+                    .run(...cols.map(c => data[c])).lastInsertRowid);
+                const merged = new Map();
+                for (const s of stock) {
+                    const locId = s.path ? ensureLocationPath(s.path) : null;
+                    merged.set(locId ?? 0, { location_id: locId, quantity: (merged.get(locId ?? 0)?.quantity ?? 0) + s.quantity });
+                }
+                syncStock(id, [...merged.values()], 'import');
+                seen.set(key, { id });
+            } else {
+                seen.set(key, { id: null });
+            }
+            result.push({ row: i, action: 'new', name, quantity: qty });
+        }
+    };
+    dryRun ? run() : tx(run);
+
+    const count = a => result.filter(x => x.action === a).length;
+    return { rows: result, summary: { new: count('new'), add: count('add'), skip: count('skip'), error: count('error') } };
 }

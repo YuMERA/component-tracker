@@ -98,7 +98,8 @@
     "manual": "Ručna izmena",
     "adjust": "Brza promena",
     "move": "Premeštanje",
-    "migrated": "Preneto iz prethodne verzije"
+    "migrated": "Preneto iz prethodne verzije",
+    "import": "Uvoz iz fajla"
   },
   "drawer": {
     "tab_data": "Podaci",
@@ -126,7 +127,11 @@
     "unsaved_title": "Nesačuvane izmene",
     "unsaved_message": "Imaš izmene koje nisu sačuvane. Zatvoriti bez čuvanja?",
     "discard": "Zatvori bez čuvanja",
-    "keep_editing": "Nastavi izmenu"
+    "keep_editing": "Nastavi izmenu",
+    "copy_as_new": "Kopiraj kao novu",
+    "copy_hint": "Nova komponenta sa istim podacima (bez MPN-a i stanja), npr. druga vrednost iste serije",
+    "save_first": "Prvo sačuvaj izmene",
+    "copied": "Kopija od „{name}” – promeni šta treba i klikni Dodaj"
   },
   "files": {
     "local_copy": "lokalno",
@@ -257,5 +262,31 @@
     "primary_source_hint": "Kad isti deo postoji kod više servisa, podaci se uzimaju odavde, a ostali popunjavaju samo ono što nedostaje. U pretrazi se za svako polje može izabrati i drugi izvor.",
     "primary": "Glavni",
     "key_where": "Za pretragu online potreban je API ključ kod Mouser-a ili Element14. Ključ se dobija besplatnom registracijom na njihovom sajtu:"
+  },
+  "import": {
+    "title": "Uvoz komponenti",
+    "button": "Uvoz",
+    "intro": "Izaberi CSV fajl – iz Excel-a: Datoteka → Sačuvaj kao → CSV. Kolone se prepoznaju same, a pre uvoza vidiš šta će biti dodato. Može i fajl napravljen Izvozom iz ove aplikacije.",
+    "sample": "Preuzmi primer fajla",
+    "choose": "Izaberi fajl…",
+    "n_rows": "{n} redova",
+    "too_short": "Fajl nema zaglavlje i bar jedan red.",
+    "columns": "Kolone iz fajla",
+    "need_name": "Izaberi kolonu za Naziv ili MPN – bez njih uvoz nije moguć.",
+    "existing": "Komponente koje već postoje (isti MPN, ili isti naziv kad MPN nema):",
+    "existing_skip": "Preskoči",
+    "existing_add": "Dodaj im količinu",
+    "s_new": "Novih: {n}",
+    "s_add": "Dopuna količine: {n}",
+    "s_skip": "Preskočeno: {n}",
+    "s_error": "Bez naziva: {n}",
+    "line": "Red",
+    "status": "Status",
+    "a_new": "Nova",
+    "a_add": "Dodaje količinu",
+    "a_skip": "Već postoji",
+    "a_error": "Nema naziv",
+    "run": "Uvezi ({n})",
+    "done": "Uvezeno: {new} novih, {add} dopunjenih, {skip} preskočenih"
   }
 }

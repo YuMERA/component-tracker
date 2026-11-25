@@ -40,6 +40,9 @@ r.post('/bulk', (req, res) => {
     res.json({ changed });
 });
 
+// Uvoz liste: { rows, existing: 'skip' | 'add', dryRun }
+r.post('/import', (req, res) => res.json(svc.importComponents(req.body)));
+
 // Brza promena stanja: { location_id, delta, note }
 r.post('/:id/adjust', (req, res) => res.json(svc.adjustStock(Number(req.params.id), req.body)));
 

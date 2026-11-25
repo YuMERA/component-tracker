@@ -33,6 +33,7 @@ export const api = {
     adjust: (id, body) => post(`/api/components/${id}/adjust`, body),
     move: (id, body) => post(`/api/components/${id}/move`, body),
     bulk: (ids, action, value) => post('/api/components/bulk', { ids, action, value }),
+    importComponents: body => post('/api/components/import', body),
     cacheImage: id => post(`/api/components/${id}/cache-image`),
     cacheDatasheet: id => post(`/api/components/${id}/cache-datasheet`),
 

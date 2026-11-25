@@ -98,7 +98,8 @@
     "manual": "Manual edit",
     "adjust": "Quick change",
     "move": "Moved",
-    "migrated": "Imported from previous version"
+    "migrated": "Imported from previous version",
+    "import": "Imported from file"
   },
   "drawer": {
     "tab_data": "Details",
@@ -126,7 +127,11 @@
     "unsaved_title": "Unsaved changes",
     "unsaved_message": "You have unsaved changes. Close without saving?",
     "discard": "Close without saving",
-    "keep_editing": "Keep editing"
+    "keep_editing": "Keep editing",
+    "copy_as_new": "Copy as new",
+    "copy_hint": "New component with the same data (without MPN and stock), e.g. another value of the same series",
+    "save_first": "Save your changes first",
+    "copied": "Copy of \"{name}\" – change what you need and click Add"
   },
   "files": {
     "local_copy": "local",
@@ -257,5 +262,31 @@
     "primary_source_hint": "When the same part exists at several services, data is taken from this one; the others only fill in what is missing. In the lookup you can still pick another source per field.",
     "primary": "Primary",
     "key_where": "Online lookup needs an API key from Mouser or Element14. You get one by registering for free on their website:"
+  },
+  "import": {
+    "title": "Import components",
+    "button": "Import",
+    "intro": "Choose a CSV file – from Excel: File → Save As → CSV. Columns are detected automatically, and you see what will be added before importing. A file made with Export in this app works too.",
+    "sample": "Download a sample file",
+    "choose": "Choose file…",
+    "n_rows": "{n} rows",
+    "too_short": "The file needs a header and at least one row.",
+    "columns": "Columns from the file",
+    "need_name": "Choose the column for Name or MPN – import is not possible without one.",
+    "existing": "Components that already exist (same MPN, or same name when there is no MPN):",
+    "existing_skip": "Skip",
+    "existing_add": "Add their quantity",
+    "s_new": "New: {n}",
+    "s_add": "Quantity added: {n}",
+    "s_skip": "Skipped: {n}",
+    "s_error": "No name: {n}",
+    "line": "Row",
+    "status": "Status",
+    "a_new": "New",
+    "a_add": "Adds quantity",
+    "a_skip": "Already exists",
+    "a_error": "No name",
+    "run": "Import ({n})",
+    "done": "Imported: {new} new, {add} topped up, {skip} skipped"
   }
 }

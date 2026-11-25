@@ -18,6 +18,7 @@ import InputIcon from 'primevue/inputicon';
 import Select from 'primevue/select';
 import Menu from 'primevue/menu';
 import FilterPanel from '../components/FilterPanel.vue';
+import ImportDialog from '../components/ImportDialog.vue';
 import QtyCell from '../components/QtyCell.vue';
 import { api } from '../api.js';
 import { store, loadAll, openComponent, dropComponents, stockStatus, imageSrc, locationWithChildren } from '../store.js';
@@ -61,6 +62,17 @@ const activeChips = computed(() => {
     return chips;
 });
 const clearFilters = () => Object.assign(filters.value, { status: 'all', categories: [], locations: [] });
+
+const importOpen = ref(false);
+
+// --- Broj redova i sortiranje se pamte (i posle zatvaranja pregledača) ---
+const TABLE_KEY = 'componentsTable';
+const tableState = (() => { try { return JSON.parse(localStorage.getItem(TABLE_KEY)) || {}; } catch { return {}; } })();
+const rows = ref([25, 50, 100, 500].includes(tableState.rows) ? tableState.rows : 25);
+const sortMeta = ref(Array.isArray(tableState.sort) ? tableState.sort : []);
+watch([rows, sortMeta], () => {
+    try { localStorage.setItem(TABLE_KEY, JSON.stringify({ rows: rows.value, sort: sortMeta.value })); } catch { /* privatni prozor */ }
+}, { deep: true });
 
 // --- Filtriranje -----------------------------------------------------
 const filtered = computed(() => {
@@ -144,6 +156,8 @@ const hideImage = e => (e.target.style.display = 'none');
                     <InputText v-model="filters.q" :placeholder="t('components.search_placeholder')" fluid />
                 </IconField>
                 <span class="muted count">{{ t('components.count', { n: filtered.length, total: store.components.length }) }}</span>
+                <Button icon="pi pi-upload" :label="t('import.button')" severity="secondary" outlined size="small" class="first-action"
+                        @click="importOpen = true" />
                 <Button icon="pi pi-download" :label="t('export.title')" severity="secondary" outlined size="small"
                         @click="exportMenu.toggle($event)" />
                 <Menu ref="exportMenu" :model="exportItems" popup />
@@ -179,7 +193,8 @@ const hideImage = e => (e.target.style.display = 'none');
                 size="small"
                 rowHover
                 paginator
-                :rows="25"
+                v-model:rows="rows"
+                v-model:multiSortMeta="sortMeta"
                 :rowsPerPageOptions="[25, 50, 100, 500]"
                 sortMode="multiple"
                 removableSort
@@ -225,6 +240,7 @@ const hideImage = e => (e.target.style.display = 'none');
             </DataTable>
         </section>
     </div>
+    <ImportDialog v-model:visible="importOpen" />
 </template>
 
 <style scoped>
@@ -237,7 +253,7 @@ const hideImage = e => (e.target.style.display = 'none');
 .toolbar { display: flex; align-items: center; gap: .75rem; padding: .6rem .75rem; border-bottom: 1px solid var(--p-content-border-color); }
 .search { flex: 1; max-width: 34rem; }
 .count { font-size: .85rem; white-space: nowrap; }
-.toolbar .p-button { margin-left: auto; }
+.toolbar .first-action { margin-left: auto; }
 .chips { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; padding: .5rem .75rem; border-bottom: 1px solid var(--p-content-border-color); }
 .chip {
     display: inline-flex; align-items: center; gap: .4rem; padding: .25rem .6rem; border-radius: 999px; cursor: pointer;
