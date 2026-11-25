@@ -1,6 +1,6 @@
 {
-  "latest_version": "3.0.0",
-  "download_url": "https://github.com/YuMERA/component-tracker/archive/refs/heads/main.zip",
+  "latest_version": "3.0.1",
+  "download_url": "https://github.com/YuMERA/component-tracker/releases/tag/v3.0.1",
   "versions": [
     {
       "version": "1.0.0",
@@ -58,6 +58,22 @@
         "Manufacturer and package are stored as separate fields; your own technical parameters can be added per component.",
         "Images and datasheets can be stored locally for offline use.",
         "Consistent one-click backups with download from the browser."
+      ]
+    },
+    {
+      "version": "3.0.1",
+      "released_at": "2026-11-25",
+      "title": "Trash, Import from Excel and In-app Guide",
+      "features": [
+        "Trash: deleted components, locations and categories can be restored or deleted permanently, with Undo right after deleting.",
+        "Import from Excel / CSV with automatic column detection and a preview of what will be added.",
+        "Copy as new: create a new component from an existing one (e.g. another value of the same series).",
+        "In-app Guide with screenshots, in Serbian and English.",
+        "Active filters shown as chips above the table; filter section headings highlighted.",
+        "The table remembers rows per page and sorting; search has a clear button.",
+        "Ctrl+S saves a component; warning before closing the tab with unsaved changes.",
+        "Component history also records deletes, restores and location changes.",
+        "Theme and language buttons at the top of the menu; the phone bottom bar fits the screen."
       ]
     }
   ]
