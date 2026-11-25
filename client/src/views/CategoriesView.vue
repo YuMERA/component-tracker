@@ -102,8 +102,8 @@ const showComponents = id => router.push({ path: '/components', query: { cat: id
     <Dialog v-model:visible="del.visible" modal :header="t('categories.delete_title')" :style="{ width: 'min(28rem, 95vw)' }">
         <p>{{ t('categories.delete_text', { name: del.cat?.name, n: del.cat?.component_count }) }}</p>
         <div v-if="del.cat?.component_count" class="field">
-            <label>{{ t('categories.move_to') }}</label>
-            <Select v-model="del.moveTo" :options="moveOptions" optionLabel="name" optionValue="id" filter showClear
+            <label for="cat-move">{{ t('categories.move_to') }}</label>
+            <Select labelId="cat-move" v-model="del.moveTo" :options="moveOptions" optionLabel="name" optionValue="id" filter showClear
                     :placeholder="t('filters.no_category')" fluid />
         </div>
         <template #footer>

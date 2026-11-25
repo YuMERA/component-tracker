@@ -299,29 +299,29 @@ const lookupQuery = computed(() => form.value.mpn || form.value.name);
                 <TabPanel value="data">
                     <div class="form-grid">
                         <div class="field">
-                            <label>{{ t('fields.name') }} *</label>
-                            <InputText v-model="form.name" fluid />
+                            <label for="cd-name">{{ t('fields.name') }} *</label>
+                            <InputText id="cd-name" v-model="form.name" fluid />
                         </div>
                         <div class="field">
-                            <label>{{ t('fields.mpn') }}</label>
-                            <InputText v-model="form.mpn" class="mono" fluid />
+                            <label for="cd-mpn">{{ t('fields.mpn') }}</label>
+                            <InputText id="cd-mpn" v-model="form.mpn" class="mono" fluid />
                         </div>
                         <div class="field">
-                            <label>{{ t('fields.manufacturer') }}</label>
-                            <InputText v-model="form.manufacturer" fluid />
+                            <label for="cd-mfr">{{ t('fields.manufacturer') }}</label>
+                            <InputText id="cd-mfr" v-model="form.manufacturer" fluid />
                         </div>
                         <div class="field">
-                            <label>{{ t('fields.package') }}</label>
-                            <InputText v-model="form.package" :placeholder="t('fields.package_placeholder')" fluid />
+                            <label for="cd-pkg">{{ t('fields.package') }}</label>
+                            <InputText id="cd-pkg" v-model="form.package" :placeholder="t('fields.package_placeholder')" fluid />
                         </div>
                         <div class="field">
-                            <label>{{ t('fields.category') }}</label>
-                            <AutoComplete v-model="form.category" :suggestions="categorySuggestions" dropdown completeOnFocus
+                            <label for="cd-cat">{{ t('fields.category') }}</label>
+                            <AutoComplete inputId="cd-cat" v-model="form.category" :suggestions="categorySuggestions" dropdown completeOnFocus
                                           :placeholder="t('fields.category_placeholder')" fluid @complete="searchCategory" />
                         </div>
                         <div class="field">
-                            <label>{{ t('fields.min_stock') }}</label>
-                            <InputNumber v-model="form.min_stock" :min="0" showButtons buttonLayout="horizontal" fluid
+                            <label for="cd-min">{{ t('fields.min_stock') }}</label>
+                            <InputNumber inputId="cd-min" v-model="form.min_stock" :min="0" showButtons buttonLayout="horizontal" fluid
                                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" />
                         </div>
                         <div class="field full">
@@ -329,19 +329,19 @@ const lookupQuery = computed(() => form.value.mpn || form.value.name);
                             <StockEditor v-model="form.stock" />
                         </div>
                         <div class="field">
-                            <label>{{ t('fields.description') }}</label>
-                            <Textarea v-model="form.description" rows="7" fluid class="area" />
+                            <label for="cd-desc">{{ t('fields.description') }}</label>
+                            <Textarea id="cd-desc" v-model="form.description" rows="7" fluid class="area" />
                         </div>
                         <div class="field">
-                            <label>{{ t('fields.notes') }}</label>
-                            <Textarea v-model="form.notes" rows="7" fluid class="area" :placeholder="t('fields.notes_placeholder')" />
+                            <label for="cd-notes">{{ t('fields.notes') }}</label>
+                            <Textarea id="cd-notes" v-model="form.notes" rows="7" fluid class="area" :placeholder="t('fields.notes_placeholder')" />
                         </div>
                         <div class="field full">
-                            <label>{{ t('fields.datasheet') }}
+                            <label for="cd-ds">{{ t('fields.datasheet') }}
                                 <Tag v-if="saved?.datasheet_file && urlUnchanged('datasheet_url')" :value="t('files.local_copy')" severity="success" icon="pi pi-check" class="local" />
                             </label>
                             <div class="row">
-                                <InputText v-model="form.datasheet_url" class="grow" fluid />
+                                <InputText id="cd-ds" v-model="form.datasheet_url" class="grow" fluid />
                                 <Button v-if="datasheetLink" as="a" :href="datasheetLink" target="_blank" rel="noopener"
                                         icon="pi pi-file-pdf" severity="secondary" outlined v-tooltip="t('files.open_datasheet')" />
                                 <Button v-if="!isNew && form.datasheet_url && urlUnchanged('datasheet_url') && !saved?.datasheet_file"
@@ -363,11 +363,11 @@ const lookupQuery = computed(() => form.value.mpn || form.value.name);
                     </div>
                     <p v-if="previewSrc && !imageFailed" class="muted hint"><i class="pi pi-search-plus" /> {{ t('files.zoom_hint') }}</p>
                     <div class="field">
-                        <label>{{ t('fields.image_url') }}
+                        <label for="cd-img">{{ t('fields.image_url') }}
                             <Tag v-if="saved?.image_file && urlUnchanged('image_url')" :value="t('files.local_copy')" severity="success" icon="pi pi-check" class="local" />
                         </label>
                         <div class="row">
-                            <InputText v-model="form.image_url" class="grow" fluid />
+                            <InputText id="cd-img" v-model="form.image_url" class="grow" fluid />
                             <Button v-if="!isNew && form.image_url && urlUnchanged('image_url') && !saved?.image_file"
                                     icon="pi pi-download" severity="secondary" outlined :loading="cachingImage"
                                     @click="cacheFile('image')" v-tooltip="t('files.save_locally')" />

@@ -165,17 +165,17 @@ async function print() {
     <Dialog v-model:visible="dialog.visible" modal :header="dialog.id ? t('locations.edit') : t('locations.add')" :style="{ width: 'min(30rem, 95vw)' }">
         <form class="dform" @submit.prevent="saveLocation">
             <div class="field">
-                <label>{{ t('fields.name') }} *</label>
-                <InputText v-model="dialog.name" autofocus fluid />
+                <label for="loc-name">{{ t('fields.name') }} *</label>
+                <InputText id="loc-name" v-model="dialog.name" autofocus fluid />
             </div>
             <div class="field">
-                <label>{{ t('locations.parent') }}</label>
-                <Select v-model="dialog.parent_id" :options="parentOptions" optionLabel="path" optionValue="id"
+                <label for="loc-parent">{{ t('locations.parent') }}</label>
+                <Select labelId="loc-parent" v-model="dialog.parent_id" :options="parentOptions" optionLabel="path" optionValue="id"
                         showClear filter :placeholder="t('locations.top_level')" fluid />
             </div>
             <div class="field">
-                <label>{{ t('fields.description') }}</label>
-                <InputText v-model="dialog.description" fluid />
+                <label for="loc-desc">{{ t('fields.description') }}</label>
+                <InputText id="loc-desc" v-model="dialog.description" fluid />
             </div>
             <button type="submit" hidden />
         </form>
@@ -189,8 +189,8 @@ async function print() {
     <Dialog v-model:visible="printDialog.visible" modal :header="t('locations.print_title')" :style="{ width: 'min(32rem, 95vw)' }">
         <p class="muted">{{ t('locations.print_hint') }}</p>
         <div class="field">
-            <label>{{ t('locations.qr_address') }}</label>
-            <Select v-model="printDialog.base" :options="printDialog.options" editable fluid />
+            <label for="qr-base">{{ t('locations.qr_address') }}</label>
+            <Select inputId="qr-base" v-model="printDialog.base" :options="printDialog.options" editable fluid />
         </div>
         <Message v-if="printDialog.base?.includes('localhost')" severity="warn" class="mt">{{ t('locations.localhost_warning') }}</Message>
         <template #footer>
