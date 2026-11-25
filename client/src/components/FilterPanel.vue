@@ -102,7 +102,16 @@ function reset() {
     background: var(--p-content-background); border-bottom: 1px solid var(--p-content-border-color);
 }
 .head a { font-size: .85rem; text-decoration: none; }
-h4 { margin: 1rem 0 .35rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--p-text-muted-color); }
+/* naslovi sekcija: traka u boji preko cele širine panela, da se ne stapaju sa stavkama */
+h4 {
+    margin: 1rem -.75rem .35rem; padding: .45rem .75rem;
+    font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+    color: var(--p-primary-color);
+    background: color-mix(in srgb, var(--p-primary-color) 10%, var(--p-content-background));
+    border-top: 1px solid color-mix(in srgb, var(--p-primary-color) 18%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--p-primary-color) 18%, transparent);
+}
+.head + h4 { margin-top: 0; border-top: 0; }
 .item {
     display: flex; align-items: center; gap: .5rem; width: 100%;
     padding: .38rem .5rem; border: 0; border-radius: 6px; background: transparent;
