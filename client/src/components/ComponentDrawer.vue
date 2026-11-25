@@ -391,7 +391,8 @@ const lookupQuery = computed(() => form.value.mpn || form.value.name);
                     <p v-if="!movements.length" class="muted">{{ t('drawer.no_history') }}</p>
                     <div v-for="m in movements" :key="m.id" class="move">
                         <Tag v-if="m.delta" :value="(m.delta > 0 ? '+' : '') + m.delta" :severity="m.delta > 0 ? 'success' : 'danger'" class="mono delta" />
-                    <Tag v-else :icon="m.kind === 'restored' ? 'pi pi-replay' : 'pi pi-trash'" severity="secondary" class="delta" />
+                    <Tag v-else-if="m.kind === 'trashed' || m.kind === 'restored'" :icon="m.kind === 'restored' ? 'pi pi-replay' : 'pi pi-trash'" severity="secondary" class="delta" />
+                        <Tag v-else value="0" severity="secondary" class="mono delta" />
                         <div class="grow">
                             <div>{{ t(`movement.${m.kind}`) }}<span v-if="m.note" class="muted"> – {{ m.note }}</span></div>
                             <div class="muted small">

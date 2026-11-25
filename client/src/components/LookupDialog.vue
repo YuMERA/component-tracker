@@ -193,7 +193,7 @@ const fmt = n => (n == null ? '?' : Number(n).toLocaleString(locale.value));
                 <Column style="width: 56px">
                     <template #body="{ data }">
                         <div class="thumb">
-                            <img v-if="data.image_url" :src="data.image_url" alt="" loading="lazy" />
+                            <img v-if="data.image_url" :src="data.image_url" alt="" loading="lazy" @error="e => (e.target.style.display = 'none')" />
                             <i v-else class="pi pi-image" />
                         </div>
                     </template>
@@ -241,7 +241,7 @@ const fmt = n => (n == null ? '?' : Number(n).toLocaleString(locale.value));
         <!-- KORAK 2: PREGLED PRE PREUZIMANJA --------------------------->
         <template v-else>
             <div class="picked">
-                <div class="thumb big"><img v-if="picked.image_url" :src="picked.image_url" alt="" /></div>
+                <div class="thumb big"><img v-if="picked.image_url" :src="picked.image_url" alt="" @error="e => (e.target.style.display = 'none')" /></div>
                 <div>
                     <strong class="mono">{{ picked.mpn }}</strong>
                     <div class="muted">{{ picked.manufacturer }} · {{ picked.package || t('lookup.package_unknown') }}</div>

@@ -177,7 +177,14 @@ After UI changes, refresh them (Windows with Edge, or set `CHROME_PATH`):
 npm run guide:screens        # both languages; or: npm run guide:screens -- sr
 ```
 
-The script starts the app with made-up demo data in a temporary folder – your own database is never used.
+The script starts the app with made-up demo data in a temporary folder. With `--real` it uses a **copy** of
+your own `data/` instead (`--data <folder>` for another one): the original is never touched, API keys in the
+copy are replaced with a fake one, and online lookup is shown from results already cached in the database.
+`--pick <name>` / `--lookup <name>` choose the components for the panel and lookup screenshots.
+
+```bash
+npm run guide:screens -- --real
+```
 
 ### Releasing a new version
 

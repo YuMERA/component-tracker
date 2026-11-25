@@ -6,7 +6,9 @@ import Tag from 'primevue/tag';
 import { api } from '../api.js';
 import { store, openComponent, stockStatus, imageSrc } from '../store.js';
 
-const { t, d } = useI18n();
+const { t, d, locale } = useI18n();
+// brojevi po jeziku aplikacije (3.972 na srpskom, 3,972 na engleskom), a ne po jeziku pregledača
+const num = v => v.toLocaleString(locale.value === 'sr' ? 'sr-Latn-RS' : 'en-US');
 const movements = ref([]);
 
 const loadMovements = async () => (movements.value = await api.movements(12));
@@ -40,6 +42,7 @@ const critical = computed(() => store.components
     .sort((a, b) => (a.quantity - a.min_stock) - (b.quantity - b.min_stock))
     .slice(0, 6));
 
+const hideImage = e => (e.target.style.display = 'none');
 const fmtDate = (s, f = 'short') => d(new Date(s.replace(' ', 'T') + 'Z'), f);
 </script>
 
@@ -51,7 +54,7 @@ const fmtDate = (s, f = 'short') => d(new Date(s.replace(' ', 'T') + 'Z'), f);
             <router-link v-for="c in cards" :key="c.key" :to="c.to" class="card stat" :class="c.tone">
                 <i :class="c.icon" />
                 <div>
-                    <div class="value num">{{ c.value.toLocaleString() }}</div>
+                    <div class="value num">{{ num(c.value) }}</div>
                     <div class="muted">{{ t(`dashboard.${c.key}`) }}</div>
                 </div>
             </router-link>
@@ -61,7 +64,7 @@ const fmtDate = (s, f = 'short') => d(new Date(s.replace(' ', 'T') + 'Z'), f);
             <section class="card card-pad">
                 <h3>{{ t('dashboard.recent') }}</h3>
                 <div v-for="c in recent" :key="c.id" class="item" @click="openComponent(c.id)">
-                    <div class="thumb"><img v-if="imageSrc(c)" :src="imageSrc(c)" alt="" /><i v-else class="pi pi-microchip" /></div>
+                    <div class="thumb"><img v-if="imageSrc(c)" :src="imageSrc(c)" alt="" @error="hideImage" /><i v-else class="pi pi-microchip" /></div>
                     <div class="grow">
                         <div class="ellipsis"><strong>{{ c.name }}</strong></div>
                         <div class="muted small ellipsis">{{ c.category || '—' }} · {{ fmtDate(c.created_at, 'date') }}</div>
@@ -74,7 +77,7 @@ const fmtDate = (s, f = 'short') => d(new Date(s.replace(' ', 'T') + 'Z'), f);
             <section class="card card-pad">
                 <h3>{{ t('dashboard.critical') }}</h3>
                 <div v-for="c in critical" :key="c.id" class="item" @click="openComponent(c.id)">
-                    <div class="thumb"><img v-if="imageSrc(c)" :src="imageSrc(c)" alt="" /><i v-else class="pi pi-microchip" /></div>
+                    <div class="thumb"><img v-if="imageSrc(c)" :src="imageSrc(c)" alt="" @error="hideImage" /><i v-else class="pi pi-microchip" /></div>
                     <div class="grow">
                         <div class="ellipsis"><strong>{{ c.name }}</strong></div>
                         <div class="muted small">{{ t('dashboard.min', { n: c.min_stock }) }}</div>
@@ -88,7 +91,8 @@ const fmtDate = (s, f = 'short') => d(new Date(s.replace(' ', 'T') + 'Z'), f);
                 <h3>{{ t('dashboard.activity') }}</h3>
                 <div v-for="m in movements" :key="m.id" class="item" @click="openComponent(m.component_id)">
                     <Tag v-if="m.delta" :value="(m.delta > 0 ? '+' : '') + m.delta" :severity="m.delta > 0 ? 'success' : 'danger'" class="mono delta" />
-                    <Tag v-else :icon="m.kind === 'restored' ? 'pi pi-replay' : 'pi pi-trash'" severity="secondary" class="delta" />
+                    <Tag v-else-if="m.kind === 'trashed' || m.kind === 'restored'" :icon="m.kind === 'restored' ? 'pi pi-replay' : 'pi pi-trash'" severity="secondary" class="delta" />
+                    <Tag v-else value="0" severity="secondary" class="mono delta" />
                     <div class="grow">
                         <div class="ellipsis"><strong>{{ m.component_name }}</strong></div>
                         <div class="muted small ellipsis">{{ t(`movement.${m.kind}`) }}<template v-if="m.delta"> · {{ m.location || t('filters.no_location') }}</template></div>

@@ -3,6 +3,9 @@
 //
 // 1. pokrene aplikaciju sa PRAZNIM privremenim folderom i upiše izmišljene demo
 //    podatke (ništa iz tvoje baze, nikakvi pravi API ključevi)
+//    --real: umesto demo podataka koristi KOPIJU tvoje baze (data/ ili --data <folder>);
+//    original se ne dira, API ključevi u kopiji se menjaju izmišljenim, a pretraga online
+//    se prikazuje iz rezultata koji su već sačuvani u bazi (bez poziva Mouser-u / Element14)
 // 2. otvori Microsoft Edge bez prozora (headless) i preko DevTools protokola
 //    klikće kroz aplikaciju i snima ekrane
 // 3. slike idu u client/public/guide-shots/<jezik>/<naziv>.webp
@@ -23,6 +26,11 @@ const BASE = `http://localhost:${PORT}`;
 const CDP_PORT = 9333;
 const VIEW = { width: 1366, height: 800 };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+const arg = name => { const i = process.argv.indexOf(name); return i > 0 ? process.argv[i + 1] : null; };
+const REAL = process.argv.includes('--real');
+const REAL_DATA = path.resolve(arg('--data') || path.join(ROOT, 'data'));
+const REAL_PICK = arg('--pick') || 'SIR570DP-T1-RE3';  // komponenta za sliku panela i istorije
+const REAL_LOOKUP = arg('--lookup') || 'USBLC6-2SC6';  // komponenta za sliku pretrage online (iz sačuvanih rezultata)
 
 const BROWSER = process.env.CHROME_PATH || [
     'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
@@ -123,6 +131,57 @@ async function seed(lang, dataDir) {
 }
 
 // ---------------------------------------------------------------------
+// --real: kopija tvoje baze
+// ---------------------------------------------------------------------
+const FAKE_KEY = 'f3a9c1e2-7b4d-4e1a-9c2f-5d8e6b0a1c47';
+
+function copyRealData(src, dataDir) {
+    const db = new DatabaseSync(path.join(src, 'inventory.db'), { readOnly: true });
+    db.exec(`VACUUM INTO '${path.join(dataDir, 'inventory.db').split(path.sep).join('/')}'`);
+    db.close();
+    for (const sub of ['images', 'datasheets']) {
+        if (fs.existsSync(path.join(src, sub))) fs.cpSync(path.join(src, sub), path.join(dataDir, sub), { recursive: true });
+    }
+    const copy = new DatabaseSync(path.join(dataDir, 'inventory.db'));
+    copy.prepare("UPDATE api_services SET api_key = ? WHERE api_key <> ''").run(FAKE_KEY);   // pravi ključevi ne idu na slike
+    copy.prepare('UPDATE lookup_cache SET created_at = ?').run(Date.now());                   // sačuvane pretrage važe
+    copy.close();
+}
+
+// Šta se prikazuje na slikama u --real režimu (bira se iz tvojih podataka)
+async function realPlan() {
+    const comps = await api('GET', '/api/components');
+    const pick = comps.find(c => c.name === REAL_PICK) || comps.find(c => c.image_file) || comps[0];
+    const count = key => {
+        const m = new Map();
+        for (const c of comps) for (const k of key(c)) if (k != null) m.set(k, (m.get(k) || 0) + 1);
+        return [...m.entries()].sort((a, b) => b[1] - a[1]);
+    };
+    const topCat = count(c => [c.category_id])[0]?.[0];
+    const locs = await api('GET', '/api/locations');
+    const byLoc = count(c => c.stock.map(s => s.location_id));
+    // za telefon: lokacija sa 4–10 komponenti (cela lista ne staje na ekran)
+    const phoneLoc = (byLoc.find(([, n]) => n >= 4 && n <= 10) || byLoc[0])?.[0];
+    const topLoc = byLoc[0]?.[0];
+    const cats = await api('GET', '/api/categories');
+    const catName = id => cats.find(c => c.id === id)?.name || '';
+    const locPath = locs.find(l => l.id === topLoc)?.path || '';
+    // nešto u kanti (samo u kopiji)
+    const extra = await api('POST', '/api/components', { name: 'BC337', mpn: 'BC337-40', stock: [] });
+    await api('DELETE', `/api/components/${extra.id}`);
+    return {
+        search: pick.mpn || pick.name, row: pick.name, lookup: REAL_LOOKUP,
+        filters: `cat=${topCat}&loc=${topLoc}`, phone: `loc=${phoneLoc}`,
+        csvRows: [
+            `${pick.name};${pick.manufacturer || ''};${pick.package || ''};${catName(pick.category_id)};${locPath};5`,
+            `TL431;Texas Instruments;TO-92;${catName(topCat)};${locPath};15`,
+            `LM317T;STMicroelectronics;TO-220;${catName(topCat)};${locPath};6`,
+            `CD4017BE;Texas Instruments;DIP-16;${catName(topCat)};${locPath};4`
+        ]
+    };
+}
+
+// ---------------------------------------------------------------------
 // Minimalni DevTools (CDP) klijent – bez dodatnih paketa
 // ---------------------------------------------------------------------
 async function connect() {
@@ -204,6 +263,7 @@ async function screens(lang) {
     const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ct-guide-'));
     const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'ct-guide-browser-'));
     const out = name => path.join(ROOT, 'client', 'public', 'guide-shots', lang, `${name}.webp`);
+    if (REAL) copyRealData(REAL_DATA, dataDir);
     const server = spawn(process.execPath, ['--disable-warning=ExperimentalWarning', 'server/index.js'], {
         cwd: ROOT, env: { ...process.env, CT_DATA_DIR: dataDir, APP_PORT: String(PORT), OPEN_BROWSER: '' }, stdio: 'ignore'
     });
@@ -213,7 +273,9 @@ async function screens(lang) {
         for (let i = 0; ; i++) {
             try { await fetch(BASE + '/api/system'); break; } catch { if (i > 50) throw new Error('Server se nije pokrenuo'); await sleep(200); }
         }
-        await seed(lang, dataDir);
+        let plan = null;
+        if (REAL) plan = await realPlan();
+        else await seed(lang, dataDir);
         const cdp = await connect();
         const p = page(cdp);
         await cdp.send('Page.enable');
@@ -229,15 +291,29 @@ async function screens(lang) {
 
         await p.goto('/'); await p.shot(out('dashboard'));
         await p.goto('/components'); await p.shot(out('components'));
-        await p.goto(`/components?cat=${catId(L.tr)}&loc=${locId(L.d2)}`); await p.shot(out('filters'));
+        plan ||= {
+            search: 'NE555', row: 'NE555P',
+            filters: `cat=${catId(L.tr)}&loc=${locId(L.d2)}`, phone: `loc=${locId(L.d2)}`,
+            csvRows: [`NE555P;Texas Instruments;DIP-8;${L.ic};${L.cab} › ${L.d1};10`,
+                `TL431;Texas Instruments;TO-92;${L.reg};${L.cab} › ${L.d2};15`,
+                `BC547B;onsemi;TO-92;${L.tr};${L.cab} › ${L.d2};25`,
+                `CD4017BE;Texas Instruments;DIP-16;${L.ic};${L.cab} › ${L.d1};4`]
+        };
+        await p.goto(`/components?${plan.filters}`); await p.shot(out('filters'));
 
-        await p.goto('/components?q=NE555');
-        await p.click('.p-datatable-tbody tr', 'NE555P');
+        await p.goto(`/components?q=${encodeURIComponent(plan.search)}`);
+        await p.click('.p-datatable-tbody tr', plan.row);
         await p.waitFor(`!!document.querySelector('.cdrawer')`);
-        await sleep(500);
+        await sleep(1500);   // slika komponente (može se učitavati sa interneta)
         await p.shot(out('component'));
         await p.click('.cdrawer .p-tab', lang === 'sr' ? 'Istorija' : 'History');
         await p.shot(out('history'));
+        if (plan.lookup && plan.lookup !== plan.row) {
+            await p.goto(`/components?q=${encodeURIComponent(plan.lookup)}`);
+            await p.click('.p-datatable-tbody tr', plan.lookup);
+            await p.waitFor(`!!document.querySelector('.cdrawer')`);
+            await sleep(500);
+        }
         await p.click('.cdrawer button', lang === 'sr' ? 'Pronađi online' : 'Find online');
         await p.waitFor(`document.querySelectorAll('.p-dialog .p-datatable-tbody tr').length > 1`);
         await sleep(500);
@@ -255,10 +331,7 @@ async function screens(lang) {
         await p.goto('/components');
         await p.click('.toolbar button', lang === 'sr' ? 'Uvoz' : 'Import');
         const csv = [lang === 'sr' ? 'Naziv;Proizvođač;Kućište;Kategorija;Lokacija;Količina' : 'Name;Manufacturer;Package;Category;Location;Quantity',
-            `NE555P;Texas Instruments;DIP-8;${L.ic};${L.cab} › ${L.d1};10`,
-            `TL431;Texas Instruments;TO-92;${L.reg};${L.cab} › ${L.d2};15`,
-            `BC547B;onsemi;TO-92;${L.tr};${L.cab} › ${L.d2};25`,
-            `CD4017BE;Texas Instruments;DIP-16;${L.ic};${L.cab} › ${L.d1};4`].join('\r\n');
+            ...plan.csvRows].join('\r\n');
         await p.evaluate(`(() => { const input = document.querySelector('.p-dialog input[type=file]'); const dt = new DataTransfer();
             dt.items.add(new File([${JSON.stringify(csv)}], 'inventar.csv', { type: 'text/csv' })); input.files = dt.files;
             input.dispatchEvent(new Event('change')); return true; })()`);
@@ -271,7 +344,7 @@ async function screens(lang) {
 
         // telefon
         await p.size(390, 844, true);
-        await p.goto(`/components?loc=${locId(L.d2)}`); await p.shot(out('phone'));
+        await p.goto(`/components?${plan.phone}`); await p.shot(out('phone'));
         cdp.close();
     } finally {
         browser.kill();
@@ -281,7 +354,8 @@ async function screens(lang) {
     }
 }
 
-for (const lang of (process.argv[2] ? [process.argv[2]] : ['sr', 'en'])) {
+const langs = process.argv.slice(2).filter(a => a === 'sr' || a === 'en');
+for (const lang of (langs.length ? langs : ['sr', 'en'])) {
     console.log(`\n${lang}:`);
     await screens(lang);
 }
