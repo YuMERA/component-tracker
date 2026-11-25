@@ -27,6 +27,7 @@ const nav = [
     { to: '/locations', icon: 'pi pi-map-marker', label: 'nav.locations' },
     { to: '/categories', icon: 'pi pi-tags', label: 'nav.categories' },
     { to: '/trash', icon: 'pi pi-trash', label: 'nav.trash' },
+    { to: '/guide', icon: 'pi pi-book', label: 'nav.guide' },
     { to: '/settings', icon: 'pi pi-cog', label: 'nav.settings' }
 ];
 
@@ -106,7 +107,7 @@ const toggleLocale =() => setLocale(locale.value === 'sr' ? 'en' : 'sr');
 
             <Button class="add-btn" icon="pi pi-plus" :label="t('components.new')" @click="openNewComponent" />
 
-            <router-link v-for="n in nav" :key="n.to" :to="n.to" class="nav-item" :class="{ 'desktop-only': n.to === '/trash' }" active-class="" exact-active-class="active">
+            <router-link v-for="n in nav" :key="n.to" :to="n.to" class="nav-item" :class="{ 'desktop-only': n.to === '/trash' || n.to === '/guide' }" active-class="" exact-active-class="active">
                 <i :class="n.icon" />
                 <span>{{ t(n.label) }}</span>
                 <span v-if="n.to === '/trash' && store.trashCount" class="count-badge">{{ store.trashCount }}</span>
@@ -177,7 +178,7 @@ const toggleLocale =() => setLocale(locale.value === 'sr' ? 'en' : 'sr');
     .nav-item { flex: 1 1 0; min-width: 0; flex-direction: column; gap: .15rem; padding: .35rem .1rem; font-size: .7rem; }
     .nav-item span:not(.dot):not(.count-badge) { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .dot { position: absolute; top: 4px; right: 8px; }
-    /* na telefonu nema mesta za 7 stavki – Kanta se otvara iz Podešavanja */
+    /* na telefonu nema mesta za sve stavke – Kanta i Uputstvo se otvaraju iz Podešavanja */
     .desktop-only { display: none; }
 }
 </style>

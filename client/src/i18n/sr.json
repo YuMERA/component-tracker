@@ -5,7 +5,8 @@
     "locations": "Lokacije",
     "categories": "Kategorije",
     "settings": "Podešavanja",
-    "trash": "Kanta"
+    "trash": "Kanta",
+    "guide": "Uputstvo"
   },
   "common": {
     "add": "Dodaj",
@@ -332,5 +333,8 @@
     "restore_confirm_location": "Vratiti lokaciju „{name}”? Njene podlokacije i komadi se vraćaju u nju.",
     "restore_confirm_category": "Vratiti kategoriju „{name}”? Njene komponente se vraćaju u nju.",
     "restore_all_confirm": "Vratiti svih {n} stavki iz kante?"
+  },
+  "guide": {
+    "zoom_hint": "Klikni na sliku za prikaz preko celog ekrana."
   }
 }

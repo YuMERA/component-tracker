@@ -5,7 +5,8 @@
     "locations": "Locations",
     "categories": "Categories",
     "settings": "Settings",
-    "trash": "Trash"
+    "trash": "Trash",
+    "guide": "Guide"
   },
   "common": {
     "add": "Add",
@@ -332,5 +333,8 @@
     "restore_confirm_location": "Restore location \"{name}\"? Its sublocations and pieces move back into it.",
     "restore_confirm_category": "Restore category \"{name}\"? Its components move back into it.",
     "restore_all_confirm": "Restore all {n} items from the trash?"
+  },
+  "guide": {
+    "zoom_hint": "Click an image to view it full screen."
   }
 }

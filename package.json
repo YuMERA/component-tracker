@@ -14,7 +14,8 @@
     "build": "vite build",
     "start": "node --disable-warning=ExperimentalWarning server/index.js",
     "build:exe": "node scripts/build-exe.mjs",
-    "build:setup": "node scripts/build-setup.mjs"
+    "build:setup": "node scripts/build-setup.mjs",
+    "guide:screens": "node scripts/guide-screens.mjs"
   },
   "keywords": [
     "inventory",

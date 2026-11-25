@@ -182,7 +182,10 @@ const latestInfo = () => system.value?.update.versions.find(v => v.version === s
         <section class="card card-pad">
             <h3>{{ t('settings.backup') }}</h3>
             <!-- na telefonu Kanta nije u donjem meniju -->
-            <router-link to="/trash" class="trash-link"><i class="pi pi-trash" /> {{ t('nav.trash') }}<span v-if="store.trashCount"> ({{ store.trashCount }})</span></router-link>
+            <div class="mobile-links">
+                <router-link to="/trash"><i class="pi pi-trash" /> {{ t('nav.trash') }}<span v-if="store.trashCount"> ({{ store.trashCount }})</span></router-link>
+                <router-link to="/guide"><i class="pi pi-book" /> {{ t('nav.guide') }}</router-link>
+            </div>
             <p v-if="backup" class="muted">
                 {{ t('settings.backup_intro', { size: size(backup.db_size) }) }}<br />
                 <span class="mono small">{{ backup.folder }}</span>
@@ -250,6 +253,7 @@ const latestInfo = () => system.value?.update.versions.find(v => v.version === s
 .author img { width: 1.6rem; height: 1.6rem; flex-shrink: 0; }
 .backups { margin-top: .75rem; }
 .brow { padding: .2rem 0; }
-.trash-link { display: none; margin-bottom: .75rem; text-decoration: none; }
-@media (max-width: 760px) { .trash-link { display: inline-flex; gap: .4rem; align-items: center; } }
+.mobile-links { display: none; gap: 1.25rem; margin-bottom: .75rem; }
+.mobile-links a { display: inline-flex; gap: .4rem; align-items: center; text-decoration: none; }
+@media (max-width: 760px) { .mobile-links { display: flex; } }
 </style>

@@ -152,6 +152,15 @@ npm run dev
 
 Starts the API server on :3000 (auto-restart on changes) and the Vite dev server with hot reload on http://localhost:5173.
 
+The in-app **Guide** (`client/src/guide/content.js`) uses screenshots from `client/public/guide-shots/`.
+After UI changes, refresh them (Windows with Edge, or set `CHROME_PATH`):
+
+```bash
+npm run guide:screens        # both languages; or: npm run guide:screens -- sr
+```
+
+The script starts the app with made-up demo data in a temporary folder – your own database is never used.
+
 ---
 
 ## Data and Backup

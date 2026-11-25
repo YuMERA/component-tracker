@@ -5,6 +5,7 @@ import LocationsView from './views/LocationsView.vue';
 import CategoriesView from './views/CategoriesView.vue';
 import SettingsView from './views/SettingsView.vue';
 import TrashView from './views/TrashView.vue';
+import GuideView from './views/GuideView.vue';
 
 export const router = createRouter({
     history: createWebHistory(),
@@ -14,6 +15,7 @@ export const router = createRouter({
         { path: '/locations', name: 'locations', component: LocationsView },
         { path: '/categories', name: 'categories', component: CategoriesView },
         { path: '/trash', name: 'trash', component: TrashView },
+        { path: '/guide', name: 'guide', component: GuideView },
         { path: '/settings', name: 'settings', component: SettingsView },
         { path: '/:pathMatch(.*)*', redirect: '/' }
     ]
