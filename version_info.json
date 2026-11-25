@@ -1,6 +1,6 @@
 {
-  "latest_version": "3.0.1",
-  "download_url": "https://github.com/YuMERA/component-tracker/releases/tag/v3.0.1",
+  "latest_version": "3.0.2",
+  "download_url": "https://github.com/YuMERA/component-tracker/releases/tag/v3.0.2",
   "versions": [
     {
       "version": "1.0.0",
@@ -87,6 +87,22 @@
           "Ctrl+S čuva komponentu; upozorenje pre zatvaranja taba sa nesačuvanim izmenama.",
           "Istorija komponente beleži i brisanje, vraćanje i promene lokacija.",
           "Dugmad za temu i jezik su na vrhu menija; donja traka na telefonu staje u ekran."
+        ]
+      }
+    },
+    {
+      "version": "3.0.2",
+      "released_at": "2026-11-25",
+      "title": "Release notes in your language",
+      "features": [
+        "What is new in each version is now shown in the language you selected (Serbian or English).",
+        "Everything from 3.0.1: Trash, Import from Excel, Copy as new and the in-app Guide."
+      ],
+      "sr": {
+        "title": "Novine na tvom jeziku",
+        "features": [
+          "Šta je novo u svakoj verziji sada se prikazuje na jeziku koji si izabrao (srpski ili engleski).",
+          "Sve iz 3.0.1: Kanta, uvoz iz Excel-a, Kopiraj kao novu i Uputstvo u aplikaciji."
         ]
       }
     }
