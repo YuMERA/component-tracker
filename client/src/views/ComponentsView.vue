@@ -47,6 +47,21 @@ watch(filters, f => {
     router.replace({ query });
 }, { deep: true });
 
+// Oznake uključenih filtera iznad tabele – svaka se skida klikom na ×
+const activeChips = computed(() => {
+    const f = filters.value, chips = [];
+    if (f.status !== 'all') chips.push({ key: 'status', icon: 'pi pi-exclamation-circle', label: t(`status.${f.status}`),
+        remove: () => (f.status = 'all') });
+    for (const id of f.categories) chips.push({ key: `c${id}`, icon: 'pi pi-tag',
+        label: id === 'none' ? t('filters.no_category') : store.categories.find(c => c.id === id)?.name ?? '?',
+        remove: () => f.categories.splice(f.categories.indexOf(id), 1) });
+    for (const id of f.locations) chips.push({ key: `l${id}`, icon: 'pi pi-map-marker',
+        label: id === 'none' ? t('filters.no_location') : store.locations.find(l => l.id === id)?.path ?? '?',
+        remove: () => f.locations.splice(f.locations.indexOf(id), 1) });
+    return chips;
+});
+const clearFilters = () => Object.assign(filters.value, { status: 'all', categories: [], locations: [] });
+
 // --- Filtriranje -----------------------------------------------------
 const filtered = computed(() => {
     const f = filters.value;
@@ -134,6 +149,13 @@ const hideImage = e => (e.target.style.display = 'none');
                 <Menu ref="exportMenu" :model="exportItems" popup />
             </div>
 
+            <div v-if="activeChips.length" class="chips">
+                <button v-for="c in activeChips" :key="c.key" class="chip" @click="c.remove()" :title="t('filters.remove')">
+                    <i :class="c.icon" /> <span>{{ c.label }}</span> <i class="pi pi-times x" />
+                </button>
+                <a v-if="activeChips.length > 1" href="#" class="clear" @click.prevent="clearFilters">{{ t('filters.clear_all') }}</a>
+            </div>
+
             <!-- Traka za masovne akcije – vidi se samo kad ima selektovanih -->
             <div v-if="selection.length" class="bulkbar">
                 <strong>{{ t('bulk.selected', { n: selection.length }) }}</strong>
@@ -216,6 +238,15 @@ const hideImage = e => (e.target.style.display = 'none');
 .search { flex: 1; max-width: 34rem; }
 .count { font-size: .85rem; white-space: nowrap; }
 .toolbar .p-button { margin-left: auto; }
+.chips { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; padding: .5rem .75rem; border-bottom: 1px solid var(--p-content-border-color); }
+.chip {
+    display: inline-flex; align-items: center; gap: .4rem; padding: .25rem .6rem; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--p-primary-color); background: var(--p-highlight-background); color: var(--p-highlight-color); font: inherit; font-size: .88rem;
+}
+.chip:hover { filter: brightness(1.15); }
+.chip i { font-size: .78rem; }
+.chip .x { opacity: .7; }
+.clear { font-size: .88rem; margin-left: .3rem; text-decoration: none; }
 .bulkbar {
     display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; padding: .5rem .75rem;
     background: var(--p-highlight-background); border-bottom: 1px solid var(--p-content-border-color);

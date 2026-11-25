@@ -57,7 +57,9 @@
     "reset": "Reset ({n})",
     "stock": "Stock",
     "no_category": "No category",
-    "no_location": "No location"
+    "no_location": "No location",
+    "remove": "Remove filter",
+    "clear_all": "Clear all"
   },
   "components": {
     "new": "New component",

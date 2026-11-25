@@ -94,7 +94,13 @@ function reset() {
 
 <style scoped>
 .panel { padding: .75rem; }
-.head { display: flex; justify-content: space-between; align-items: center; }
+/* naslov i Reset ostaju na vrhu dok se lista filtera skroluje */
+.head {
+    display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: -.75rem; z-index: 1;
+    margin: -.75rem -.75rem 0; padding: .75rem;
+    background: var(--p-content-background); border-bottom: 1px solid var(--p-content-border-color);
+}
 .head a { font-size: .85rem; text-decoration: none; }
 h4 { margin: 1rem 0 .35rem; font-size: .78rem; text-transform: uppercase; letter-spacing: .05em; color: var(--p-text-muted-color); }
 .item {

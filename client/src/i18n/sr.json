@@ -57,7 +57,9 @@
     "reset": "Poništi ({n})",
     "stock": "Stanje",
     "no_category": "Bez kategorije",
-    "no_location": "Bez lokacije"
+    "no_location": "Bez lokacije",
+    "remove": "Ukloni filter",
+    "clear_all": "Poništi sve"
   },
   "components": {
     "new": "Nova komponenta",
