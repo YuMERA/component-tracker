@@ -1,6 +1,6 @@
 {
   "name": "component-tracker",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Local-first inventory and component tracking application built with Node.js, Express, Vue 3 and SQLite.",
   "type": "module",
   "private": true,
