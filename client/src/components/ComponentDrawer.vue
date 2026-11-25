@@ -3,7 +3,7 @@
 // Bočni panel komponente: pregled, izmena, nova komponenta.
 // Tab "Podaci" staje u jedan pogled; slika, parametri i istorija su u svojim tabovima.
 // *********************************************************************
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import { useConfirm } from 'primevue/useconfirm';
@@ -98,6 +98,19 @@ function copyAsNew() {
     Object.assign(store.drawer, { id: null, prefill: c });
     toast.add({ severity: 'info', summary: t('drawer.copied', { name: form.value.name }), life: 3000 });
 }
+
+// Zatvaranje taba / pregledača sa nesačuvanim izmenama – pregledač sam pita "Napusti stranicu?"
+function onBeforeUnload(e) {
+    if (store.drawer.visible && dirty.value) { e.preventDefault(); e.returnValue = ''; }
+}
+// Ctrl+S (Cmd+S na Mac-u) čuva otvorenu komponentu umesto da pregledač snima stranicu
+function onKeydown(e) {
+    if (!store.drawer.visible || !(e.ctrlKey || e.metaKey) || e.key.toLowerCase() !== 's') return;
+    e.preventDefault();
+    if (!lookupOpen.value && !saving.value && (isNew.value || dirty.value)) save();
+}
+onMounted(() => { window.addEventListener('beforeunload', onBeforeUnload); window.addEventListener('keydown', onKeydown); });
+onBeforeUnmount(() => { window.removeEventListener('beforeunload', onBeforeUnload); window.removeEventListener('keydown', onKeydown); });
 
 // Zatvaranje sa nesačuvanim izmenama traži potvrdu
 const visible = computed({
@@ -398,7 +411,7 @@ const lookupQuery = computed(() => form.value.mpn || form.value.name);
                 <span class="grow" />
                 <span v-if="dirty && !isNew" class="muted small">{{ t('drawer.unsaved') }}</span>
                 <Button :label="t('common.close')" severity="secondary" text @click="visible = false" />
-                <Button :label="isNew ? t('common.add') : t('common.save')" icon="pi pi-check" :loading="saving"
+                <Button :label="isNew ? t('common.add') : t('common.save')" icon="pi pi-check" :loading="saving" v-tooltip.top="'Ctrl+S'"
                         :disabled="!isNew && !dirty" @click="save()" />
             </div>
         </template>

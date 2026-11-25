@@ -3,7 +3,8 @@
 // App.vue – okvir aplikacije: navigacija levo, ekran desno,
 // bočni panel komponente dostupan sa svakog ekrana
 // *********************************************************************
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
@@ -27,6 +28,13 @@ const nav = [
     { to: '/categories', icon: 'pi pi-tags', label: 'nav.categories' },
     { to: '/settings', icon: 'pi pi-cog', label: 'nav.settings' }
 ];
+
+// Naslov taba po ekranu: "Komponente – Component Tracker"
+const route = useRoute();
+watch([() => route.path, locale], () => {
+    const item = nav.find(n => n.to === route.path);
+    document.title = item && item.to !== '/' ? `${t(item.label)} – Component Tracker` : 'Component Tracker';
+}, { immediate: true });
 
 const loadError = ref('');
 

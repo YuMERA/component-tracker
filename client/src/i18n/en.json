@@ -20,7 +20,8 @@
     "pcs": "pcs",
     "save": "Save",
     "saved": "Saved",
-    "search": "Search"
+    "search": "Search",
+    "clear": "Clear"
   },
   "status": {
     "all": "All",

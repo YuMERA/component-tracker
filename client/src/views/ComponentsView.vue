@@ -153,7 +153,8 @@ const hideImage = e => (e.target.style.display = 'none');
             <div class="toolbar">
                 <IconField class="search">
                     <InputIcon class="pi pi-search" />
-                    <InputText v-model="filters.q" :placeholder="t('components.search_placeholder')" fluid />
+                    <InputText v-model="filters.q" :placeholder="t('components.search_placeholder')" fluid @keydown.esc="filters.q = ''" />
+                    <InputIcon v-if="filters.q" class="pi pi-times clear-q" @click="filters.q = ''" v-tooltip.bottom="t('common.clear')" />
                 </IconField>
                 <span class="muted count">{{ t('components.count', { n: filtered.length, total: store.components.length }) }}</span>
                 <Button icon="pi pi-upload" :label="t('import.button')" severity="secondary" outlined size="small" class="first-action"
@@ -252,6 +253,8 @@ const hideImage = e => (e.target.style.display = 'none');
 .content { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
 .toolbar { display: flex; align-items: center; gap: .75rem; padding: .6rem .75rem; border-bottom: 1px solid var(--p-content-border-color); }
 .search { flex: 1; max-width: 34rem; }
+.clear-q { cursor: pointer; }
+.clear-q:hover { color: var(--p-text-color); }
 .count { font-size: .85rem; white-space: nowrap; }
 .toolbar .first-action { margin-left: auto; }
 .chips { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem; padding: .5rem .75rem; border-bottom: 1px solid var(--p-content-border-color); }

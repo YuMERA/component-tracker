@@ -73,7 +73,8 @@ const showComponents = id => router.push({ path: '/components', query: { cat: id
                 </form>
                 <IconField>
                     <InputIcon class="pi pi-search" />
-                    <InputText v-model="search" :placeholder="t('common.search')" />
+                    <InputText v-model="search" :placeholder="t('common.search')" @keydown.esc="search = ''" />
+                    <InputIcon v-if="search" class="pi pi-times" style="cursor: pointer" @click="search = ''" />
                 </IconField>
             </div>
 
