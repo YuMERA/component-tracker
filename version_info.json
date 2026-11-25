@@ -74,7 +74,21 @@
         "Ctrl+S saves a component; warning before closing the tab with unsaved changes.",
         "Component history also records deletes, restores and location changes.",
         "Theme and language buttons at the top of the menu; the phone bottom bar fits the screen."
-      ]
+      ],
+      "sr": {
+        "title": "Kanta, uvoz iz Excel-a i uputstvo u aplikaciji",
+        "features": [
+          "Kanta: obrisane komponente, lokacije i kategorije mogu da se vrate ili obrišu trajno, a odmah posle brisanja tu je dugme Poništi.",
+          "Uvoz iz Excel-a / CSV-a: kolone se prepoznaju same, a pre uvoza vidiš šta će biti dodato.",
+          "Kopiraj kao novu: nova komponenta na osnovu postojeće (npr. druga vrednost iste serije).",
+          "Uputstvo u aplikaciji sa slikama ekrana, na srpskom i engleskom.",
+          "Uključeni filteri se vide kao oznake iznad tabele; naslovi sekcija u filterima su istaknuti.",
+          "Tabela pamti broj redova i sortiranje; pretraga ima dugme × za brisanje.",
+          "Ctrl+S čuva komponentu; upozorenje pre zatvaranja taba sa nesačuvanim izmenama.",
+          "Istorija komponente beleži i brisanje, vraćanje i promene lokacija.",
+          "Dugmad za temu i jezik su na vrhu menija; donja traka na telefonu staje u ekran."
+        ]
+      }
     }
   ]
 }

@@ -102,7 +102,12 @@ const fmtDate = s => d(new Date(s), 'short');
 const themes = [{ value: 'light', icon: 'pi pi-sun' }, { value: 'dark', icon: 'pi pi-moon' }, { value: 'system', icon: 'pi pi-desktop' }];
 const textSizes = ['small', 'normal', 'large'].map(value => ({ value }));
 const languages = [{ value: 'sr', label: 'Srpski' }, { value: 'en', label: 'English' }];
-const latestInfo = () => system.value?.update.versions.find(v => v.version === system.value.update.latest);
+// Novine nove verzije na izabranom jeziku: version_info.json ima engleski (title/features)
+// i prevod po jeziku (npr. "sr": { title, features }) – ako prevoda nema, ostaje engleski
+const latestInfo = () => {
+    const v = system.value?.update.versions.find(x => x.version === system.value.update.latest);
+    return v ? { ...v, ...(v[locale.value] || {}) } : null;
+};
 </script>
 
 <template>
