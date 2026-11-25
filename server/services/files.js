@@ -81,11 +81,3 @@ export function cacheAllImages() {
     })();
     return running;
 }
-
-export function removeFiles(ids) {
-    for (const dir of [config.imagesDir, config.datasheetsDir]) {
-        for (const f of fs.readdirSync(dir)) {
-            if (ids.some(id => f.startsWith(`${id}-`))) fs.rmSync(path.join(dir, f), { force: true });
-        }
-    }
-}

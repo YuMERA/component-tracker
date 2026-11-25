@@ -11,7 +11,7 @@ import Toast from 'primevue/toast';
 import ConfirmDialog from 'primevue/confirmdialog';
 import Button from 'primevue/button';
 import ComponentDrawer from './components/ComponentDrawer.vue';
-import { store, loadAll, openNewComponent } from './store.js';
+import { store, loadAll, openNewComponent, refreshTrashCount } from './store.js';
 import { api } from './api.js';
 import { useTheme } from './theme.js';
 import { setLocale } from './i18n/index.js';
@@ -26,6 +26,7 @@ const nav = [
     { to: '/components', icon: 'pi pi-microchip', label: 'nav.components' },
     { to: '/locations', icon: 'pi pi-map-marker', label: 'nav.locations' },
     { to: '/categories', icon: 'pi pi-tags', label: 'nav.categories' },
+    { to: '/trash', icon: 'pi pi-trash', label: 'nav.trash' },
     { to: '/settings', icon: 'pi pi-cog', label: 'nav.settings' }
 ];
 
@@ -53,15 +54,39 @@ async function initialLoad(attempt = 1) {
 onMounted(async () => {
     document.documentElement.lang = locale.value;
     await initialLoad();
+    refreshTrashCount();
     api.system().then(s => (updateAvailable.value = s.update.available)).catch(() => {});
 });
 
 const year = new Date().getFullYear();
+// "Poništi" u poruci posle brisanja: vrati baš te stavke iz kante
+async function undo(message) {
+    toast.remove(message);
+    try {
+        // upravo obrisano se vraća uvek (force), čak i ako u međuvremenu postoji isti MPN
+        const r = await api.restoreTrashMany(message.data.trashIds, true);
+        await loadAll();
+        refreshTrashCount();
+        toast.add({ severity: 'success', summary: t('trash.restored_n', { n: r.restored }), life: 2500 });
+    } catch (e) {
+        toast.add({ severity: 'error', summary: t('common.error'), detail: e.message, life: 5000 });
+    }
+}
+
 const toggleLocale =() => setLocale(locale.value === 'sr' ? 'en' : 'sr');
 </script>
 
 <template>
     <Toast />
+    <Toast group="undo">
+        <template #message="{ message }">
+            <div class="undo">
+                <i class="pi pi-trash" />
+                <span class="grow">{{ message.summary }}</span>
+                <Button :label="t('trash.undo')" size="small" @click="undo(message)" />
+            </div>
+        </template>
+    </Toast>
     <ConfirmDialog />
 
     <div class="shell">
@@ -81,9 +106,10 @@ const toggleLocale =() => setLocale(locale.value === 'sr' ? 'en' : 'sr');
 
             <Button class="add-btn" icon="pi pi-plus" :label="t('components.new')" @click="openNewComponent" />
 
-            <router-link v-for="n in nav" :key="n.to" :to="n.to" class="nav-item" active-class="" exact-active-class="active">
+            <router-link v-for="n in nav" :key="n.to" :to="n.to" class="nav-item" :class="{ 'desktop-only': n.to === '/trash' }" active-class="" exact-active-class="active">
                 <i :class="n.icon" />
                 <span>{{ t(n.label) }}</span>
+                <span v-if="n.to === '/trash' && store.trashCount" class="count-badge">{{ store.trashCount }}</span>
                 <span v-if="n.to === '/settings' && updateAvailable" class="dot" v-tooltip.right="t('settings.update_available')" />
             </router-link>
 
@@ -124,6 +150,11 @@ const toggleLocale =() => setLocale(locale.value === 'sr' ? 'en' : 'sr');
 .nav-item:hover { background: var(--p-content-hover-background); }
 .nav-item.active { background: var(--p-highlight-background); color: var(--p-highlight-color); font-weight: 600; }
 .nav-item i { width: 1.1rem; text-align: center; }
+.undo { display: flex; align-items: center; gap: .75rem; width: 100%; }
+.count-badge {
+    margin-left: auto; min-width: 1.3rem; padding: 0 .35rem; border-radius: 999px; text-align: center;
+    font-size: .75rem; line-height: 1.3rem; background: var(--p-content-hover-background); color: var(--p-text-muted-color);
+}
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--p-orange-500); margin-left: auto; }
 .prefs { display: grid; grid-template-columns: 1fr 1fr; gap: .25rem; margin: 0 0 .9rem; }
 .prefs :deep(.p-button) { padding: .45rem .4rem; font-size: .9rem; color: var(--p-text-color); }
@@ -139,9 +170,14 @@ const toggleLocale =() => setLocale(locale.value === 'sr' ? 'en' : 'sr');
         padding: .3rem; border-right: 0; border-top: 1px solid var(--p-content-border-color);
     }
     .brand, .prefs, .copyright { display: none; }
-    .add-btn { margin: 0; }
+    .rail { gap: .1rem; min-width: 0; }
+    .add-btn { margin: 0; flex-shrink: 0; }
     .add-btn :deep(.p-button-label) { display: none; }
-    .nav-item { flex-direction: column; gap: .15rem; padding: .35rem .4rem; font-size: .78rem; }
+    /* stavke dele širinu ravnomerno, dugački nazivi se skraćuju – traka nikad nije šira od ekrana */
+    .nav-item { flex: 1 1 0; min-width: 0; flex-direction: column; gap: .15rem; padding: .35rem .1rem; font-size: .7rem; }
+    .nav-item span:not(.dot):not(.count-badge) { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .dot { position: absolute; top: 4px; right: 8px; }
+    /* na telefonu nema mesta za 7 stavki – Kanta se otvara iz Podešavanja */
+    .desktop-only { display: none; }
 }
 </style>

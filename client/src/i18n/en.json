@@ -4,7 +4,8 @@
     "components": "Components",
     "locations": "Locations",
     "categories": "Categories",
-    "settings": "Settings"
+    "settings": "Settings",
+    "trash": "Trash"
   },
   "common": {
     "add": "Add",
@@ -77,7 +78,7 @@
     "set_category": "Change",
     "clear": "Clear selection",
     "changed": "Changed: {n}",
-    "delete_confirm": "Delete {n} components? This cannot be undone."
+    "delete_confirm": "Move {n} components to the trash? They can be restored from Trash."
   },
   "export": {
     "title": "Export",
@@ -113,7 +114,7 @@
     "saved": "Changes saved",
     "not_saved": "Not saved",
     "deleted": "Deleted",
-    "delete_confirm": "Delete \"{name}\"?",
+    "delete_confirm": "Move \"{name}\" to the trash? It can be restored from Trash.",
     "duplicate": "You already have {name} ({mpn}) – {n} pcs.",
     "add_to_existing": "Add {n} to stock",
     "added_to_existing": "Added {n} pcs",
@@ -200,7 +201,7 @@
     "components": "Components",
     "show_components": "Show components",
     "empty": "No locations yet.",
-    "delete_confirm": "Delete location \"{name}\"? Sub-locations and stock move to: {target}.",
+    "delete_confirm": "Move location \"{name}\" to the trash? Sublocations and stock move to: {target}. Restoring it from Trash moves everything back.",
     "print_label": "QR label",
     "print_selected": "QR labels ({n})",
     "print_title": "Print QR labels",
@@ -289,5 +290,37 @@
     "a_error": "No name",
     "run": "Import ({n})",
     "done": "Imported: {new} new, {add} topped up, {skip} skipped"
+  },
+  "trash": {
+    "intro": "Everything that was deleted – components, locations and categories – waits here and can be restored until you empty the trash.",
+    "is_empty": "The trash is empty.",
+    "item": "Item",
+    "deleted_at": "Deleted",
+    "kind_component": "Component",
+    "kind_location": "Location",
+    "kind_category": "Category",
+    "pieces": "{n} pcs",
+    "children": "{n} sublocations",
+    "components": "{n} components",
+    "restore": "Restore",
+    "restore_all": "Restore all",
+    "purge": "Delete permanently",
+    "purge_title": "Delete permanently",
+    "purge_confirm": "\"{name}\" will be deleted permanently. This cannot be undone.",
+    "empty": "Empty trash",
+    "empty_confirm": "Permanently delete all {n} items in the trash? This cannot be undone.",
+    "restored": "Restored: {name}",
+    "restored_n": "Items restored: {n}",
+    "skipped": "Not restored: {n} (a component with the same MPN exists)",
+    "mpn_exists_title": "A component with the same MPN already exists",
+    "mpn_exists": "\"{name}\" ({mpn}) was added in the meantime. Restore this one too, so both exist?",
+    "restore_anyway": "Restore anyway",
+    "note_location": "Its location was deleted, so the pieces were restored without a location.",
+    "note_category": "Its category was deleted, so it was restored without a category.",
+    "note_merged": "A category with the same name already exists – components were restored into it.",
+    "note_renamed": "A location with the same name already exists there, so it was restored with a number in its name.",
+    "moved_one": "\"{name}\" moved to trash",
+    "moved_many": "Moved to trash: {n}",
+    "undo": "Undo"
   }
 }

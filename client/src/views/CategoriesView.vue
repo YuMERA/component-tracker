@@ -13,7 +13,7 @@ import InputIcon from 'primevue/inputicon';
 import Dialog from 'primevue/dialog';
 import Select from 'primevue/select';
 import { api } from '../api.js';
-import { store, loadAll } from '../store.js';
+import { store, loadAll, notifyTrashed } from '../store.js';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -52,10 +52,10 @@ const openDelete = cat => (del.value = { visible: true, cat, moveTo: null });
 const moveOptions = computed(() => store.categories.filter(c => c.id !== del.value.cat?.id));
 
 async function confirmDelete() {
-    await api.deleteCategory(del.value.cat.id, del.value.moveTo);
+    const r = await api.deleteCategory(del.value.cat.id, del.value.moveTo);
     del.value.visible = false;
     await loadAll();
-    toast.add({ severity: 'success', summary: t('common.done'), life: 1500 });
+    notifyTrashed(t('trash.moved_one', { name: del.value.cat.name }), r.trash);
 }
 
 const showComponents = id => router.push({ path: '/components', query: { cat: id } });

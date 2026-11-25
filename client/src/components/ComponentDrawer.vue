@@ -25,7 +25,7 @@ import Image from 'primevue/image';
 import StockEditor from './StockEditor.vue';
 import LookupDialog from './LookupDialog.vue';
 import { api } from '../api.js';
-import { store, putComponent, dropComponents, reloadCatalog, openComponent, stockStatus, imageSrc, datasheetHref } from '../store.js';
+import { store, putComponent, dropComponents, reloadCatalog, notifyTrashed, openComponent, stockStatus, imageSrc, datasheetHref } from '../store.js';
 
 const { t, d } = useI18n();
 const toast = useToast();
@@ -204,10 +204,10 @@ function remove() {
         acceptProps: { label: t('common.delete'), severity: 'danger' },
         rejectProps: { label: t('common.cancel'), severity: 'secondary', outlined: true },
         accept: async () => {
-            await api.deleteComponent(store.drawer.id);
+            const r = await api.deleteComponent(store.drawer.id);
             dropComponents([store.drawer.id]);
             await reloadCatalog();
-            toast.add({ severity: 'success', summary: t('drawer.deleted'), life: 2500 });
+            notifyTrashed(t('trash.moved_one', { name: form.value.name }), r.trash);
             original.value = JSON.stringify(form.value);
             store.drawer.visible = false;
         }

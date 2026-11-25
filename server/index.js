@@ -9,6 +9,7 @@ import { spawn } from 'node:child_process';
 import { config } from './config.js';
 import './db/index.js';
 import components from './routes/components.js';
+import trashRoutes from './routes/trash.js';
 import catalog from './routes/catalog.js';
 import system from './routes/system.js';
 import { checkForUpdates } from './services/system.js';
@@ -18,6 +19,7 @@ app.disable('x-powered-by');
 app.use(express.json({ limit: '2mb' }));
 
 app.use('/api/components', components);
+app.use('/api/trash', trashRoutes);
 app.use('/api', catalog);
 app.use('/api', system);
 app.use('/api', (req, res) => res.status(404).json({ message: 'Not found' }));

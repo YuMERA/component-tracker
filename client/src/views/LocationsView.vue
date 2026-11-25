@@ -17,7 +17,7 @@ import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import Message from 'primevue/message';
 import { api } from '../api.js';
-import { store, reloadCatalog, loadAll, locationWithChildren } from '../store.js';
+import { store, reloadCatalog, loadAll, locationWithChildren, notifyTrashed } from '../store.js';
 
 const { t } = useI18n();
 const router = useRouter();
@@ -87,9 +87,9 @@ function removeLocation(l) {
         acceptProps: { label: t('common.delete'), severity: 'danger' },
         rejectProps: { label: t('common.cancel'), severity: 'secondary', outlined: true },
         accept: async () => {
-            await api.deleteLocation(l.id);
+            const r = await api.deleteLocation(l.id);
             await loadAll();
-            toast.add({ severity: 'success', summary: t('common.done'), life: 2000 });
+            notifyTrashed(t('trash.moved_one', { name: l.path }), r.trash);
         }
     });
 }

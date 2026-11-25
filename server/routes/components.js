@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import * as svc from '../services/components.js';
-import { cacheImageInBackground, cacheImage, cacheDatasheet, removeFiles } from '../services/files.js';
+import { cacheImageInBackground, cacheImage, cacheDatasheet } from '../services/files.js';
+import { trashComponents } from '../services/trash.js';
 
 const r = Router();
 
@@ -29,15 +30,19 @@ r.patch('/:id', (req, res) => {
 
 r.delete('/:id', (req, res) => {
     const id = Number(req.params.id);
-    if (!svc.deleteComponents([id])) throw new svc.HttpError(404, 'Component not found');
-    removeFiles([id]);
-    res.status(204).end();
+    // ide u kantu; trash = id-jevi u kanti (za "Poništi")
+    const trash = trashComponents([id]);
+    if (!trash.length) throw new svc.HttpError(404, 'Component not found');
+    res.json({ trash });
 });
 
 r.post('/bulk', (req, res) => {
-    const changed = svc.bulkUpdate(req.body.ids, req.body.action, req.body.value);
-    if (req.body.action === 'delete') removeFiles(req.body.ids.map(Number));
-    res.json({ changed });
+    if (req.body.action === 'delete') {
+        if (!Array.isArray(req.body.ids) || !req.body.ids.length) throw new svc.HttpError(400, 'No components selected');
+        const trash = trashComponents(req.body.ids);
+        return res.json({ changed: trash.length, trash });
+    }
+    res.json({ changed: svc.bulkUpdate(req.body.ids, req.body.action, req.body.value) });
 });
 
 // Uvoz liste: { rows, existing: 'skip' | 'add', dryRun }

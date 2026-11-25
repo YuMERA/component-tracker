@@ -46,11 +46,14 @@ export const config = {
     imagesDir: path.join(DATA_DIR, 'images'),
     datasheetsDir: path.join(DATA_DIR, 'datasheets'),
     backupsDir: path.join(DATA_DIR, 'backups'),
+    // fajlovi obrisanih komponenti (slika, datasheet) čekaju ovde dok se kanta ne isprazni
+    trashImagesDir: path.join(DATA_DIR, 'trash', 'images'),
+    trashDatasheetsDir: path.join(DATA_DIR, 'trash', 'datasheets'),
     distDir: path.join(ROOT, 'dist'),
     versionUrl: process.env.VERSION_URL || 'https://raw.githubusercontent.com/YuMERA/component-tracker/main/version_info.json',
     githubToken: process.env.GITHUB_TOKEN || null
 };
 
-for (const dir of [config.dataDir, config.imagesDir, config.datasheetsDir, config.backupsDir]) {
+for (const dir of [config.dataDir, config.imagesDir, config.datasheetsDir, config.backupsDir, config.trashImagesDir, config.trashDatasheetsDir]) {
     fs.mkdirSync(dir, { recursive: true });
 }

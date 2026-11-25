@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import { db } from '../db/index.js';
 import { HttpError } from '../services/components.js';
+import { trashCategory, trashLocation } from '../services/trash.js';
 import { allLocations, descendantIds, ensureLocationPath } from '../services/locations.js';
 
 const r = Router();
@@ -39,12 +40,10 @@ r.patch('/categories/:id', (req, res) => {
     res.json(db.prepare('SELECT * FROM categories WHERE id = ?').get(req.params.id));
 });
 
-// Brisanje: komponente prelaze u drugu kategoriju (ili ostaju bez kategorije)
+// Brisanje (u kantu): komponente prelaze u drugu kategoriju (ili ostaju bez kategorije)
 r.delete('/categories/:id', (req, res) => {
     const target = req.query.move_to ? Number(req.query.move_to) : null;
-    db.prepare('UPDATE components SET category_id = ? WHERE category_id = ?').run(target, req.params.id);
-    db.prepare('DELETE FROM categories WHERE id = ?').run(req.params.id);
-    res.status(204).end();
+    res.json({ trash: [trashCategory(Number(req.params.id), target)] });
 });
 
 // ---------------------------------------------------------------------
@@ -85,31 +84,9 @@ r.patch('/locations/:id', (req, res) => {
     res.json(allLocations().find(l => l.id === id));
 });
 
-// Brisanje: podlokacije i stanje prelaze na roditelja (ništa se ne gubi)
+// Brisanje (u kantu): podlokacije i stanje prelaze na roditelja (ništa se ne gubi)
 r.delete('/locations/:id', (req, res) => {
-    const id = Number(req.params.id);
-    const loc = db.prepare('SELECT * FROM locations WHERE id = ?').get(id);
-    if (!loc) throw new HttpError(404, 'Location not found');
-    db.exec('BEGIN');
-    try {
-        db.prepare('UPDATE locations SET parent_id = ? WHERE parent_id = ?').run(loc.parent_id, id);
-        // stanje: spoji sa postojećim redom na roditelju, ili samo prebaci
-        for (const s of db.prepare('SELECT * FROM stock WHERE location_id = ?').all(id)) {
-            const dst = db.prepare('SELECT * FROM stock WHERE component_id = ? AND IFNULL(location_id, 0) = ?').get(s.component_id, loc.parent_id ?? 0);
-            if (dst) {
-                db.prepare('UPDATE stock SET quantity = quantity + ? WHERE id = ?').run(s.quantity, dst.id);
-                db.prepare('DELETE FROM stock WHERE id = ?').run(s.id);
-            } else {
-                db.prepare('UPDATE stock SET location_id = ? WHERE id = ?').run(loc.parent_id, s.id);
-            }
-        }
-        db.prepare('DELETE FROM locations WHERE id = ?').run(id);
-        db.exec('COMMIT');
-    } catch (e) {
-        db.exec('ROLLBACK');
-        throw e;
-    }
-    res.status(204).end();
+    res.json({ trash: [trashLocation(Number(req.params.id))] });
 });
 
 export default r;

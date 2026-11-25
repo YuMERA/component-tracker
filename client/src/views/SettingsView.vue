@@ -12,7 +12,7 @@ import Password from 'primevue/password';
 import Tag from 'primevue/tag';
 import Message from 'primevue/message';
 import { api } from '../api.js';
-import { loadAll } from '../store.js';
+import { loadAll, store } from '../store.js';
 import { useTheme, useTextSize } from '../theme.js';
 import { setLocale } from '../i18n/index.js';
 
@@ -181,6 +181,8 @@ const latestInfo = () => system.value?.update.versions.find(v => v.version === s
         <!-- BACKUP -->
         <section class="card card-pad">
             <h3>{{ t('settings.backup') }}</h3>
+            <!-- na telefonu Kanta nije u donjem meniju -->
+            <router-link to="/trash" class="trash-link"><i class="pi pi-trash" /> {{ t('nav.trash') }}<span v-if="store.trashCount"> ({{ store.trashCount }})</span></router-link>
             <p v-if="backup" class="muted">
                 {{ t('settings.backup_intro', { size: size(backup.db_size) }) }}<br />
                 <span class="mono small">{{ backup.folder }}</span>
@@ -248,4 +250,6 @@ const latestInfo = () => system.value?.update.versions.find(v => v.version === s
 .author img { width: 1.6rem; height: 1.6rem; flex-shrink: 0; }
 .backups { margin-top: .75rem; }
 .brow { padding: .2rem 0; }
+.trash-link { display: none; margin-bottom: .75rem; text-decoration: none; }
+@media (max-width: 760px) { .trash-link { display: inline-flex; gap: .4rem; align-items: center; } }
 </style>

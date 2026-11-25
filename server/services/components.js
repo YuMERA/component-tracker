@@ -211,17 +211,10 @@ export function updateComponent(id, body) {
     return getComponent(before.id);
 }
 
-export function deleteComponents(ids) {
-    const placeholders = ids.map(() => '?').join(',');
-    return db.prepare(`DELETE FROM components WHERE id IN (${placeholders})`).run(...ids).changes;
-}
-
 export function bulkUpdate(ids, action, value) {
     if (!Array.isArray(ids) || !ids.length) throw new HttpError(400, 'No components selected');
     ids = ids.map(Number);
     const placeholders = ids.map(() => '?').join(',');
-
-    if (action === 'delete') return deleteComponents(ids);
 
     if (action === 'category') {
         return db.prepare(`UPDATE components SET category_id = ?, updated_at = CURRENT_TIMESTAMP WHERE id IN (${placeholders})`)

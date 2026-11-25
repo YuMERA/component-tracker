@@ -102,6 +102,19 @@ const MIGRATIONS = [
     db => {
         db.exec('ALTER TABLE api_services ADD COLUMN priority INTEGER NOT NULL DEFAULT 9');
         db.exec("UPDATE api_services SET priority = CASE name WHEN 'mouser' THEN 1 WHEN 'element14' THEN 2 ELSE 9 END");
+    },
+    // 3: kanta – obrisano se čuva kao snimak (JSON) dok se kanta ne isprazni
+    db => {
+        db.exec(`
+            CREATE TABLE trash (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                kind TEXT NOT NULL,          -- component | location | category
+                label TEXT NOT NULL,         -- naziv za prikaz
+                detail TEXT,                 -- JSON: mpn, komadi, broj podlokacija…
+                payload TEXT NOT NULL,       -- JSON snimak svega što treba za vraćanje
+                deleted_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+        `);
     }
 ];
 

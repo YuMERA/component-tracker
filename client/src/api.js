@@ -58,6 +58,12 @@ export const api = {
 
     backupInfo: () => get('/api/backup'),
     createBackup: () => post('/api/backup'),
+    trash: () => get('/api/trash'),
+    trashCount: () => get('/api/trash/count'),
+    restoreTrash: (id, force = false) => post(`/api/trash/${id}/restore`, { force }),
+    restoreTrashMany: (ids, force = false) => post('/api/trash/restore', ids ? { ids, force } : {}),
+    purgeTrash: id => del(`/api/trash/${id}`),
+    emptyTrash: () => del('/api/trash'),
     deleteBackup: name => del(`/api/backup/${encodeURIComponent(name)}`),
 
     system: () => get('/api/system'),

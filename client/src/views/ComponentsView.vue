@@ -21,7 +21,7 @@ import FilterPanel from '../components/FilterPanel.vue';
 import ImportDialog from '../components/ImportDialog.vue';
 import QtyCell from '../components/QtyCell.vue';
 import { api } from '../api.js';
-import { store, loadAll, openComponent, dropComponents, stockStatus, imageSrc, locationWithChildren } from '../store.js';
+import { store, loadAll, notifyTrashed, openComponent, dropComponents, stockStatus, imageSrc, locationWithChildren } from '../store.js';
 import { exportCsv, exportTxt } from '../export.js';
 
 const { t } = useI18n();
@@ -108,8 +108,8 @@ async function runBulk(action, value) {
     const ids = selection.value.map(c => c.id);
     try {
         const r = await api.bulk(ids, action, value);
-        toast.add({ severity: 'success', summary: t('common.done'), detail: t('bulk.changed', { n: r.changed }), life: 2500 });
-        if (action === 'delete') dropComponents(ids);
+        if (action === 'delete') { dropComponents(ids); notifyTrashed(t('trash.moved_many', { n: r.changed }), r.trash); }
+        else toast.add({ severity: 'success', summary: t('common.done'), detail: t('bulk.changed', { n: r.changed }), life: 2500 });
         selection.value = [];
         bulkLocation.value = bulkCategory.value = null;
         await loadAll();

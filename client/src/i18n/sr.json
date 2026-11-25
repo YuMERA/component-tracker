@@ -4,7 +4,8 @@
     "components": "Komponente",
     "locations": "Lokacije",
     "categories": "Kategorije",
-    "settings": "Podešavanja"
+    "settings": "Podešavanja",
+    "trash": "Kanta"
   },
   "common": {
     "add": "Dodaj",
@@ -77,7 +78,7 @@
     "set_category": "Promeni",
     "clear": "Poništi izbor",
     "changed": "Promenjeno: {n}",
-    "delete_confirm": "Obrisati {n} komponenti? Ovo se ne može poništiti."
+    "delete_confirm": "Premestiti {n} komponenti u kantu? Mogu se vratiti iz Kante."
   },
   "export": {
     "title": "Izvoz",
@@ -113,7 +114,7 @@
     "saved": "Izmene sačuvane",
     "not_saved": "Nije sačuvano",
     "deleted": "Obrisano",
-    "delete_confirm": "Obrisati „{name}”?",
+    "delete_confirm": "Premestiti „{name}” u kantu? Može se vratiti iz Kante.",
     "duplicate": "Već imaš {name} ({mpn}) – {n} kom.",
     "add_to_existing": "Dodaj {n} na stanje",
     "added_to_existing": "Dodato {n} kom",
@@ -200,7 +201,7 @@
     "components": "Komponenti",
     "show_components": "Prikaži komponente",
     "empty": "Još nema lokacija.",
-    "delete_confirm": "Obrisati lokaciju „{name}”? Podlokacije i stanje prelaze na: {target}.",
+    "delete_confirm": "Premestiti lokaciju „{name}” u kantu? Podlokacije i stanje prelaze na: {target}. Vraćanjem iz Kante se sve vraća nazad.",
     "print_label": "QR nalepnica",
     "print_selected": "QR nalepnice ({n})",
     "print_title": "Štampa QR nalepnica",
@@ -289,5 +290,37 @@
     "a_error": "Nema naziv",
     "run": "Uvezi ({n})",
     "done": "Uvezeno: {new} novih, {add} dopunjenih, {skip} preskočenih"
+  },
+  "trash": {
+    "intro": "Ovde je sve što je obrisano – komponente, lokacije i kategorije. Sve se može vratiti dok ne isprazniš kantu.",
+    "is_empty": "Kanta je prazna.",
+    "item": "Stavka",
+    "deleted_at": "Obrisano",
+    "kind_component": "Komponenta",
+    "kind_location": "Lokacija",
+    "kind_category": "Kategorija",
+    "pieces": "{n} kom",
+    "children": "{n} podlokacija",
+    "components": "{n} komponenti",
+    "restore": "Vrati",
+    "restore_all": "Vrati sve",
+    "purge": "Obriši trajno",
+    "purge_title": "Trajno brisanje",
+    "purge_confirm": "„{name}” će biti obrisano trajno. Ovo se ne može poništiti.",
+    "empty": "Isprazni kantu",
+    "empty_confirm": "Trajno obrisati svih {n} stavki iz kante? Ovo se ne može poništiti.",
+    "restored": "Vraćeno: {name}",
+    "restored_n": "Vraćeno stavki: {n}",
+    "skipped": "Nije vraćeno: {n} (postoji komponenta sa istim MPN-om)",
+    "mpn_exists_title": "Već postoji komponenta sa istim MPN-om",
+    "mpn_exists": "U međuvremenu je dodata „{name}” ({mpn}). Vratiti i ovu, pa da postoje obe?",
+    "restore_anyway": "Vrati svejedno",
+    "note_location": "Njena lokacija je obrisana, pa su komadi vraćeni bez lokacije.",
+    "note_category": "Njena kategorija je obrisana, pa je vraćena bez kategorije.",
+    "note_merged": "Već postoji kategorija istog naziva – komponente su vraćene u nju.",
+    "note_renamed": "Na tom mestu već postoji lokacija istog naziva, pa je vraćena sa brojem u nazivu.",
+    "moved_one": "„{name}” je premešteno u kantu",
+    "moved_many": "U kantu premešteno: {n}",
+    "undo": "Poništi"
   }
 }
