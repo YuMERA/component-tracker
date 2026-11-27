@@ -69,9 +69,13 @@ const importOpen = ref(false);
 const TABLE_KEY = 'componentsTable';
 const tableState = (() => { try { return JSON.parse(localStorage.getItem(TABLE_KEY)) || {}; } catch { return {}; } })();
 const rows = ref([25, 50, 100, 500].includes(tableState.rows) ? tableState.rows : 25);
-const sortMeta = ref(Array.isArray(tableState.sort) ? tableState.sort : []);
-watch([rows, sortMeta], () => {
-    try { localStorage.setItem(TABLE_KEY, JSON.stringify({ rows: rows.value, sort: sortMeta.value })); } catch { /* privatni prozor */ }
+// sortiranje po jednoj koloni: { field, order } (stari zapis je bio niz – uzima se prvi)
+const savedSort = Array.isArray(tableState.sort) ? tableState.sort[0] : tableState.sort;
+const sortField = ref(savedSort?.field || null);
+const sortOrder = ref(savedSort?.order || null);
+watch([rows, sortField, sortOrder], () => {
+    const sort = sortField.value ? { field: sortField.value, order: sortOrder.value } : null;
+    try { localStorage.setItem(TABLE_KEY, JSON.stringify({ rows: rows.value, sort })); } catch { /* privatni prozor */ }
 }, { deep: true });
 
 // --- Filtriranje -----------------------------------------------------
@@ -100,7 +104,34 @@ const filtered = computed(() => {
 });
 
 // --- Masovne akcije --------------------------------------------------
+// Sortiramo sami (DataTable je "lazy"): abecedno kao u Excel-u – 0805…, 1N5819, 2N7002…, AC0100…, AC03…
+// (ugrađeno sortiranje poredi brojeve unutar naziva kao brojeve, pa oznake delova izgledaju ispreturano)
+const collator = new Intl.Collator(undefined, { sensitivity: 'base' });
+const sortValue = (c, field) => field === 'quantity' ? c.quantity : (c[field] ?? '');
+const sorted = computed(() => {
+    const field = sortField.value, order = sortOrder.value || 1;
+    if (!field) return filtered.value;
+    return [...filtered.value].sort((a, b) => {
+        const x = sortValue(a, field), y = sortValue(b, field);
+        if (typeof x === 'number') return (x - y) * order;
+        if (!x !== !y) return x ? -1 : 1;          // prazno uvek na kraju
+        return collator.compare(x, y) * order || collator.compare(a.name, b.name);
+    });
+});
+const first = ref(0);
+const page = computed(() => sorted.value.slice(first.value, first.value + rows.value));
+watch(filters, () => (first.value = 0), { deep: true });   // novi filter → prva strana
+watch(() => sorted.value.length, n => { if (first.value >= n) first.value = 0; });
+function onSort(e) {
+    sortField.value = e.sortField || null;
+    sortOrder.value = e.sortField ? e.sortOrder : null;
+    first.value = 0;
+}
+
 const selection = ref([]);
+// "Izaberi sve" u zaglavlju bira sve filtrirane, ne samo trenutnu stranu
+const allSelected = computed(() => sorted.value.length > 0 && selection.value.length === sorted.value.length);
+const onSelectAll = e => (selection.value = e.checked ? [...sorted.value] : []);
 const bulkLocation = ref(null);
 const bulkCategory = ref(null);
 
@@ -135,7 +166,7 @@ const exportItems = computed(() => [
     { label: t('export.csv'), icon: 'pi pi-file-excel', command: () => exportCsv(rowsForExport(), t) },
     { label: t('export.txt'), icon: 'pi pi-file', command: () => exportTxt(rowsForExport(), t) }
 ]);
-const rowsForExport = () => (selection.value.length ? selection.value : filtered.value);
+const rowsForExport = () => (selection.value.length ? selection.value : sorted.value);
 
 const locationLabel = c => {
     const locs = c.stock.filter(s => s.location);
@@ -189,15 +220,22 @@ const hideImage = e => (e.target.style.display = 'none');
 
             <DataTable
                 v-model:selection="selection"
-                :value="filtered"
+                :value="page"
+                lazy
+                :totalRecords="sorted.length"
+                v-model:first="first"
+                :sortField="sortField"
+                :sortOrder="sortOrder"
+                @sort="onSort"
+                :selectAll="allSelected"
+                @select-all-change="onSelectAll"
                 dataKey="id"
                 size="small"
                 rowHover
                 paginator
                 v-model:rows="rows"
-                v-model:multiSortMeta="sortMeta"
                 :rowsPerPageOptions="[25, 50, 100, 500]"
-                sortMode="multiple"
+                sortMode="single"
                 removableSort
                 scrollable
                 scrollHeight="flex"
